@@ -110,7 +110,11 @@ public/build/
 
 # Misc
 .cache/
+.tanstack/
+backend/scripts/output/
 *.tar.gz
 *.zip
 CareerForge_AI.zip
 .workspace/
+uploads/
+backend/uploads/
