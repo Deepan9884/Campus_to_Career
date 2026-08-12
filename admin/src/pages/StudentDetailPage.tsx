@@ -29,6 +29,7 @@ import {
   Zap,
   ShieldCheck,
   CheckCircle,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -48,10 +49,21 @@ type Tab =
   | "activity"
   | "mentor-action";
 
+function formatExtractedText(text: string): string {
+  if (!text) return "";
+  return text
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .replace(/([&,;:])([A-Za-z])/g, "$1 $2")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function StudentDetailPage() {
   const { studentId = "" } = useParams<{ studentId: string }>();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [selectedResumeModal, setSelectedResumeModal] = useState<any | null>(null);
 
   const [feedbackTitle, setFeedbackTitle] = useState("");
   const [feedbackNote, setFeedbackNote] = useState("");
@@ -323,28 +335,156 @@ export function StudentDetailPage() {
 
       {/* Tab Content 2: Resumes */}
       {activeTab === "resumes" && (
-        <GlassCard className="p-5 space-y-4">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <FileText className="h-4 w-4 text-blue-400" /> Uploaded Resumes ({resumes.length})
-          </h3>
+        <GlassCard className="p-6 space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <FileText className="h-5 w-5 text-indigo-400" /> Uploaded Resumes ({resumes.length})
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                AI ATS resume scoring, keyword matching, and bullet point diagnostics.
+              </p>
+            </div>
+            <span className="text-xs px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">
+              {resumes.length} {resumes.length === 1 ? "File" : "Files"} Analyzed
+            </span>
+          </div>
+
           {resumes.length > 0 ? (
-            <div className="space-y-3">
-              {resumes.map((r: any, i: number) => (
-                <div key={i} className="p-4 rounded-xl glass border border-white/10 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-white">ATS Score: {r.atsScore || 0}%</span>
-                    <span className="text-[10px] text-muted-foreground">
-                      {new Date(r.createdAt).toLocaleDateString()}
-                    </span>
+            <div className="space-y-4">
+              {resumes.map((r: any, i: number) => {
+                const matched = r.keywordBreakdown?.matched || [];
+                const missing = r.keywordBreakdown?.missing || [];
+                const score = r.atsScore || 0;
+                const scoreColor =
+                  score >= 80
+                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                    : score >= 60
+                    ? "bg-amber-500/15 text-amber-400 border-amber-500/30"
+                    : "bg-red-500/15 text-red-400 border-red-500/30";
+
+                return (
+                  <div
+                    key={r._id || i}
+                    className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-slate-700/80 transition-all duration-200 space-y-4 shadow-lg"
+                  >
+                    {/* Header Row */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                          <FileText className="h-5 w-5 text-indigo-400" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-sm text-white">
+                              {r.filename || `Resume #${resumes.length - i}`}
+                            </span>
+                            {(r.targetRole || r.inferredTargetRole) && (
+                              <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                                {r.targetRole || r.inferredTargetRole}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs text-slate-400">
+                            Uploaded {new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Score Badge */}
+                      <div className="flex items-center gap-3 shrink-0">
+                        <div className={`px-3 py-1.5 rounded-xl border flex items-center gap-2 ${scoreColor}`}>
+                          <span className="text-xs font-semibold">ATS Score</span>
+                          <span className="text-base font-extrabold">{score}%</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Executive Summary */}
+                    {r.summary ? (
+                      <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                        <span className="font-semibold text-indigo-400 block mb-1">Executive Summary</span>
+                        {r.summary}
+                      </p>
+                    ) : r.extractedText ? (
+                      <p className="text-xs text-slate-300/90 leading-relaxed line-clamp-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 font-mono text-[11px]">
+                        {formatExtractedText(r.extractedText)}
+                      </p>
+                    ) : null}
+
+                    {/* Keyword Breakdown Tags */}
+                    {(matched.length > 0 || missing.length > 0) && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        {matched.length > 0 && (
+                          <div className="space-y-1.5">
+                            <span className="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
+                              <CheckCircle2 className="h-3.5 w-3.5" /> Matched Skills ({matched.length})
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {matched.slice(0, 6).map((skill: string, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                              {matched.length > 6 && (
+                                <span className="text-[10px] text-slate-400 self-center">
+                                  +{matched.length - 6} more
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {missing.length > 0 && (
+                          <div className="space-y-1.5">
+                            <span className="text-[11px] font-semibold text-amber-400 flex items-center gap-1">
+                              <AlertCircle className="h-3.5 w-3.5" /> Missing Keywords ({missing.length})
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {missing.slice(0, 6).map((skill: string, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="text-[11px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                              {missing.length > 6 && (
+                                <span className="text-[10px] text-slate-400 self-center">
+                                  +{missing.length - 6} more
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Card Actions Footer */}
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
+                      <div className="flex items-center gap-2">
+                        {r.strengths?.length > 0 && (
+                          <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                            <Sparkles className="h-3 w-3 text-indigo-400" /> {r.strengths.length} Strengths identified
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => setSelectedResumeModal(r)}
+                        className="px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-xs font-semibold text-indigo-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" /> Inspect Full ATS Report
+                      </button>
+                    </div>
                   </div>
-                  {r.extractedText && (
-                    <p className="text-xs text-slate-300 line-clamp-2">{r.extractedText}</p>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground text-center py-6">
+            <p className="text-xs text-slate-400 text-center py-10 border border-dashed border-slate-800 rounded-2xl">
               No resumes uploaded yet by student.
             </p>
           )}
@@ -723,6 +863,123 @@ export function StudentDetailPage() {
             </div>
           </form>
         </GlassCard>
+      )}
+
+      {/* Resume Inspection Detail Modal */}
+      {selectedResumeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-indigo-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-base">
+                    {selectedResumeModal.filename || "Resume ATS Report"}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Uploaded on {new Date(selectedResumeModal.createdAt).toLocaleDateString()} • Target: {selectedResumeModal.targetRole || selectedResumeModal.inferredTargetRole || "General"}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedResumeModal(null)}
+                className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs text-slate-300">
+              {/* Score & Key Metrics */}
+              <div className="grid grid-cols-3 gap-3 p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-center">
+                <div>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">ATS Score</span>
+                  <span className="text-2xl font-black text-indigo-400 mt-1 block">{selectedResumeModal.atsScore || 0}%</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Matched Keywords</span>
+                  <span className="text-2xl font-black text-emerald-400 mt-1 block">
+                    {selectedResumeModal.keywordBreakdown?.matched?.length || 0}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Missing Keywords</span>
+                  <span className="text-2xl font-black text-amber-400 mt-1 block">
+                    {selectedResumeModal.keywordBreakdown?.missing?.length || 0}
+                  </span>
+                </div>
+              </div>
+
+              {/* Summary */}
+              {selectedResumeModal.summary && (
+                <div className="space-y-2">
+                  <h4 className="font-bold text-white text-xs uppercase tracking-wider">Executive Summary</h4>
+                  <p className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 leading-relaxed">
+                    {selectedResumeModal.summary}
+                  </p>
+                </div>
+              )}
+
+              {/* Strengths */}
+              {selectedResumeModal.strengths?.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-bold text-emerald-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4" /> Strengths Identified
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {selectedResumeModal.strengths.map((s: string, idx: number) => (
+                      <li key={idx} className="p-2.5 rounded-lg bg-emerald-500/5 border border-emerald-500/15 text-slate-200 flex items-start gap-2">
+                        <span className="text-emerald-400 font-bold">•</span>
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Areas for Improvement */}
+              {selectedResumeModal.improvements?.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-bold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="h-4 w-4" /> Actionable Improvements
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {selectedResumeModal.improvements.map((imp: string, idx: number) => (
+                      <li key={idx} className="p-2.5 rounded-lg bg-amber-500/5 border border-amber-500/15 text-slate-200 flex items-start gap-2">
+                        <span className="text-amber-400 font-bold">•</span>
+                        <span>{imp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Extracted Raw Text Formatted Preview */}
+              {selectedResumeModal.extractedText && (
+                <div className="space-y-2 pt-2 border-t border-slate-800">
+                  <h4 className="font-bold text-slate-400 text-xs uppercase tracking-wider">Parsed Document Text</h4>
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-[11px] leading-relaxed text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap">
+                    {formatExtractedText(selectedResumeModal.extractedText)}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-800 flex justify-end bg-slate-950/60">
+              <button
+                onClick={() => setSelectedResumeModal(null)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer"
+              >
+                Close Report
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

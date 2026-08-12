@@ -18,8 +18,23 @@ import {
   Eye,
   EyeOff,
   Briefcase,
+  Sun,
+  Moon,
+  Laptop,
+  Palette,
+  LayoutGrid,
+  Sliders,
+  Calendar,
+  Zap,
+  FileSpreadsheet,
+  BarChart2,
+  AlertTriangle,
+  Send,
+  Volume2,
+  SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTheme, Theme, AccentColor, LayoutDensity } from "../lib/theme-context";
 import {
   getMentorProfile,
   updateMentorProfile,
@@ -28,6 +43,22 @@ import {
 
 export function MentorSettingsPage() {
   const queryClient = useQueryClient();
+  const {
+    theme,
+    resolvedTheme,
+    setTheme,
+    accentColor,
+    setAccentColor,
+    density,
+    setDensity,
+    mentorPreferences,
+    updatePreferences,
+  } = useTheme();
+
+  // Settings Active Tab
+  const [activeTab, setActiveTab] = useState<
+    "appearance" | "mentorship" | "notifications" | "data" | "profile" | "security"
+  >("appearance");
 
   // Profile Form State
   const [name, setName] = useState("");
@@ -77,7 +108,7 @@ export function MentorSettingsPage() {
   const changePasswordMutation = useMutation({
     mutationFn: (payload: any) => changeMentorPassword(payload),
     onSuccess: (res) => {
-      toast.success(res.message || "Password credentials updated successfully!");
+      toast.success(res.message || "Password updated successfully!");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -126,68 +157,513 @@ export function MentorSettingsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     );
   }
 
+  const tabs = [
+    { id: "appearance", label: "Appearance & Theme", icon: Palette },
+    { id: "mentorship", label: "Mentorship & Cohort", icon: Sliders },
+    { id: "notifications", label: "Notifications & Alerts", icon: Bell },
+    { id: "data", label: "Data & Export", icon: FileSpreadsheet },
+    { id: "profile", label: "Identity Profile", icon: UserIcon },
+    { id: "security", label: "Security & Passcode", icon: Key },
+  ] as const;
+
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 max-w-5xl mx-auto">
       {/* Header Banner */}
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1 uppercase tracking-wider">
-            <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> Credential Management
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1 uppercase tracking-wider">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" /> Mentor Settings Center
+            </span>
+          </div>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+            <SlidersHorizontal className="h-6 w-6 text-indigo-500" /> Mentor Preferences & Theme Control
+          </h2>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+            Customize Light & Dark mode aesthetics, cohort alert rules, notification digests, and security credentials.
+          </p>
+        </div>
+
+        {/* Current Active Mode Badge */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-200/80 dark:bg-slate-900 border border-slate-300 dark:border-white/10 shrink-0 self-start md:self-auto">
+          <span className="text-xs text-slate-600 dark:text-slate-400 font-semibold">Active Theme:</span>
+          <span className="px-2 py-0.5 rounded-lg text-xs font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
+            {resolvedTheme === "light" ? <Sun className="h-3.5 w-3.5 text-amber-500" /> : <Moon className="h-3.5 w-3.5 text-indigo-400" />}
+            {theme === "system" ? `System (${resolvedTheme})` : resolvedTheme}
           </span>
         </div>
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-          <UserIcon className="h-6 w-6 text-indigo-400" /> Mentor Profile & Security Settings
-        </h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Manage your account identity, security passcodes, and mentorship preferences
-        </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {/* Left Column: Quick Identity Card */}
-        <div className="space-y-6">
-          <GlassCard className="p-6 text-center space-y-4 border-indigo-500/20 bg-gradient-to-b from-indigo-950/30 via-slate-900/60 to-transparent">
-            <div className="mx-auto h-20 w-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-[2px] shadow-xl">
-              <div className="w-full h-full bg-slate-950 rounded-[14px] grid place-items-center text-2xl font-black text-white">
-                {name ? name.charAt(0).toUpperCase() : "M"}
+      {/* Navigation Tab Bar */}
+      <div className="flex overflow-x-auto gap-2 pb-1 border-b border-slate-200 dark:border-white/10 no-scrollbar">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap transition ${
+                isActive
+                  ? "btn-gradient text-white shadow-lg shadow-indigo-500/25"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/5"
+              }`}
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Tab Content Container */}
+      <div className="space-y-6">
+        {/* TAB 1: APPEARANCE & THEME SETTINGS */}
+        {activeTab === "appearance" && (
+          <div className="space-y-6">
+            {/* Theme Selection Section */}
+            <GlassCard className="p-6 space-y-6">
+              <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
+                <Palette className="h-5 w-5 text-indigo-500" />
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Theme & Color Mode</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Select your preferred visual environment for daytime and nighttime placement monitoring.
+                  </p>
+                </div>
+              </div>
+
+              {/* 3-Way Mode Cards */}
+              <div className="grid sm:grid-cols-3 gap-4">
+                {/* Light Card */}
+                <div
+                  onClick={() => {
+                    setTheme("light");
+                    toast.success("Switched to Light Mode ☀️");
+                  }}
+                  className={`p-4 rounded-2xl cursor-pointer border-2 transition relative ${
+                    theme === "light"
+                      ? "border-indigo-500 bg-indigo-500/10 shadow-lg shadow-indigo-500/10"
+                      : "border-slate-300 dark:border-white/10 hover:border-indigo-500/50 bg-slate-100 dark:bg-slate-900/60"
+                  }`}
+                >
+                  {theme === "light" && (
+                    <div className="absolute top-3 right-3 h-5 w-5 rounded-full bg-indigo-500 text-white grid place-items-center text-xs font-bold">
+                      <Check className="h-3 w-3" />
+                    </div>
+                  )}
+                  <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 grid place-items-center mb-3">
+                    <Sun className="h-5 w-5" />
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Light Mode ☀️</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Clean, high-contrast light theme. Best for bright daylight office environments.
+                  </p>
+                </div>
+
+                {/* Dark Card */}
+                <div
+                  onClick={() => {
+                    setTheme("dark");
+                    toast.success("Switched to Dark Mode 🌙");
+                  }}
+                  className={`p-4 rounded-2xl cursor-pointer border-2 transition relative ${
+                    theme === "dark"
+                      ? "border-indigo-500 bg-indigo-500/10 shadow-lg shadow-indigo-500/10"
+                      : "border-slate-300 dark:border-white/10 hover:border-indigo-500/50 bg-slate-100 dark:bg-slate-900/60"
+                  }`}
+                >
+                  {theme === "dark" && (
+                    <div className="absolute top-3 right-3 h-5 w-5 rounded-full bg-indigo-500 text-white grid place-items-center text-xs font-bold">
+                      <Check className="h-3 w-3" />
+                    </div>
+                  )}
+                  <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 grid place-items-center mb-3">
+                    <Moon className="h-5 w-5" />
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Dark Mode 🌙</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Deep slate liquid glass mode. Reduces eye strain during late-night code reviews.
+                  </p>
+                </div>
+
+                {/* System Card */}
+                <div
+                  onClick={() => {
+                    setTheme("system");
+                    toast.success("Theme synced to System Preference 💻");
+                  }}
+                  className={`p-4 rounded-2xl cursor-pointer border-2 transition relative ${
+                    theme === "system"
+                      ? "border-indigo-500 bg-indigo-500/10 shadow-lg shadow-indigo-500/10"
+                      : "border-slate-300 dark:border-white/10 hover:border-indigo-500/50 bg-slate-100 dark:bg-slate-900/60"
+                  }`}
+                >
+                  {theme === "system" && (
+                    <div className="absolute top-3 right-3 h-5 w-5 rounded-full bg-indigo-500 text-white grid place-items-center text-xs font-bold">
+                      <Check className="h-3 w-3" />
+                    </div>
+                  )}
+                  <div className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 grid place-items-center mb-3">
+                    <Laptop className="h-5 w-5" />
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">System Sync 💻</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Automatically switches between Light & Dark based on your operating system settings.
+                  </p>
+                </div>
+              </div>
+
+              {/* Accent Color Scheme */}
+              <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-3">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Primary Accent Theme Swatch
+                </label>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { id: "indigo", label: "Indigo Electric", color: "bg-indigo-600" },
+                    { id: "purple", label: "Royal Purple", color: "bg-purple-600" },
+                    { id: "emerald", label: "Emerald Growth", color: "bg-emerald-600" },
+                    { id: "amber", label: "Amber Glow", color: "bg-amber-500" },
+                    { id: "cyan", label: "Ocean Cyan", color: "bg-cyan-500" },
+                  ].map((swatch) => (
+                    <button
+                      key={swatch.id}
+                      onClick={() => {
+                        setAccentColor(swatch.id as AccentColor);
+                        toast.success(`Accent color set to ${swatch.label}`);
+                      }}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border transition ${
+                        accentColor === swatch.id
+                          ? "border-indigo-500 bg-indigo-500/10 text-slate-900 dark:text-white ring-2 ring-indigo-500/30"
+                          : "border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                      }`}
+                    >
+                      <span className={`h-3 w-3 rounded-full ${swatch.color}`} />
+                      {swatch.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Density & Background Controls */}
+              <div className="pt-4 border-t border-slate-200 dark:border-white/10 grid sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Data Table Density
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setDensity("comfortable");
+                        toast.success("Comfortable layout density active");
+                      }}
+                      className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                        density === "comfortable"
+                          ? "btn-gradient text-white"
+                          : "border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                      }`}
+                    >
+                      Comfortable Spacing
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDensity("compact");
+                        toast.success("Compact layout density active");
+                      }}
+                      className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                        density === "compact"
+                          ? "btn-gradient text-white"
+                          : "border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                      }`}
+                    >
+                      Compact High-Density
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-slate-900/50">
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">Ambient Glow Background</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Show dynamic blurred background color spheres
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={mentorPreferences.showAmbientGlow}
+                    onChange={(e) => {
+                      updatePreferences({ showAmbientGlow: e.target.checked });
+                      toast.success(
+                        e.target.checked ? "Ambient glow enabled" : "Ambient glow disabled"
+                      );
+                    }}
+                    className="h-4 w-4 rounded accent-indigo-600 cursor-pointer"
+                  />
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+        )}
+
+        {/* TAB 2: MENTORSHIP & COHORT RULES */}
+        {activeTab === "mentorship" && (
+          <GlassCard className="p-6 space-y-6">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
+              <Sliders className="h-5 w-5 text-indigo-500" />
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Cohort Thresholds & Office Hours</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Configure intervention alert triggers and mentee office hour booking channels.
+                </p>
               </div>
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">{name || "Mentor"}</h3>
-              <p className="text-xs text-indigo-300 font-medium mt-0.5">{targetRole || "Lead Placement Mentor"}</p>
-              <p className="text-[11px] text-slate-400 mt-1">{email}</p>
+
+            {/* At-Risk Threshold Slider */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <AlertTriangle className="h-4 w-4 text-amber-500" /> At-Risk Readiness Warning Threshold
+                </label>
+                <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-black">
+                  {mentorPreferences.atRiskThreshold}% Overall Readiness
+                </span>
+              </div>
+              <input
+                type="range"
+                min="50"
+                max="85"
+                step="5"
+                value={mentorPreferences.atRiskThreshold}
+                onChange={(e) => {
+                  updatePreferences({ atRiskThreshold: Number(e.target.value) });
+                }}
+                className="w-full h-2 bg-slate-300 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
+              />
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                Mentees scoring below <strong className="text-rose-500">{mentorPreferences.atRiskThreshold}%</strong> in overall readiness will automatically be highlighted in red with an "At Risk" intervention tag.
+              </p>
             </div>
 
-            <div className="pt-3 border-t border-white/10 flex justify-center gap-3 text-xs text-slate-300">
-              <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-bold flex items-center gap-1 text-[10px]">
-                <CheckCircle2 className="h-3 w-3" /> Active Mentor
-              </span>
+            {/* Office Hours Calendly URL */}
+            <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                1-on-1 Office Hours Booking Link (Calendly / Meet)
+              </label>
+              <div className="relative">
+                <Calendar className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
+                <input
+                  type="url"
+                  value={mentorPreferences.officeHoursUrl}
+                  onChange={(e) => updatePreferences({ officeHoursUrl: e.target.value })}
+                  placeholder="https://calendly.com/mentor-name/30min"
+                  className="w-full glass-input rounded-xl pl-9 pr-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500/50"
+                />
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                This booking URL is embedded in student action plans so mentees can schedule direct feedback sessions.
+              </p>
+            </div>
+
+            {/* Inactivity Encouragement Automation */}
+            <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-slate-900/50">
+              <div className="space-y-0.5">
+                <p className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Zap className="h-4 w-4 text-indigo-500" /> Auto-Encouragement Check-in Emails
+                </p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Automatically dispatch a friendly check-in email if a mentee has zero coding or interview activity for 3+ days.
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={mentorPreferences.autoEncouragement}
+                onChange={(e) => {
+                  updatePreferences({ autoEncouragement: e.target.checked });
+                  toast.success(
+                    e.target.checked
+                      ? "Automated encouragement emails enabled"
+                      : "Automated encouragement emails paused"
+                  );
+                }}
+                className="h-4 w-4 rounded accent-indigo-600 cursor-pointer"
+              />
             </div>
           </GlassCard>
-        </div>
+        )}
 
-        {/* Right Column: Settings Forms */}
-        <div className="md:col-span-2 space-y-6">
-          {/* Card 1: Profile & Identity Credentials */}
-          <GlassCard className="p-6 space-y-5 border-white/10">
-            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-              <UserIcon className="h-5 w-5 text-indigo-400" />
+        {/* TAB 3: NOTIFICATIONS & ALERTS */}
+        {activeTab === "notifications" && (
+          <GlassCard className="p-6 space-y-6">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
+              <Bell className="h-5 w-5 text-indigo-500" />
               <div>
-                <h3 className="text-base font-bold text-white">Identity & Contact Credentials</h3>
-                <p className="text-xs text-muted-foreground">Update your mentor public profile & contact information</p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Email Digest & Alert Triggers</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Choose how frequently you receive mentee activity summaries and instant intervention notifications.
+                </p>
+              </div>
+            </div>
+
+            {/* Email Digest Frequency */}
+            <div className="space-y-3">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                Mentorship Email Digest Schedule
+              </label>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {[
+                  { id: "daily", label: "Daily Summary (8 AM)", desc: "Morning summary of mentee scores & activity." },
+                  { id: "weekly", label: "Weekly Digest (Mondays)", desc: "Comprehensive weekly placement report." },
+                  { id: "off", label: "Mute Email Reports", desc: "Only inspect stats directly in dashboard." },
+                ].map((opt) => (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      updatePreferences({ emailDigest: opt.id as any });
+                      toast.success(`Email digest set to: ${opt.label}`);
+                    }}
+                    className={`p-3.5 rounded-xl border text-left transition ${
+                      mentorPreferences.emailDigest === opt.id
+                        ? "border-indigo-500 bg-indigo-500/10 text-slate-900 dark:text-white ring-2 ring-indigo-500/30"
+                        : "border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold">{opt.label}</span>
+                      {mentorPreferences.emailDigest === opt.id && <Check className="h-3.5 w-3.5 text-indigo-500" />}
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{opt.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Alert Checkboxes */}
+            <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-3">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                Instant Intervention Alert Triggers
+              </label>
+              <div className="space-y-2">
+                {[
+                  {
+                    key: "notifyOnLowMockScore",
+                    label: "Alert when a mentee scores below 60% in a Mock Interview session",
+                  },
+                  {
+                    key: "notifyOnLowResumeScore",
+                    label: "Alert when a mentee uploads an unoptimized ATS resume (< 55% match)",
+                  },
+                  {
+                    key: "notifyOnInactivity",
+                    label: "Alert when a mentee drops off activity for 5 consecutive days",
+                  },
+                ].map((item) => (
+                  <label
+                    key={item.key}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-slate-900/50 cursor-pointer hover:bg-slate-200/50 dark:hover:bg-white/5 transition"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={(mentorPreferences as any)[item.key]}
+                      onChange={(e) => {
+                        updatePreferences({ [item.key]: e.target.checked });
+                        toast.success("Notification preference updated");
+                      }}
+                      className="h-4 w-4 rounded accent-indigo-600 cursor-pointer"
+                    />
+                    <span className="text-xs text-slate-800 dark:text-slate-200 font-medium">{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </GlassCard>
+        )}
+
+        {/* TAB 4: DATA & EXPORT DEFAULTS */}
+        {activeTab === "data" && (
+          <GlassCard className="p-6 space-y-6">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
+              <FileSpreadsheet className="h-5 w-5 text-indigo-500" />
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Data Export & Analytics Defaults</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Set default report formats and initial roster sorting criteria.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Default Export Format
+                </label>
+                <div className="flex gap-2">
+                  {[
+                    { id: "csv", label: "CSV Spreadsheet" },
+                    { id: "pdf", label: "PDF Brief" },
+                    { id: "json", label: "JSON Telemetry" },
+                  ].map((fmt) => (
+                    <button
+                      key={fmt.id}
+                      onClick={() => {
+                        updatePreferences({ defaultExportFormat: fmt.id as any });
+                        toast.success(`Default export format set to ${fmt.label}`);
+                      }}
+                      className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                        mentorPreferences.defaultExportFormat === fmt.id
+                          ? "btn-gradient text-white"
+                          : "border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-400"
+                      }`}
+                    >
+                      {fmt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Default Roster View Filter
+                </label>
+                <select
+                  value={mentorPreferences.defaultCohortFilter}
+                  onChange={(e) => {
+                    updatePreferences({ defaultCohortFilter: e.target.value });
+                    toast.success("Default cohort filter saved");
+                  }}
+                  className="w-full glass-input rounded-xl px-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500/50"
+                >
+                  <option value="my-mentees">My Assigned Mentees Only</option>
+                  <option value="all">All Registered Students</option>
+                  <option value="at-risk">At-Risk Intervention Students</option>
+                  <option value="top-performer">Top Performers</option>
+                </select>
+              </div>
+            </div>
+          </GlassCard>
+        )}
+
+        {/* TAB 5: IDENTITY PROFILE CREDENTIALS */}
+        {activeTab === "profile" && (
+          <GlassCard className="p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
+              <UserIcon className="h-5 w-5 text-indigo-500" />
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Identity & Contact Credentials</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Update your mentor public profile & contact information</p>
               </div>
             </div>
 
             <form onSubmit={handleProfileSubmit} className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    Full Name <span className="text-rose-400">*</span>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Full Name <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -199,8 +675,8 @@ export function MentorSettingsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    Mentor Account Email <span className="text-rose-400">*</span>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Mentor Account Email <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <Mail className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
@@ -208,7 +684,7 @@ export function MentorSettingsPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="mentor@careerforge.ai"
+                      placeholder="mentor@campustocareer.ai"
                       className="w-full glass-input rounded-xl pl-9 pr-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500/50"
                     />
                   </div>
@@ -217,7 +693,7 @@ export function MentorSettingsPage() {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                     Mentor Title / Specialization
                   </label>
                   <div className="relative">
@@ -233,7 +709,7 @@ export function MentorSettingsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                     GitHub Username
                   </label>
                   <div className="relative">
@@ -250,7 +726,7 @@ export function MentorSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                   Professional Bio / Mentorship Statement
                 </label>
                 <textarea
@@ -278,21 +754,23 @@ export function MentorSettingsPage() {
               </div>
             </form>
           </GlassCard>
+        )}
 
-          {/* Card 2: Security & Password Credentials */}
-          <GlassCard className="p-6 space-y-5 border-purple-500/20">
-            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-              <Key className="h-5 w-5 text-purple-400" />
+        {/* TAB 6: SECURITY & PASSCODE */}
+        {activeTab === "security" && (
+          <GlassCard className="p-6 space-y-5">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
+              <Key className="h-5 w-5 text-purple-500" />
               <div>
-                <h3 className="text-base font-bold text-white">Passcode & Security Credentials</h3>
-                <p className="text-xs text-muted-foreground">Update your mentor workspace sign-in password</p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Passcode & Security Credentials</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Update your mentor workspace sign-in password</p>
               </div>
             </div>
 
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  Current Password <span className="text-rose-400">*</span>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Current Password <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
@@ -306,7 +784,7 @@ export function MentorSettingsPage() {
                   <button
                     type="button"
                     onClick={() => setShowCurrentPass(!showCurrentPass)}
-                    className="absolute right-3 top-3 text-slate-400 hover:text-white"
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   >
                     {showCurrentPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -315,8 +793,8 @@ export function MentorSettingsPage() {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    New Password <span className="text-rose-400">*</span>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    New Password <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <Lock className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
@@ -330,7 +808,7 @@ export function MentorSettingsPage() {
                     <button
                       type="button"
                       onClick={() => setShowNewPass(!showNewPass)}
-                      className="absolute right-3 top-3 text-slate-400 hover:text-white"
+                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     >
                       {showNewPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -338,8 +816,8 @@ export function MentorSettingsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    Confirm New Password <span className="text-rose-400">*</span>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Confirm New Password <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <Lock className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
@@ -370,7 +848,7 @@ export function MentorSettingsPage() {
               </div>
             </form>
           </GlassCard>
-        </div>
+        )}
       </div>
     </div>
   );
