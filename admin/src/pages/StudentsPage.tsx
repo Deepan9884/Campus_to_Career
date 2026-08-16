@@ -10,7 +10,6 @@ import {
   Loader2,
   Filter,
   ShieldCheck,
-  Sparkles,
   UserPlus,
   UserCheck,
   UserMinus,

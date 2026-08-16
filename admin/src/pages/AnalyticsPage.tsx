@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GlassCard } from "../components/GlassCard";
-import { BarChart3, Users, Trophy, FileText, Mic, Code2, Loader2, Target, Sparkles } from "lucide-react";
+import { BarChart3, Users, Trophy, FileText, Mic, Code2, Loader2, Target } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from "recharts";
 import { getCohortAnalytics } from "../lib/admin-api";
 import { useTheme } from "../lib/theme-context";
@@ -130,7 +130,7 @@ export function AnalyticsPage() {
       {/* Target Roles Distribution */}
       <GlassCard className="p-6 space-y-4">
         <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-indigo-500" /> Mentees Target Role Distribution
+          <Target className="h-4 w-4 text-indigo-500" /> Mentees Target Role Distribution
         </h3>
         <div className="h-64 w-full">
           {roleChartData.length > 0 ? (

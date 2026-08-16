@@ -10,7 +10,6 @@ import {
   Award,
   ChevronRight,
   Loader2,
-  Sparkles,
   Zap,
   Target,
   FileText,
@@ -66,7 +65,7 @@ export function OverviewPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1 uppercase tracking-wider">
-                <Sparkles className="h-3 w-3 text-indigo-500 dark:text-indigo-400" /> Mentee Command Center
+                <Zap className="h-3 w-3 text-indigo-500 dark:text-indigo-400" /> Mentee Command Center
               </span>
             </div>
             <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Mentorship & Hiring Readiness Funnel</h2>

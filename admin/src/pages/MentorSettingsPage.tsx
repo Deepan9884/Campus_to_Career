@@ -9,7 +9,6 @@ import {
   Key,
   Save,
   Loader2,
-  Sparkles,
   CheckCircle2,
   Github,
   Linkedin,

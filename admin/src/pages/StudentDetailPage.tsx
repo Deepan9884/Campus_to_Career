@@ -15,7 +15,7 @@ import {
   BookOpen,
   Send,
   Loader2,
-  Sparkles,
+  Target,
   Clock,
   Printer,
   Star,
@@ -146,7 +146,7 @@ export function StudentDetailPage() {
     events.length > 0 ? Math.round((verifiedEvents.length / events.length) * 100) : 0;
 
   const tabs: { key: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    { key: "overview", label: "Readiness Overview", icon: Sparkles },
+    { key: "overview", label: "Readiness Overview", icon: Target },
     { key: "resumes", label: `Resumes (${resumes.length})`, icon: FileText },
     { key: "interviews", label: `Interviews (${interviews.length})`, icon: Mic },
     { key: "coding", label: `Coding & GitHub (${codingProfiles.length})`, icon: Code2 },
@@ -468,7 +468,7 @@ export function StudentDetailPage() {
                       <div className="flex items-center gap-2">
                         {r.strengths?.length > 0 && (
                           <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                            <Sparkles className="h-3 w-3 text-indigo-400" /> {r.strengths.length} Strengths identified
+                            <Zap className="h-3 w-3 text-indigo-400" /> {r.strengths.length} Strengths identified
                           </span>
                         )}
                       </div>
@@ -945,7 +945,7 @@ export function StudentDetailPage() {
               {selectedResumeModal.improvements?.length > 0 && (
                 <div className="space-y-2">
                   <h4 className="font-bold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles className="h-4 w-4" /> Actionable Improvements
+                    <Target className="h-4 w-4" /> Actionable Improvements
                   </h4>
                   <ul className="space-y-1.5">
                     {selectedResumeModal.improvements.map((imp: string, idx: number) => (

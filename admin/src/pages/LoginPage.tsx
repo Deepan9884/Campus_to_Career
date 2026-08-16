@@ -4,7 +4,7 @@ import {
   Lock,
   Mail,
   Loader2,
-  Sparkles,
+  Zap,
   Eye,
   EyeOff,
   CheckCircle2,
@@ -354,7 +354,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                 disabled={loading}
                 className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-medium text-sm py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
               >
-                <Sparkles className="h-4 w-4 text-indigo-400 group-hover:scale-110 transition-transform" />
+                <Zap className="h-4 w-4 text-indigo-400 group-hover:scale-110 transition-transform" />
                 <span>1-Click Demo Mentor Login</span>
               </button>
               <p className="text-[11px] text-center text-slate-400">

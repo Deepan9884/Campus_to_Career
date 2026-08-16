@@ -13,7 +13,6 @@ import {
   HelpCircle,
   Menu,
   X,
-  Sparkles,
   Sun,
   Moon,
   Laptop,

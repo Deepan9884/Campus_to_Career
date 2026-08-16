@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GlassCard } from "./GlassCard";
 import {
-  Sparkles,
   Users,
   Trophy,
   Target,
