@@ -381,21 +381,92 @@ function AuthenticatedApp({ onLogout }: { onLogout: () => void }) {
 }
 
 export function App() {
-  const [authenticated, setAuthenticated] = useState<boolean>(Boolean(getAccessToken()));
+  const [token, setToken] = useState<string | null>(() => getAccessToken());
+  const [isVerifying, setIsVerifying] = useState<boolean>(() => Boolean(getAccessToken()));
+
+  // Listen for custom auth change events from api.ts
+  React.useEffect(() => {
+    const handleAuthChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ token: string | null }>;
+      setToken(customEvent.detail?.token || null);
+    };
+
+    window.addEventListener("cf:admin:auth-change", handleAuthChange);
+    return () => {
+      window.removeEventListener("cf:admin:auth-change", handleAuthChange);
+    };
+  }, []);
+
+  // Verify stored token on initial load
+  React.useEffect(() => {
+    const currentToken = getAccessToken();
+    if (!currentToken) {
+      setIsVerifying(false);
+      return;
+    }
+
+    let isMounted = true;
+    fetch("/api/admin/profile", {
+      headers: {
+        Authorization: `Bearer ${currentToken}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Invalid session");
+        }
+        return res.json();
+      })
+      .then((json) => {
+        if (isMounted) {
+          if (json.success === false) {
+            setAccessToken(null);
+            setToken(null);
+          }
+          setIsVerifying(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setAccessToken(null);
+          setToken(null);
+          setIsVerifying(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleLogout = () => {
     setAccessToken(null);
-    setAuthenticated(false);
+    setToken(null);
+    queryClient.clear();
   };
+
+  const handleLoginSuccess = () => {
+    setToken(getAccessToken());
+  };
+
+  if (isVerifying) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
+        <div className="h-10 w-10 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
+        <p className="text-xs font-bold text-slate-400">Verifying session...</p>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <BrowserRouter>
-          {authenticated ? (
+          {token ? (
             <AuthenticatedApp onLogout={handleLogout} />
           ) : (
-            <LoginPage onLoginSuccess={() => setAuthenticated(true)} />
+            <LoginPage onLoginSuccess={handleLoginSuccess} />
           )}
         </BrowserRouter>
       </ThemeProvider>

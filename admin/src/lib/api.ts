@@ -5,8 +5,14 @@ let accessToken: string | null =
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
-  if (token) localStorage.setItem("cf-admin-token", token);
-  else localStorage.removeItem("cf-admin-token");
+  if (token) {
+    localStorage.setItem("cf-admin-token", token);
+  } else {
+    localStorage.removeItem("cf-admin-token");
+  }
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("cf:admin:auth-change", { detail: { token } }));
+  }
 }
 
 export function getAccessToken(): string | null {
@@ -51,11 +57,14 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 
   if (!res.ok || json.success === false) {
-    if (res.status === 401 || json.message === "Invalid token" || json.message === "Authentication token is required") {
+    if (
+      res.status === 401 ||
+      res.status === 403 ||
+      json.message === "Invalid token" ||
+      json.message === "Authentication token is required" ||
+      json.message === "Access forbidden: insufficient permissions"
+    ) {
       setAccessToken(null);
-      if (typeof window !== "undefined" && window.location.pathname !== "/") {
-        window.location.href = "/";
-      }
     }
     throw new ApiError(
       json.statusCode || res.status,
