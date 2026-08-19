@@ -41,6 +41,8 @@ export interface Student360DetailResponse {
     createdAt: string;
     assignedMentor?: string;
     isMyMentee?: boolean;
+    isProctoringBlocked?: boolean;
+    proctoringBlockedAt?: string;
   };
   metrics: {
     overallReadinessPct: number;
@@ -63,6 +65,7 @@ export interface Student360DetailResponse {
   userSkills: any[];
   activityLogs?: any[];
   quizAttempts?: any[];
+  proctoringViolations?: any[];
 }
 
 export interface CohortAnalyticsResponse {
@@ -84,16 +87,23 @@ export interface CohortAnalyticsResponse {
   topMissingSkills?: { skill: string; count: number }[];
 }
 
-export async function getStudentsList(page = 1, search = "", filter = "all"): Promise<StudentsListResponse> {
-  return api.get<StudentsListResponse>(`/admin/students?page=${page}&search=${encodeURIComponent(search)}&filter=${filter}`);
+export async function getStudentsList(
+  page = 1,
+  search = "",
+  filter = "all",
+  limit = 20
+): Promise<StudentsListResponse> {
+  return api.get<StudentsListResponse>(
+    `/admin/students?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&filter=${filter}`
+  );
 }
 
 export async function getStudent360Detail(studentId: string): Promise<Student360DetailResponse> {
   return api.get<Student360DetailResponse>(`/admin/students/${studentId}`);
 }
 
-export async function getCohortAnalytics(): Promise<CohortAnalyticsResponse> {
-  return api.get<CohortAnalyticsResponse>("/admin/analytics");
+export async function getCohortAnalytics(scope = "my-mentees"): Promise<CohortAnalyticsResponse> {
+  return api.get<CohortAnalyticsResponse>(`/admin/analytics?scope=${scope}`);
 }
 
 export async function sendStudentFeedback(
@@ -129,4 +139,30 @@ export async function updateMentorProfile(data: any): Promise<{ message: string;
 
 export async function changeMentorPassword(data: any): Promise<{ message: string }> {
   return api.post<{ message: string }>("/admin/change-password", data);
+}
+
+export async function unblockStudentProctoring(
+  studentId: string
+): Promise<{ message: string }> {
+  return api.post<{ message: string }>(
+    `/admin/students/${studentId}/unblock-proctoring`,
+    {}
+  );
+}
+
+export async function getStudentProctoringViolations(
+  studentId: string
+): Promise<{
+  violations: Array<{
+    _id: string;
+    moduleType: string;
+    moduleId: string;
+    violationCount: number;
+    isBlocked: boolean;
+    blockedAt?: string;
+    createdAt: string;
+    events: Array<{ violationType: string; detectedAt: string }>;
+  }>;
+}> {
+  return api.get(`/admin/students/${studentId}/proctoring-violations`);
 }

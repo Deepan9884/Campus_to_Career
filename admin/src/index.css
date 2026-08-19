@@ -8,21 +8,21 @@
     --bg-main: #020617;
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
-    --glass-bg: rgba(15, 23, 42, 0.75);
+    --glass-bg: rgba(15, 23, 42, 0.72);
     --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-card-bg: linear-gradient(135deg, rgba(30, 41, 59, 0.65) 0%, rgba(15, 23, 42, 0.85) 100%);
+    --glass-card-bg: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
     --glass-card-border: rgba(255, 255, 255, 0.12);
-    --glass-card-hover: rgba(99, 102, 241, 0.35);
+    --glass-card-hover: rgba(99, 102, 241, 0.45);
     --glass-input-bg: rgba(15, 23, 42, 0.9);
-    --glass-input-border: rgba(255, 255, 255, 0.12);
+    --glass-input-border: rgba(255, 255, 255, 0.14);
     --glass-input-text: #f8fafc;
     --sidebar-bg: rgba(2, 6, 23, 0.92);
     --sidebar-border: rgba(255, 255, 255, 0.1);
-    --card-inner-bg: rgba(30, 41, 59, 0.5);
+    --card-inner-bg: rgba(30, 41, 59, 0.55);
     --card-border: rgba(255, 255, 255, 0.08);
-    --glow-opacity: 0.15;
+    --glow-opacity: 0.2;
     --scrollbar-track: #020617;
-    --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.18);
   }
 
   html.light, .light {
@@ -30,21 +30,21 @@
     --bg-main: #f8fafc;
     --text-main: #0f172a;
     --text-muted: #475569;
-    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-bg: rgba(255, 255, 255, 0.88);
     --glass-border: rgba(0, 0, 0, 0.08);
-    --glass-card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%);
+    --glass-card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(241, 245, 249, 0.94) 100%);
     --glass-card-border: rgba(0, 0, 0, 0.1);
     --glass-card-hover: rgba(99, 102, 241, 0.4);
-    --glass-input-bg: rgba(255, 255, 255, 0.95);
+    --glass-input-bg: rgba(255, 255, 255, 0.98);
     --glass-input-border: rgba(0, 0, 0, 0.15);
     --glass-input-text: #0f172a;
-    --sidebar-bg: rgba(255, 255, 255, 0.95);
+    --sidebar-bg: rgba(255, 255, 255, 0.96);
     --sidebar-border: rgba(0, 0, 0, 0.1);
-    --card-inner-bg: rgba(241, 245, 249, 0.8);
+    --card-inner-bg: rgba(241, 245, 249, 0.85);
     --card-border: rgba(0, 0, 0, 0.08);
-    --glow-opacity: 0.04;
+    --glow-opacity: 0.06;
     --scrollbar-track: #f1f5f9;
-    --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.22);
   }
 
   body {
@@ -58,24 +58,27 @@
   }
 }
 
+/* Glassmorphism Classes with Dynamic Glow */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
 }
 
 .glass-card {
   background: var(--glass-card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--glass-card-border);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25), 0 0 20px -5px rgba(99, 102, 241, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
   border-color: var(--glass-card-hover);
-  box-shadow: 0 15px 35px -10px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.35), 0 0 30px 0px rgba(99, 102, 241, 0.22);
+  transform: translateY(-2px);
 }
 
 .glass-input {
@@ -86,21 +89,75 @@
 }
 
 .glass-input:focus {
-  border-color: rgba(99, 102, 241, 0.6);
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.7);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
 }
 
+/* Vibrant Button Gradients & Shimmer */
 .btn-gradient {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .btn-gradient:hover {
-  opacity: 0.95;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
+  opacity: 0.98;
+  transform: translateY(-1.5px) scale(1.01);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.45);
 }
 .btn-gradient:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.99);
+}
+
+.btn-emerald-gradient {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  transition: all 0.25s ease;
+}
+.btn-emerald-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+}
+
+/* Ambient Neon Glow Accents */
+.neon-glow-indigo {
+  box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.35);
+}
+.neon-glow-emerald {
+  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+}
+.neon-glow-amber {
+  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35);
+}
+.neon-glow-rose {
+  box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.35);
+}
+.neon-glow-cyan {
+  box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35);
+}
+
+/* Animations */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.02); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 4s ease-in-out infinite;
+}
+
+@keyframes float-badge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.animate-float-badge {
+  animation: float-badge 3s ease-in-out infinite;
 }
 
 /* Custom Scrollbar */
@@ -116,7 +173,7 @@
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.5);
+  background: rgba(99, 102, 241, 0.6);
 }
 
 /* Dropdown option contrast */
@@ -127,4 +184,53 @@ html.light select option, .light select option {
 html.dark select option, .dark select option {
   background-color: #020617;
   color: #f8fafc;
+}
+
+/* =========================================================
+   SUPER PDF & PRINT STYLES
+   ========================================================= */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 10mm 12mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide noisy UI elements during print */
+  aside,
+  header,
+  nav,
+  .no-print,
+  #interactive-canvas-bg,
+  .btn-gradient,
+  .glass,
+  .fixed,
+  button:not(.print-include) {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .print-page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  .print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
 }
