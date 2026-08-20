@@ -3,6 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { GlassCard } from "../components/GlassCard";
 import { ScoreRing } from "../components/Score";
+import { AIInterventionModal } from "../components/AIInterventionModal";
+import { AssignTaskModal } from "../components/AssignTaskModal";
+import { CompanyMatcherModal } from "../components/CompanyMatcherModal";
+import { LiveProctoringOperations } from "../components/LiveProctoringOperations";
 import {
   Users,
   AlertTriangle,
@@ -23,6 +27,10 @@ import {
   CheckCircle2,
   X,
   Activity,
+  Sparkles,
+  Building2,
+  ShieldAlert,
+  ListTodo,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -31,6 +39,7 @@ import {
   sendStudentFeedback,
   addMentee,
   searchRegisteredStudents,
+  exportCohortCsvData,
 } from "../lib/admin-api";
 
 export function OverviewPage() {
@@ -42,6 +51,12 @@ export function OverviewPage() {
   const [feedbackStudent, setFeedbackStudent] = useState<any | null>(null);
   const [feedbackNote, setFeedbackNote] = useState("");
   const [feedbackActionType, setFeedbackActionType] = useState("general");
+
+  // AI Co-Pilot & Task Modals State
+  const [interventionStudent, setInterventionStudent] = useState<any | null>(null);
+  const [taskStudent, setTaskStudent] = useState<any | null>(null);
+  const [showCompanyMatcher, setShowCompanyMatcher] = useState(false);
+  const [showLiveProctoring, setShowLiveProctoring] = useState(false);
 
   // Add Mentee Modal State
   const [showAddModal, setShowAddModal] = useState(false);
@@ -805,12 +820,22 @@ export function OverviewPage() {
                       <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">{st.targetRole}</p>
                     </div>
 
-                    <button
-                      onClick={() => setFeedbackStudent(st)}
-                      className="w-full py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-[10px] font-extrabold text-rose-600 dark:text-rose-300 transition flex items-center justify-center gap-1"
-                    >
-                      <Send className="h-3 w-3" /> Guide
-                    </button>
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <button
+                        onClick={() => setInterventionStudent(st)}
+                        className="flex-1 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-[10px] font-black text-indigo-600 dark:text-indigo-300 transition flex items-center justify-center gap-1 shadow-sm"
+                        title="AI Co-Pilot 2-Week Remedial Plan"
+                      >
+                        <Sparkles className="h-3 w-3 text-indigo-500" /> AI Plan
+                      </button>
+                      <button
+                        onClick={() => setTaskStudent(st)}
+                        className="flex-1 py-1.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-[10px] font-black text-purple-600 dark:text-purple-300 transition flex items-center justify-center gap-1 shadow-sm"
+                        title="Assign Specific Goal Milestone"
+                      >
+                        <ListTodo className="h-3 w-3 text-purple-500" /> Assign Goal
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1060,6 +1085,26 @@ export function OverviewPage() {
             </form>
           </GlassCard>
         </div>
+      )}
+
+      {/* MODAL 3: AI Co-Pilot Intervention Diagnosis */}
+      {interventionStudent && (
+        <AIInterventionModal
+          open={!!interventionStudent}
+          studentId={interventionStudent._id}
+          studentName={interventionStudent.name}
+          onClose={() => setInterventionStudent(null)}
+        />
+      )}
+
+      {/* MODAL 4: Prescriptive Goal & Milestone Assignment */}
+      {taskStudent && (
+        <AssignTaskModal
+          open={!!taskStudent}
+          studentId={taskStudent._id}
+          studentName={taskStudent.name}
+          onClose={() => setTaskStudent(null)}
+        />
       )}
     </div>
   );

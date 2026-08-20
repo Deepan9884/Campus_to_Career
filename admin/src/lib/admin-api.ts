@@ -16,6 +16,8 @@ export interface StudentSummary {
   linkedPlatformsCount: number;
   status: "On Track" | "At Risk" | "Top Performer";
   isMyMentee?: boolean;
+  isProctoringBlocked?: boolean;
+  proctoringBlockedAt?: string;
   lastActive?: string;
 }
 
@@ -166,3 +168,116 @@ export async function getStudentProctoringViolations(
 }> {
   return api.get(`/admin/students/${studentId}/proctoring-violations`);
 }
+
+export interface AIInterventionPlan {
+  diagnosisSummary: string;
+  keyDeficits: string[];
+  twoWeekPlan: Array<{
+    week: number;
+    theme: string;
+    actions: string[];
+  }>;
+  suggestedTasks: Array<{
+    title: string;
+    description: string;
+    category: "quiz" | "interview" | "resume" | "coding" | "general";
+    priority: "urgent" | "high" | "medium" | "low";
+    daysToComplete: number;
+    actionUrl: string;
+  }>;
+}
+
+export async function generateAIIntervention(
+  studentId: string
+): Promise<{
+  student: { _id: string; name: string; targetRole: string };
+  intervention: AIInterventionPlan;
+}> {
+  return api.post(`/admin/students/${studentId}/generate-intervention`, {});
+}
+
+export interface MentorTaskItem {
+  _id: string;
+  student: string;
+  mentor: { _id: string; name: string; email: string; avatar?: string };
+  title: string;
+  description: string;
+  category: "quiz" | "interview" | "resume" | "coding" | "general";
+  priority: "urgent" | "high" | "medium" | "low";
+  dueDate: string;
+  status: "pending" | "in_progress" | "completed" | "overdue";
+  actionUrl: string;
+  completedAt?: string;
+  createdAt: string;
+}
+
+export async function createMentorTask(
+  studentId: string,
+  payload: {
+    title: string;
+    description?: string;
+    category?: string;
+    priority?: string;
+    daysToComplete?: number;
+    actionUrl?: string;
+  }
+): Promise<{ message: string; task: MentorTaskItem }> {
+  return api.post(`/admin/students/${studentId}/tasks`, payload);
+}
+
+export async function getStudentMentorTasks(
+  studentId: string
+): Promise<{ tasks: MentorTaskItem[] }> {
+  return api.get(`/admin/students/${studentId}/tasks`);
+}
+
+export async function updateMentorTask(
+  taskId: string,
+  payload: Partial<MentorTaskItem>
+): Promise<{ message: string; task: MentorTaskItem }> {
+  return api.patch(`/admin/tasks/${taskId}`, payload);
+}
+
+export async function deleteMentorTask(taskId: string): Promise<{ message: string }> {
+  return api.delete(`/admin/tasks/${taskId}`);
+}
+
+export interface LiveProctoringFeedResponse {
+  totalBlockedCount: number;
+  blockedUsers: Array<{
+    _id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    targetRole?: string;
+    proctoringBlockedAt?: string;
+    assignedMentor?: string;
+  }>;
+  recentViolations: Array<{
+    _id: string;
+    userId: { _id: string; name: string; email: string; avatar?: string; targetRole?: string };
+    moduleType: string;
+    moduleId: string;
+    violationCount: number;
+    isBlocked: boolean;
+    blockedAt?: string;
+    updatedAt: string;
+    events: Array<{ violationType: string; detectedAt: string }>;
+  }>;
+}
+
+export async function getLiveProctoringFeed(): Promise<LiveProctoringFeedResponse> {
+  return api.get("/admin/proctoring/live-feed");
+}
+
+export async function batchUnblockStudents(
+  studentIds: string[],
+  reason?: string
+): Promise<{ message: string; unblockedCount: number }> {
+  return api.post("/admin/students/batch-unblock", { studentIds, reason });
+}
+
+export async function exportCohortCsvData(): Promise<{ students: StudentSummary[] }> {
+  return api.get("/admin/cohort/export-csv");
+}
+

@@ -17,6 +17,7 @@ import {
   Laptop,
   PanelLeftClose,
   PanelLeftOpen,
+  AlertCircle,
 } from "lucide-react";
 import { getAccessToken, setAccessToken } from "./lib/api";
 import { ThemeProvider, useTheme } from "./lib/theme-context";
@@ -30,6 +31,10 @@ import { StudentDetailPage } from "./pages/StudentDetailPage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { MentorSettingsPage } from "./pages/MentorSettingsPage";
 import { MentorProductTour } from "./components/MentorProductTour";
+import { CommandPalette } from "./components/CommandPalette";
+import { CompanyMatcherModal } from "./components/CompanyMatcherModal";
+import { LiveProctoringOperations } from "./components/LiveProctoringOperations";
+import { Building2, ShieldAlert, Command } from "lucide-react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -135,6 +140,22 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
     return false;
   });
 
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [companyMatcherOpen, setCompanyMatcherOpen] = useState(false);
+  const [liveProctoringOpen, setLiveProctoringOpen] = useState(false);
+
+  // Global Cmd+K / Ctrl+K listener
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const navItems = [
     { label: "Overview", href: "/", icon: LayoutDashboard },
     { label: "Student Roster", href: "/students", icon: Users },
@@ -147,13 +168,29 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
       {/* Interactive Background */}
       <InteractiveAppBackground />
 
+      {/* Global Command Hub & Operations Modals */}
+      <CommandPalette
+        open={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        onOpenCompanyMatcher={() => setCompanyMatcherOpen(true)}
+        onOpenLiveProctoring={() => setLiveProctoringOpen(true)}
+      />
+      <CompanyMatcherModal
+        open={companyMatcherOpen}
+        onClose={() => setCompanyMatcherOpen(false)}
+      />
+      <LiveProctoringOperations
+        open={liveProctoringOpen}
+        onClose={() => setLiveProctoringOpen(false)}
+      />
+
       {/* Left Sidebar Navigation (Expandable & Shrinkable) */}
       <aside
         className={`fixed top-0 bottom-0 left-0 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/10 flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl ${
           sidebarCollapsed ? "w-[72px] p-3" : "w-64 p-5"
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Brand Logo Header & Shrink / Expand Toggle */}
           <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 pb-4">
             {!sidebarCollapsed ? (
@@ -194,6 +231,30 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
             )}
           </div>
 
+          {/* Quick Search & Command Hub Trigger Button */}
+          {!sidebarCollapsed ? (
+            <button
+              onClick={() => setCommandPaletteOpen(true)}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-indigo-500/40 transition text-xs shadow-sm"
+            >
+              <span className="flex items-center gap-2 font-medium">
+                <Command className="h-3.5 w-3.5 text-indigo-500" />
+                Command Hub
+              </span>
+              <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-slate-600 dark:text-slate-300 font-bold border border-slate-300 dark:border-slate-700">
+                ⌘K
+              </kbd>
+            </button>
+          ) : (
+            <button
+              onClick={() => setCommandPaletteOpen(true)}
+              title="Command Hub (Cmd+K)"
+              className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-indigo-500 flex items-center justify-center hover:scale-105 transition"
+            >
+              <Command className="h-4 w-4" />
+            </button>
+          )}
+
           {/* Navigation Items */}
           <nav className="space-y-1.5">
             {navItems.map((item) => {
@@ -224,6 +285,29 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                 </Link>
               );
             })}
+
+            {/* Quick Operations Sub-Group in Sidebar */}
+            {!sidebarCollapsed && (
+              <div className="pt-3 border-t border-slate-200/60 dark:border-white/5 space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 pb-1">
+                  Placement Tools
+                </p>
+                <button
+                  onClick={() => setCompanyMatcherOpen(true)}
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 flex items-center gap-2.5 transition text-left"
+                >
+                  <Building2 className="h-4 w-4 text-indigo-500 shrink-0" />
+                  <span>Company Matcher</span>
+                </button>
+                <button
+                  onClick={() => setLiveProctoringOpen(true)}
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2.5 transition text-left"
+                >
+                  <ShieldAlert className="h-4 w-4 text-rose-500 shrink-0" />
+                  <span>Live Proctoring Radar</span>
+                </button>
+              </div>
+            )}
           </nav>
         </div>
 

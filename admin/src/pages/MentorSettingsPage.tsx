@@ -243,7 +243,7 @@ export function MentorSettingsPage() {
                 <div
                   onClick={() => {
                     setTheme("light");
-                    toast.success("Switched to Light Mode ☀️");
+                    toast.success("Switched to Light Mode");
                   }}
                   className={`p-4 rounded-2xl cursor-pointer border-2 transition relative ${
                     theme === "light"
@@ -259,7 +259,7 @@ export function MentorSettingsPage() {
                   <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 grid place-items-center mb-3">
                     <Sun className="h-5 w-5" />
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Light Mode ☀️</h4>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Light Mode</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Clean, high-contrast light theme. Best for bright daylight office environments.
                   </p>
@@ -269,7 +269,7 @@ export function MentorSettingsPage() {
                 <div
                   onClick={() => {
                     setTheme("dark");
-                    toast.success("Switched to Dark Mode 🌙");
+                    toast.success("Switched to Dark Mode");
                   }}
                   className={`p-4 rounded-2xl cursor-pointer border-2 transition relative ${
                     theme === "dark"
@@ -285,7 +285,7 @@ export function MentorSettingsPage() {
                   <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 grid place-items-center mb-3">
                     <Moon className="h-5 w-5" />
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Dark Mode 🌙</h4>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Dark Mode</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Deep slate liquid glass mode. Reduces eye strain during late-night code reviews.
                   </p>
@@ -295,7 +295,7 @@ export function MentorSettingsPage() {
                 <div
                   onClick={() => {
                     setTheme("system");
-                    toast.success("Theme synced to System Preference 💻");
+                    toast.success("Theme synced to System Preference");
                   }}
                   className={`p-4 rounded-2xl cursor-pointer border-2 transition relative ${
                     theme === "system"
@@ -311,7 +311,7 @@ export function MentorSettingsPage() {
                   <div className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 grid place-items-center mb-3">
                     <Laptop className="h-5 w-5" />
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">System Sync 💻</h4>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">System Sync</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Automatically switches between Light & Dark based on your operating system settings.
                   </p>
@@ -325,11 +325,11 @@ export function MentorSettingsPage() {
                 </label>
                 <div className="flex flex-wrap gap-3">
                   {[
-                    { id: "indigo", label: "Indigo Electric", color: "bg-indigo-600" },
-                    { id: "purple", label: "Royal Purple", color: "bg-purple-600" },
-                    { id: "emerald", label: "Emerald Growth", color: "bg-emerald-600" },
-                    { id: "amber", label: "Amber Glow", color: "bg-amber-500" },
-                    { id: "cyan", label: "Ocean Cyan", color: "bg-cyan-500" },
+                    { id: "indigo", label: "Indigo Electric", color: "bg-indigo-600", active: "border-indigo-500 bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 ring-2 ring-indigo-500/30" },
+                    { id: "purple", label: "Royal Purple", color: "bg-purple-600", active: "border-purple-500 bg-purple-500/15 text-purple-600 dark:text-purple-300 ring-2 ring-purple-500/30" },
+                    { id: "emerald", label: "Emerald Growth", color: "bg-emerald-600", active: "border-emerald-500 bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 ring-2 ring-emerald-500/30" },
+                    { id: "amber", label: "Amber Glow", color: "bg-amber-500", active: "border-amber-500 bg-amber-500/15 text-amber-600 dark:text-amber-300 ring-2 ring-amber-500/30" },
+                    { id: "cyan", label: "Ocean Cyan", color: "bg-cyan-500", active: "border-cyan-500 bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 ring-2 ring-cyan-500/30" },
                   ].map((swatch) => (
                     <button
                       key={swatch.id}
@@ -337,13 +337,13 @@ export function MentorSettingsPage() {
                         setAccentColor(swatch.id as AccentColor);
                         toast.success(`Accent color set to ${swatch.label}`);
                       }}
-                      className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border transition ${
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border transition cursor-pointer ${
                         accentColor === swatch.id
-                          ? "border-indigo-500 bg-indigo-500/10 text-slate-900 dark:text-white ring-2 ring-indigo-500/30"
+                          ? swatch.active
                           : "border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                       }`}
                     >
-                      <span className={`h-3 w-3 rounded-full ${swatch.color}`} />
+                      <span className={`h-3 w-3 rounded-full ${swatch.color} shadow-sm`} />
                       {swatch.label}
                     </button>
                   ))}

@@ -3,6 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { GlassCard } from "../components/GlassCard";
 import { ScoreRing } from "../components/Score";
+import { AIInterventionModal } from "../components/AIInterventionModal";
+import { AssignTaskModal } from "../components/AssignTaskModal";
+import { CompanyMatcherModal } from "../components/CompanyMatcherModal";
 import {
   Users,
   Search,
@@ -21,6 +24,12 @@ import {
   Lock,
   Eye,
   Info,
+  ShieldX,
+  ShieldAlert,
+  Building2,
+  Download,
+  Sparkles,
+  ListTodo,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -28,6 +37,9 @@ import {
   addMentee,
   removeMentee,
   searchRegisteredStudents,
+  unblockStudentProctoring,
+  batchUnblockStudents,
+  exportCohortCsvData,
 } from "../lib/admin-api";
 
 export function StudentsPage() {
@@ -36,6 +48,14 @@ export function StudentsPage() {
   const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("my-mentees");
+
+  // Selection & Batch Action State
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showCompanyMatcher, setShowCompanyMatcher] = useState(false);
+
+  // Modals for AI Co-Pilot & Task Assignment
+  const [interventionStudent, setInterventionStudent] = useState<any | null>(null);
+  const [taskStudent, setTaskStudent] = useState<any | null>(null);
 
   // Modal State for Adding Mentees
   const [showAddModal, setShowAddModal] = useState(false);
@@ -50,6 +70,19 @@ export function StudentsPage() {
 
   const students = data?.students || [];
   const pagination = data?.pagination || { page: 1, limit: pageSize, total: students.length, totalPages: 1 };
+
+  // Unblock Proctoring Mutation
+  const unblockMutation = useMutation({
+    mutationFn: (studentId: string) => unblockStudentProctoring(studentId),
+    onSuccess: (res) => {
+      toast.success(res.message || "Student exam access restored!");
+      queryClient.invalidateQueries({ queryKey: ["adminStudentsList"] });
+      queryClient.invalidateQueries({ queryKey: ["adminCohortAnalytics"] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Failed to unblock student");
+    },
+  });
 
   // Add Mentee Mutation
   const addMenteeMutation = useMutation({
@@ -80,6 +113,83 @@ export function StudentsPage() {
       toast.error(err?.message || "Failed to remove mentee");
     },
   });
+
+  // Batch unblock mutation
+  const batchUnblockMutation = useMutation({
+    mutationFn: (ids: string[]) => batchUnblockStudents(ids, "Restored via Roster Batch Action"),
+    onSuccess: (res) => {
+      toast.success(res.message || "Students unblocked successfully!");
+      setSelectedIds([]);
+      queryClient.invalidateQueries({ queryKey: ["adminStudentsList"] });
+      queryClient.invalidateQueries({ queryKey: ["adminCohortAnalytics"] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Failed to batch unblock");
+    },
+  });
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const selectAll = () => {
+    if (selectedIds.length === students.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(students.map((s) => s._id));
+    }
+  };
+
+  const handleExportCsv = async () => {
+    toast.loading("Exporting cohort master CSV...", { id: "roster-csv" });
+    try {
+      const res = await exportCohortCsvData();
+      const rows = res.students || [];
+      const headers = [
+        "Name",
+        "Email",
+        "Target Role",
+        "Overall Readiness %",
+        "ATS Resume %",
+        "Mock Interview %",
+        "Coding Solved",
+        "Verified Proofs",
+        "Mentee Status",
+        "Proctoring Status",
+      ];
+      const csvContent = [
+        headers.join(","),
+        ...rows.map((s) =>
+          [
+            `"${s.name}"`,
+            `"${s.email}"`,
+            `"${s.targetRole}"`,
+            s.overallReadiness,
+            s.resumeScore,
+            s.avgInterviewScore,
+            s.totalProblemsSolved,
+            s.verifiedEventsCount,
+            s.isMyMentee ? "Assigned Mentee" : "Directory",
+            s.isProctoringBlocked ? "BLOCKED" : "Active",
+          ].join(",")
+        ),
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Students_Roster_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success(`Exported ${rows.length} student records!`, { id: "roster-csv" });
+    } catch {
+      toast.error("Failed to export CSV", { id: "roster-csv" });
+    }
+  };
 
   // Live search registered students in modal
   const handleLiveSearch = async (val: string) => {
@@ -122,7 +232,23 @@ export function StudentsPage() {
         </div>
 
         {/* Action Controls */}
-        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+        <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto">
+          {/* Company Matcher Launcher */}
+          <button
+            onClick={() => setShowCompanyMatcher(true)}
+            className="px-3.5 py-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+          >
+            <Building2 className="h-4 w-4 text-indigo-500" /> Company Matcher
+          </button>
+
+          {/* Export CSV */}
+          <button
+            onClick={handleExportCsv}
+            className="px-3.5 py-2 rounded-xl glass hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center gap-1.5 transition"
+          >
+            <Download className="h-4 w-4 text-slate-500" /> Export CSV
+          </button>
+
           {/* Add Mentee Button */}
           <button
             onClick={() => setShowAddModal(true)}
@@ -132,7 +258,7 @@ export function StudentsPage() {
           </button>
 
           {/* Search Box */}
-          <div className="relative flex-1 sm:w-64 min-w-[220px]">
+          <div className="relative flex-1 sm:w-64 min-w-[200px]">
             <Search className="h-4 w-4 absolute left-3 top-2.5 text-slate-400" />
             <input
               type="text"
@@ -161,9 +287,10 @@ export function StudentsPage() {
           <div className="flex bg-slate-200/80 dark:bg-slate-900/80 border border-slate-300 dark:border-white/10 p-1 rounded-xl flex-wrap">
             {[
               { key: "my-mentees", label: "My Mentees" },
-              { key: "all", label: "All Students Directory" },
+              { key: "all", label: "All Directory" },
               { key: "top-performer", label: "Ready (≥75%)" },
               { key: "at-risk", label: "Intervention (<40%)" },
+              { key: "blocked", label: "🔴 Blocked" },
             ].map((f) => (
               <button
                 key={f.key}
@@ -218,6 +345,14 @@ export function StudentsPage() {
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider text-[10px] whitespace-nowrap">
+                    <th className="py-4 px-3 w-8">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.length > 0 && selectedIds.length === students.length}
+                        onChange={selectAll}
+                        className="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-0 cursor-pointer"
+                      />
+                    </th>
                     <th className="py-4 px-5">Student Info</th>
                     <th className="py-4 px-5">Mentee Status</th>
                     <th className="py-4 px-5">Target Role</th>
@@ -234,13 +369,23 @@ export function StudentsPage() {
                     )}
 
                     <th className="py-4 px-5 text-right">
-                      {filter === "all" ? "Roster Action" : "360° Inspection"}
+                      {filter === "all" ? "Roster Action" : "Actions & 360°"}
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200/60 dark:divide-white/5">
                   {students.map((st) => (
                     <tr key={st._id} className="hover:bg-slate-100/50 dark:hover:bg-white/5 transition">
+                      {/* Checkbox */}
+                      <td className="py-4 px-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(st._id)}
+                          onChange={() => toggleSelect(st._id)}
+                          className="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-0 cursor-pointer"
+                        />
+                      </td>
+
                       {/* Student Info */}
                       <td className="py-4 px-5 whitespace-nowrap">
                         <div className="flex items-center gap-3">
@@ -250,10 +395,17 @@ export function StudentsPage() {
                             </div>
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-slate-900 dark:text-white text-xs whitespace-nowrap truncate max-w-[200px]" title={st.name}>
-                              {st.name}
-                            </p>
-                            <p className="text-[10px] text-slate-500 dark:text-slate-400 whitespace-nowrap truncate max-w-[200px]" title={st.email}>
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-bold text-slate-900 dark:text-white text-xs whitespace-nowrap truncate max-w-[160px]" title={st.name}>
+                                {st.name}
+                              </p>
+                              {st.isProctoringBlocked && (
+                                <span className="px-1.5 py-0.5 rounded-md bg-red-500/15 border border-red-500/30 text-[9px] font-bold text-red-500 flex items-center gap-0.5 animate-pulse">
+                                  <ShieldX className="h-2.5 w-2.5" /> Blocked
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 whitespace-nowrap truncate max-w-[180px]" title={st.email}>
                               {st.email}
                             </p>
                           </div>
@@ -314,22 +466,52 @@ export function StudentsPage() {
 
                       {/* Action Column */}
                       <td className="py-4 px-5 text-right whitespace-nowrap">
-                        {st.isMyMentee ? (
-                          <Link
-                            to={`/students/${st._id}`}
-                            className="btn-gradient px-3.5 py-1.5 rounded-xl text-xs font-bold text-white inline-flex items-center gap-1 shadow-md shadow-indigo-500/20 whitespace-nowrap"
-                          >
-                            Inspect 360° <ChevronRight className="h-3.5 w-3.5" />
-                          </Link>
-                        ) : (
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* AI Co-Pilot Button */}
                           <button
-                            onClick={() => addMenteeMutation.mutate(st.email)}
-                            disabled={addMenteeMutation.isPending}
-                            className="px-3.5 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-xs font-bold text-indigo-600 dark:text-indigo-300 inline-flex items-center gap-1.5 transition whitespace-nowrap shadow-sm"
+                            onClick={() => setInterventionStudent(st)}
+                            className="p-1.5 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 transition shadow-sm"
+                            title="AI Co-Pilot Diagnosis & 2-Week Plan"
                           >
-                            <UserPlus className="h-3.5 w-3.5" /> Assign Mentee
+                            <Sparkles className="h-3.5 w-3.5" />
                           </button>
-                        )}
+
+                          {/* Assign Goal Button */}
+                          <button
+                            onClick={() => setTaskStudent(st)}
+                            className="p-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-600 dark:text-purple-300 border border-purple-500/30 transition shadow-sm"
+                            title="Assign Goal Milestone"
+                          >
+                            <ListTodo className="h-3.5 w-3.5" />
+                          </button>
+
+                          {st.isProctoringBlocked && (
+                            <button
+                              onClick={() => unblockMutation.mutate(st._id)}
+                              disabled={unblockMutation.isPending}
+                              className="px-2.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs inline-flex items-center gap-1 shadow-md shadow-red-500/20 transition whitespace-nowrap"
+                              title="Restore exam access for this candidate"
+                            >
+                              <ShieldCheck className="h-3.5 w-3.5" /> Unblock
+                            </button>
+                          )}
+                          {st.isMyMentee ? (
+                            <Link
+                              to={`/students/${st._id}`}
+                              className="btn-gradient px-3.5 py-1.5 rounded-xl text-xs font-bold text-white inline-flex items-center gap-1 shadow-md shadow-indigo-500/20 whitespace-nowrap"
+                            >
+                              Inspect 360° <ChevronRight className="h-3.5 w-3.5" />
+                            </Link>
+                          ) : (
+                            <button
+                              onClick={() => addMenteeMutation.mutate(st.email)}
+                              disabled={addMenteeMutation.isPending}
+                              className="px-3.5 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-xs font-bold text-indigo-600 dark:text-indigo-300 inline-flex items-center gap-1.5 transition whitespace-nowrap shadow-sm"
+                            >
+                              <UserPlus className="h-3.5 w-3.5" /> Assign Mentee
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -562,6 +744,54 @@ export function StudentsPage() {
           </GlassCard>
         </div>
       )}
+
+      {/* Floating Batch Operations Dock */}
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 text-white border border-indigo-500/40 rounded-2xl shadow-2xl px-5 py-3 flex items-center gap-4 backdrop-blur-xl animate-in slide-in-from-bottom-4">
+          <span className="text-xs font-bold text-slate-200">
+            <strong className="text-indigo-400 font-extrabold">{selectedIds.length}</strong> candidates selected
+          </span>
+          <button
+            onClick={() => batchUnblockMutation.mutate(selectedIds)}
+            disabled={batchUnblockMutation.isPending}
+            className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1.5 shadow"
+          >
+            <ShieldCheck className="h-4 w-4" /> Batch Unblock Exams
+          </button>
+          <button
+            onClick={() => setSelectedIds([])}
+            className="text-xs text-slate-400 hover:text-white"
+          >
+            Clear Selection
+          </button>
+        </div>
+      )}
+
+      {/* MODAL 1: AI Co-Pilot Intervention Diagnosis */}
+      {interventionStudent && (
+        <AIInterventionModal
+          open={!!interventionStudent}
+          studentId={interventionStudent._id}
+          studentName={interventionStudent.name}
+          onClose={() => setInterventionStudent(null)}
+        />
+      )}
+
+      {/* MODAL 2: Prescriptive Goal & Milestone Assignment */}
+      {taskStudent && (
+        <AssignTaskModal
+          open={!!taskStudent}
+          studentId={taskStudent._id}
+          studentName={taskStudent.name}
+          onClose={() => setTaskStudent(null)}
+        />
+      )}
+
+      {/* MODAL 3: Company Placement Matcher */}
+      <CompanyMatcherModal
+        open={showCompanyMatcher}
+        onClose={() => setShowCompanyMatcher(false)}
+      />
     </div>
   );
 }

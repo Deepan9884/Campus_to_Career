@@ -4,7 +4,6 @@ import {
   Lock,
   Mail,
   Loader2,
-  Zap,
   Eye,
   EyeOff,
   CheckCircle2,
@@ -48,32 +47,6 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
       onLoginSuccess();
     } catch (err: any) {
       toast.error(err.message || "Failed to log in");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleQuickDemoAccess = async () => {
-    setEmail("mentor@campustocareer.ai");
-    setPassword("MentorSecret123!");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: "mentor@campustocareer.ai", password: "MentorSecret123!" }),
-      });
-
-      const json = await res.json();
-      if (!res.ok || json.success === false) {
-        throw new Error(json.message || "Demo login failed");
-      }
-
-      setAccessToken(json.data.accessToken);
-      toast.success("Signed in as Mentor Administrator!");
-      onLoginSuccess();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to log in as demo mentor");
     } finally {
       setLoading(false);
     }
@@ -346,24 +319,8 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
               </button>
             </div>
 
-            {/* Quick Demo Access Button */}
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={handleQuickDemoAccess}
-                disabled={loading}
-                className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-medium text-sm py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
-              >
-                <Zap className="h-4 w-4 text-indigo-400 group-hover:scale-110 transition-transform" />
-                <span>1-Click Demo Mentor Login</span>
-              </button>
-              <p className="text-[11px] text-center text-slate-400">
-                Instantly pre-fills verified administrator credentials.
-              </p>
-            </div>
-
             {/* Security Footer */}
-            <p className="text-center text-xs text-slate-400 pt-4">
+            <p className="text-center text-xs text-slate-400 pt-2">
               Protected by 256-bit SSL encryption & role-based access control.
             </p>
 

@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { GlassCard } from "../components/GlassCard";
 import { ScoreRing } from "../components/Score";
 import { CodingPlatformAnalyticsCharts } from "../components/CodingPlatformAnalyticsCharts";
+import { AIInterventionModal } from "../components/AIInterventionModal";
+import { AssignTaskModal } from "../components/AssignTaskModal";
 import {
   ArrowLeft,
   FileText,
@@ -31,6 +33,9 @@ import {
   X,
   Lock,
   Download,
+  Sparkles,
+  ListTodo,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -39,12 +44,17 @@ import {
   addMentee,
   removeMentee,
   unblockStudentProctoring,
+  getStudentMentorTasks,
+  updateMentorTask,
+  deleteMentorTask,
+  type MentorTaskItem,
 } from "../lib/admin-api";
 import { StudentPdfReport } from "../components/StudentPdfReport";
 import { generateStudentPdfReport } from "../lib/pdf-report-generator";
 
 type Tab =
   | "overview"
+  | "tasks"
   | "resumes"
   | "interviews"
   | "coding"
@@ -112,7 +122,7 @@ function ProctoringStatusCard({
               Proctoring & Exam Integrity
             </p>
             <p className={`text-xs mt-0.5 font-medium ${isBlocked ? "text-red-400" : "text-emerald-500"}`}>
-              {isBlocked ? "🚫 Examination Access Blocked (3 Strikes)" : "Active — No Active Blocks"}
+              {isBlocked ? "Examination Access Blocked (3 Strikes)" : "Active — No Active Blocks"}
             </p>
           </div>
         </div>
@@ -165,16 +175,16 @@ function ProctoringStatusCard({
         </div>
       )}
 
-      {showLog && recentEvents.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-white/10 space-y-2">
-          <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
-            Proctoring Incident Telemetry
+      {showLog && (
+        <div className="border-t border-slate-200 dark:border-white/10 p-3 bg-slate-50 dark:bg-black/20 space-y-2">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            Violation Audit Trail ({recentEvents.length} events logged)
           </p>
-          <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+          <div className="space-y-1.5 max-h-48 overflow-y-auto">
             {recentEvents.map((evt: any, idx: number) => (
               <div
-                key={idx}
-                className="flex items-center justify-between text-xs p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5"
+                key={evt._id || idx}
+                className="text-xs p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 flex items-center justify-between"
               >
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
@@ -183,12 +193,16 @@ function ProctoringStatusCard({
                   </span>
                   <span className="text-slate-700 dark:text-slate-300">
                     {evt.violationType === "mobile_phone_detected"
-                      ? "📱 Mobile phone detected in camera"
+                      ? "Mobile phone detected in camera"
+                      : evt.violationType === "face_not_detected"
+                      ? "Candidate face missing / camera disabled"
+                      : evt.violationType === "multiple_faces_detected"
+                      ? "Multiple people in frame"
                       : evt.violationType === "fullscreen_exit"
-                      ? "🖥️ Exited full screen mode"
+                      ? "Exited full screen mode"
                       : evt.violationType === "tab_switch"
-                      ? "📑 Switched browser tab / window"
-                      : "⌨️ Restricted keyboard shortcut"}
+                      ? "Switched browser tab / window"
+                      : "Restricted keyboard shortcut"}
                   </span>
                 </div>
                 <span className="text-[11px] text-slate-400 font-mono">
@@ -218,9 +232,42 @@ export function StudentDetailPage() {
   const [feedbackNote, setFeedbackNote] = useState("");
   const [feedbackActionType, setFeedbackActionType] = useState("general");
 
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["adminStudent360", studentId],
     queryFn: () => getStudent360Detail(studentId),
+  });
+
+  const { data: tasksData, refetch: refetchTasks } = useQuery({
+    queryKey: ["adminStudentTasks", studentId],
+    queryFn: () => getStudentMentorTasks(studentId as string),
+    enabled: !!studentId,
+  });
+  const mentorTasks: MentorTaskItem[] = tasksData?.tasks || [];
+
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ taskId, payload }: { taskId: string; payload: Partial<MentorTaskItem> }) =>
+      updateMentorTask(taskId, payload),
+    onSuccess: (res) => {
+      toast.success(res.message || "Goal milestone updated");
+      refetchTasks();
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Failed to update task");
+    },
+  });
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: (taskId: string) => deleteMentorTask(taskId),
+    onSuccess: (res) => {
+      toast.success(res.message || "Goal milestone removed");
+      refetchTasks();
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Failed to delete task");
+    },
   });
 
   const feedbackMutation = useMutation({
@@ -290,7 +337,7 @@ export function StudentDetailPage() {
     );
   }
 
-  const student = data.student || {};
+  const student = data.student;
   const metrics = data.metrics || {
     overallReadinessPct: 0,
     skillGapMatchPct: 0,
@@ -322,6 +369,7 @@ export function StudentDetailPage() {
 
   const tabs: { key: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { key: "overview", label: "Readiness Overview", icon: Target },
+    { key: "tasks", label: `Assigned Goals (${mentorTasks.length})`, icon: ListTodo },
     { key: "resumes", label: `Resumes (${resumes.length})`, icon: FileText },
     { key: "interviews", label: `Interviews (${interviews.length})`, icon: Mic },
     { key: "coding", label: `Coding & GitHub (${codingProfiles.length})`, icon: Code2 },
@@ -357,11 +405,29 @@ export function StudentDetailPage() {
             <ArrowLeft className="h-4 w-4" /> Back to Student Roster
           </Link>
 
-          <div className="flex items-center gap-3 self-start sm:self-center flex-wrap">
+          <div className="flex items-center gap-2.5 self-start sm:self-center flex-wrap">
+            {/* AI Co-Pilot Generator */}
+            <button
+              onClick={() => setShowAIModal(true)}
+              className="px-3.5 py-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              title="AI Co-Pilot Diagnosis & 2-Week Plan"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-indigo-500" /> AI Co-Pilot
+            </button>
+
+            {/* Assign Goal */}
+            <button
+              onClick={() => setShowTaskModal(true)}
+              className="px-3.5 py-2 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-600 dark:text-purple-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              title="Assign Goal Milestone"
+            >
+              <ListTodo className="h-3.5 w-3.5 text-purple-500" /> Assign Goal
+            </button>
+
             <button
               onClick={handleDownloadPdf}
               disabled={isGeneratingPdf}
-              className="btn-gradient px-4 py-2.5 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 transition hover:scale-105 disabled:opacity-50"
+              className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 transition hover:scale-105 disabled:opacity-50"
               title="Download direct PDF assessment dossier"
             >
               {isGeneratingPdf ? (
@@ -374,7 +440,7 @@ export function StudentDetailPage() {
 
             <button
               onClick={() => window.print()}
-              className="px-3.5 py-2.5 rounded-xl glass hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition"
+              className="px-3 py-2 rounded-xl glass hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition"
               title="Print or Save via Browser"
             >
               <Printer className="h-3.5 w-3.5 text-indigo-500" /> Print
@@ -453,6 +519,41 @@ export function StudentDetailPage() {
         </GlassCard>
 
         {/* Privacy Notice Banner for Unassigned Students */}
+        {/* Exam Blocked Notice Banner */}
+        {student?.isProctoringBlocked && (
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-red-500/20 via-rose-500/10 to-red-500/5 border-2 border-red-500/50 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-in fade-in">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-500 shrink-0">
+                <ShieldX className="h-7 w-7 animate-pulse" />
+              </div>
+              <div className="space-y-0.5">
+                <h3 className="text-base font-extrabold text-red-600 dark:text-red-400 flex items-center gap-2">
+                  <span>Examination Access Suspended (3 Proctoring Strikes)</span>
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  This candidate was flagged for 3 repeated violations during a proctored assessment. Review the telemetry below and restore exam access anytime.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={async () => {
+                try {
+                  await unblockStudentProctoring(student._id);
+                  toast.success(`${student.name}'s exam access has been restored!`);
+                  queryClient.invalidateQueries({ queryKey: ["adminStudent360", studentId] });
+                  queryClient.invalidateQueries({ queryKey: ["adminStudentsList"] });
+                } catch (err: any) {
+                  toast.error(err?.message || "Failed to restore exam access");
+                }
+              }}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-red-500/30 transition shrink-0"
+            >
+              <ShieldCheck className="h-4 w-4" /> Restore Exam Access
+            </button>
+          </div>
+        )}
+
         {!student.isMyMentee && (
           <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
             <div className="flex items-center gap-2.5">
@@ -554,6 +655,154 @@ export function StudentDetailPage() {
             />
           </div>
         )}
+
+      {/* Tab Content: Assigned Goals & Tasks */}
+      {activeTab === "tasks" && (
+        <GlassCard className="p-6 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <ListTodo className="h-5 w-5 text-indigo-500" /> Prescribed Goals & Milestones ({mentorTasks.length})
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Specific remedial assignments, practice deadlines, and roadmap tasks assigned to this mentee
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={() => setShowAIModal(true)}
+                className="px-3.5 py-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              >
+                <Sparkles className="h-3.5 w-3.5" /> AI Co-Pilot
+              </button>
+              <button
+                onClick={() => setShowTaskModal(true)}
+                className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
+              >
+                <ListTodo className="h-4 w-4" /> Assign New Goal
+              </button>
+            </div>
+          </div>
+
+          {mentorTasks.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {mentorTasks.map((t) => {
+                const isOverdue = t.dueDate && new Date(t.dueDate) < new Date() && t.status !== "completed";
+                return (
+                  <div
+                    key={t._id}
+                    className={`p-4.5 rounded-2xl border transition-all space-y-3 flex flex-col justify-between ${
+                      t.status === "completed"
+                        ? "bg-emerald-500/5 border-emerald-500/30"
+                        : isOverdue
+                        ? "bg-rose-500/5 border-rose-500/30"
+                        : "bg-slate-100/80 dark:bg-slate-950/70 border-slate-200 dark:border-white/10"
+                    }`}
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider ${
+                              t.category === "interview"
+                                ? "bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30"
+                                : t.category === "quiz"
+                                ? "bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30"
+                                : t.category === "resume"
+                                ? "bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/30"
+                                : "bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30"
+                            }`}
+                          >
+                            {t.category}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                              t.priority === "urgent"
+                                ? "bg-rose-500/20 text-rose-600 dark:text-rose-300"
+                                : t.priority === "high"
+                                ? "bg-amber-500/20 text-amber-600 dark:text-amber-300"
+                                : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                            }`}
+                          >
+                            {t.priority}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => deleteTaskMutation.mutate(t._id)}
+                          className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition"
+                          title="Delete Goal"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+
+                      <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug">
+                        {t.title}
+                      </h4>
+                      {t.description && (
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                          {t.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-200/80 dark:border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-medium text-[11px]">
+                        <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                        <span>
+                          {t.dueDate ? `Due ${new Date(t.dueDate).toLocaleDateString()}` : "No deadline"}
+                        </span>
+                        {isOverdue && (
+                          <span className="text-rose-500 font-bold ml-1">(Overdue)</span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={t.status}
+                          onChange={(e) =>
+                            updateTaskMutation.mutate({
+                              taskId: t._id,
+                              payload: { status: e.target.value as any },
+                            })
+                          }
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold outline-none cursor-pointer border ${
+                            t.status === "completed"
+                              ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border-emerald-500/40"
+                              : t.status === "in_progress"
+                              ? "bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border-indigo-500/40"
+                              : "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700"
+                          }`}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="in_progress">In Progress</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-16 text-center space-y-3 bg-slate-100/50 dark:bg-slate-950/40 rounded-2xl border border-slate-200 dark:border-white/5">
+              <ListTodo className="h-10 w-10 text-slate-400 mx-auto" />
+              <p className="font-bold text-sm text-slate-900 dark:text-white">No Prescribed Goals Yet</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                Use the AI Mentor Co-Pilot to automatically generate a 2-week remedial plan or assign a custom milestone.
+              </p>
+              <button
+                onClick={() => setShowTaskModal(true)}
+                className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white inline-flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
+              >
+                <ListTodo className="h-4 w-4" /> Assign First Goal
+              </button>
+            </div>
+          )}
+        </GlassCard>
+      )}
 
       {/* Tab Content 2: Resumes */}
       {activeTab === "resumes" && (
@@ -1162,6 +1411,26 @@ export function StudentDetailPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* AI Co-Pilot Intervention Modal */}
+      {showAIModal && (
+        <AIInterventionModal
+          open={showAIModal}
+          studentId={student._id}
+          studentName={student.name}
+          onClose={() => setShowAIModal(false)}
+        />
+      )}
+
+      {/* Prescriptive Goal Assignment Modal */}
+      {showTaskModal && (
+        <AssignTaskModal
+          open={showTaskModal}
+          studentId={student._id}
+          studentName={student.name}
+          onClose={() => setShowTaskModal(false)}
+        />
       )}
       </div>
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useTheme } from "../lib/theme-context";
 
 interface Particle {
   x: number;
@@ -13,6 +14,7 @@ interface Particle {
 
 export const InteractiveAppBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { accentColor, resolvedTheme } = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,13 +38,35 @@ export const InteractiveAppBackground: React.FC = () => {
     const count = Math.min(48, Math.floor((width * height) / 30000));
     const particles: Particle[] = [];
 
-    const coolPalette = [
-      "rgba(99, 102, 241, 0.75)",  // Electric Indigo
-      "rgba(168, 85, 247, 0.70)",  // Royal Purple
-      "rgba(56, 189, 248, 0.65)",  // Cyber Sky
-      "rgba(16, 185, 129, 0.60)",  // Emerald Growth
-      "rgba(244, 63, 94, 0.55)",   // Rose Alert
-    ];
+    const paletteMap: Record<string, string[]> = {
+      indigo: [
+        "rgba(99, 102, 241, 0.85)",  // Electric Indigo
+        "rgba(168, 85, 247, 0.75)",  // Royal Purple
+        "rgba(56, 189, 248, 0.70)",  // Cyber Sky
+      ],
+      purple: [
+        "rgba(147, 51, 234, 0.85)",  // Purple
+        "rgba(192, 132, 252, 0.80)", // Light Purple
+        "rgba(236, 72, 153, 0.70)",  // Pink
+      ],
+      emerald: [
+        "rgba(16, 185, 129, 0.85)",  // Emerald
+        "rgba(5, 150, 105, 0.80)",   // Deep Green
+        "rgba(20, 184, 166, 0.70)",  // Teal
+      ],
+      amber: [
+        "rgba(245, 158, 11, 0.85)",  // Amber
+        "rgba(217, 119, 6, 0.80)",   // Deep Amber
+        "rgba(251, 146, 60, 0.70)",  // Orange
+      ],
+      cyan: [
+        "rgba(6, 182, 212, 0.85)",   // Cyan
+        "rgba(56, 189, 248, 0.80)",  // Sky
+        "rgba(14, 165, 233, 0.70)",  // Blue
+      ],
+    };
+
+    const coolPalette = paletteMap[accentColor] || paletteMap.indigo;
 
     for (let i = 0; i < count; i++) {
       const radius = Math.random() * 2.2 + 1;
@@ -160,7 +184,46 @@ export const InteractiveAppBackground: React.FC = () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, []);
+  }, [accentColor]);
+
+  // Color orb class mapping based on accent
+  const orbConfig = {
+    indigo: {
+      orb1: "from-indigo-600/25 via-purple-600/20 to-transparent",
+      orb2: "from-purple-600/25 via-pink-600/20 to-transparent",
+      orb3: "from-cyan-600/20 via-blue-600/20 to-emerald-600/10",
+      grid: "rgba(99, 102, 241, 0.22)",
+    },
+    purple: {
+      orb1: "from-purple-600/30 via-fuchsia-600/25 to-transparent",
+      orb2: "from-pink-600/30 via-rose-600/20 to-transparent",
+      orb3: "from-violet-600/25 via-purple-600/20 to-indigo-600/10",
+      grid: "rgba(168, 85, 247, 0.22)",
+    },
+    emerald: {
+      orb1: "from-emerald-600/30 via-teal-600/25 to-transparent",
+      orb2: "from-teal-600/25 via-cyan-600/20 to-transparent",
+      orb3: "from-green-600/25 via-emerald-600/20 to-cyan-600/10",
+      grid: "rgba(16, 185, 129, 0.22)",
+    },
+    amber: {
+      orb1: "from-amber-600/30 via-orange-600/25 to-transparent",
+      orb2: "from-orange-600/25 via-red-600/20 to-transparent",
+      orb3: "from-yellow-600/25 via-amber-600/20 to-orange-600/10",
+      grid: "rgba(245, 158, 11, 0.22)",
+    },
+    cyan: {
+      orb1: "from-cyan-600/30 via-sky-600/25 to-transparent",
+      orb2: "from-sky-600/25 via-blue-600/20 to-transparent",
+      orb3: "from-teal-600/25 via-cyan-600/20 to-blue-600/10",
+      grid: "rgba(6, 182, 212, 0.22)",
+    },
+  }[accentColor] || {
+    orb1: "from-indigo-600/25 via-purple-600/20 to-transparent",
+    orb2: "from-purple-600/25 via-pink-600/20 to-transparent",
+    orb3: "from-cyan-600/20 via-blue-600/20 to-emerald-600/10",
+    grid: "rgba(99, 102, 241, 0.22)",
+  };
 
   return (
     <div
@@ -169,17 +232,16 @@ export const InteractiveAppBackground: React.FC = () => {
       aria-hidden="true"
     >
       {/* Dynamic Aurora Ambient Glowing Orbs */}
-      <div className="absolute -top-32 -left-32 w-[550px] h-[550px] rounded-full bg-gradient-to-br from-indigo-600/20 via-purple-600/15 to-transparent blur-[140px] animate-pulse pointer-events-none" style={{ animationDuration: "10s" }} />
-      <div className="absolute top-1/4 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-purple-600/20 via-pink-600/15 to-transparent blur-[150px] animate-pulse pointer-events-none" style={{ animationDuration: "14s" }} />
-      <div className="absolute -bottom-40 left-1/4 w-[650px] h-[650px] rounded-full bg-gradient-to-tr from-cyan-600/15 via-blue-600/15 to-emerald-600/10 blur-[160px] animate-pulse pointer-events-none" style={{ animationDuration: "12s" }} />
-      <div className="absolute top-2/3 right-1/4 w-[400px] h-[400px] rounded-full bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent blur-[130px] pointer-events-none" />
+      <div className={`absolute -top-32 -left-32 w-[550px] h-[550px] rounded-full bg-gradient-to-br ${orbConfig.orb1} blur-[140px] animate-pulse pointer-events-none`} style={{ animationDuration: "10s" }} />
+      <div className={`absolute top-1/4 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-bl ${orbConfig.orb2} blur-[150px] animate-pulse pointer-events-none`} style={{ animationDuration: "14s" }} />
+      <div className={`absolute -bottom-40 left-1/4 w-[650px] h-[650px] rounded-full bg-gradient-to-tr ${orbConfig.orb3} blur-[160px] animate-pulse pointer-events-none`} style={{ animationDuration: "12s" }} />
 
       {/* Cyber Grid with Soft Perspective */}
       <div
-        className="absolute inset-0 opacity-[0.16] dark:opacity-[0.18] pointer-events-none"
+        className="absolute inset-0 opacity-[0.16] dark:opacity-[0.18] pointer-events-none transition-all duration-500"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(99, 102, 241, 0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(99, 102, 241, 0.22) 1px, transparent 1px)",
+            `linear-gradient(${orbConfig.grid} 1px, transparent 1px), linear-gradient(90deg, ${orbConfig.grid} 1px, transparent 1px)`,
           backgroundSize: "48px 48px",
         }}
       />

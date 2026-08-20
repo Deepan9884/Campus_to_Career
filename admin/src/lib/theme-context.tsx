@@ -126,6 +126,75 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener("change", listener);
   }, [theme]);
 
+  // Apply Accent Color and Layout Density to Root
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute("data-accent", accentColor);
+
+    const palettes: Record<AccentColor, {
+      primary: string;
+      primaryRgb: string;
+      primaryHover: string;
+      btnGradient: string;
+      glassHover: string;
+      ring: string;
+    }> = {
+      indigo: {
+        primary: "#6366f1",
+        primaryRgb: "99, 102, 241",
+        primaryHover: "#4f46e5",
+        btnGradient: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%)",
+        glassHover: "rgba(99, 102, 241, 0.45)",
+        ring: "#6366f1",
+      },
+      purple: {
+        primary: "#9333ea",
+        primaryRgb: "147, 51, 234",
+        primaryHover: "#7e22ce",
+        btnGradient: "linear-gradient(135deg, #9333ea 0%, #a855f7 50%, #ec4899 100%)",
+        glassHover: "rgba(168, 85, 247, 0.45)",
+        ring: "#a855f7",
+      },
+      emerald: {
+        primary: "#10b981",
+        primaryRgb: "16, 185, 129",
+        primaryHover: "#059669",
+        btnGradient: "linear-gradient(135deg, #059669 0%, #10b981 50%, #14b8a6 100%)",
+        glassHover: "rgba(16, 185, 129, 0.45)",
+        ring: "#10b981",
+      },
+      amber: {
+        primary: "#f59e0b",
+        primaryRgb: "245, 158, 11",
+        primaryHover: "#d97706",
+        btnGradient: "linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #f97316 100%)",
+        glassHover: "rgba(245, 158, 11, 0.45)",
+        ring: "#f59e0b",
+      },
+      cyan: {
+        primary: "#06b6d4",
+        primaryRgb: "6, 182, 212",
+        primaryHover: "#0891b2",
+        btnGradient: "linear-gradient(135deg, #0891b2 0%, #06b6d4 50%, #38bdf8 100%)",
+        glassHover: "rgba(6, 182, 212, 0.45)",
+        ring: "#06b6d4",
+      },
+    };
+
+    const activePalette = palettes[accentColor] || palettes.indigo;
+    root.style.setProperty("--color-primary", activePalette.primary);
+    root.style.setProperty("--color-primary-rgb", activePalette.primaryRgb);
+    root.style.setProperty("--color-primary-hover", activePalette.primaryHover);
+    root.style.setProperty("--btn-gradient", activePalette.btnGradient);
+    root.style.setProperty("--glass-card-hover", activePalette.glassHover);
+    root.style.setProperty("--ring-color", activePalette.ring);
+  }, [accentColor]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute("data-density", density);
+  }, [density]);
+
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
     localStorage.setItem("cf-admin-theme", newTheme);

@@ -12,6 +12,10 @@ import {
   GraduationCap,
   Send,
   BarChart3,
+  FileText,
+  Mic,
+  Code2,
+  Award,
 } from "lucide-react";
 
 interface MentorProductTourProps {
@@ -22,7 +26,7 @@ interface MentorProductTourProps {
 const MENTOR_TOUR_STEPS = [
   {
     step: 1,
-    title: "Welcome to Mentor Command Center 🎓",
+    title: "Welcome to Mentor Command Center",
     subtitle: "Your dedicated portal for monitoring mentee readiness and placement progress",
     icon: GraduationCap,
     iconColor: "text-indigo-400",
@@ -33,14 +37,14 @@ const MENTOR_TOUR_STEPS = [
           The Mentor Portal provides real-time visibility into your students' technical skills, ATS resume scores, mock interview recordings, and competitive coding telemetry across platforms.
         </p>
         <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-medium">
-          🏆 <strong className="text-white">Readiness Index:</strong> Monitor composite career readiness metrics to identify top performers and mentees needing help.
+          <strong className="text-white">Readiness Index:</strong> Monitor composite career readiness metrics to identify top performers and mentees needing help.
         </div>
       </div>
     ),
   },
   {
     step: 2,
-    title: "Hiring Readiness Funnel & Heatmap 📊",
+    title: "Hiring Readiness Funnel & Heatmap",
     subtitle: "Identify cohort-wide skill deficiencies before placement season",
     icon: Trophy,
     iconColor: "text-emerald-400",
@@ -50,7 +54,21 @@ const MENTOR_TOUR_STEPS = [
         <ul className="space-y-2">
           <li className="flex items-start gap-2">
             <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-            <span><strong className="text-white">Placement Readiness Funnel:</strong> Classify mentees into 🟢 Placement Ready (&ge; 75%), 🟡 Developing (45%–74%), and 🔴 Priority Intervention (&lt; 45%).</span>
+            <span>
+              <strong className="text-white">Placement Readiness Funnel:</strong> Classify mentees into{" "}
+              <span className="inline-flex items-center gap-1 font-semibold text-emerald-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Placement Ready (&ge; 75%)
+              </span>
+              ,{" "}
+              <span className="inline-flex items-center gap-1 font-semibold text-amber-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Developing (45%–74%)
+              </span>
+              , and{" "}
+              <span className="inline-flex items-center gap-1 font-semibold text-rose-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> Priority Intervention (&lt; 45%)
+              </span>
+              .
+            </span>
           </li>
           <li className="flex items-start gap-2">
             <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
@@ -62,7 +80,7 @@ const MENTOR_TOUR_STEPS = [
   },
   {
     step: 3,
-    title: "Student Roster & 360° Inspection 🔍",
+    title: "Student Roster & 360° Inspection",
     subtitle: "Deep inspection into individual student telemetry & transcripts",
     icon: Users,
     iconColor: "text-blue-400",
@@ -73,17 +91,25 @@ const MENTOR_TOUR_STEPS = [
           Search the student directory, filter by readiness tier, and click <strong className="text-white">Inspect 360°</strong> to view:
         </p>
         <div className="grid grid-cols-2 gap-2 font-semibold text-slate-200">
-          <span className="p-2 rounded-lg bg-white/5 border border-white/10">📄 ATS Resume Scores</span>
-          <span className="p-2 rounded-lg bg-white/5 border border-white/10">🎙️ Mock Interview Audits</span>
-          <span className="p-2 rounded-lg bg-white/5 border border-white/10">💻 Solved Problems</span>
-          <span className="p-2 rounded-lg bg-white/5 border border-white/10">🏆 Verified Proofs</span>
+          <span className="p-2 rounded-lg bg-white/5 border border-white/10 flex items-center gap-2">
+            <FileText className="h-3.5 w-3.5 text-indigo-400" /> ATS Resume Scores
+          </span>
+          <span className="p-2 rounded-lg bg-white/5 border border-white/10 flex items-center gap-2">
+            <Mic className="h-3.5 w-3.5 text-blue-400" /> Mock Interview Audits
+          </span>
+          <span className="p-2 rounded-lg bg-white/5 border border-white/10 flex items-center gap-2">
+            <Code2 className="h-3.5 w-3.5 text-emerald-400" /> Solved Problems
+          </span>
+          <span className="p-2 rounded-lg bg-white/5 border border-white/10 flex items-center gap-2">
+            <Award className="h-3.5 w-3.5 text-amber-400" /> Verified Proofs
+          </span>
         </div>
       </div>
     ),
   },
   {
     step: 4,
-    title: "Direct Mentor Actions & Feedback ⚡",
+    title: "Direct Mentor Actions & Feedback",
     subtitle: "Deliver custom goals and guidance directly to student dashboards",
     icon: Send,
     iconColor: "text-purple-400",
@@ -91,10 +117,10 @@ const MENTOR_TOUR_STEPS = [
     content: (
       <div className="space-y-3 text-xs text-slate-300">
         <p>
-          Use the <strong className="text-white">Mentor Actions ✨</strong> tab on any student profile to assign custom problem goals, write targeted AI-enhanced advice, or flag priority follow-ups.
+          Use the <strong className="text-white">Mentor Actions</strong> tab on any student profile to assign custom problem goals, write targeted AI-enhanced advice, or flag priority follow-ups.
         </p>
         <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 font-medium">
-          🚀 <strong className="text-white">Real-Time Sync:</strong> Mentor notes deliver instant push notifications to your student's live readiness dashboard!
+          <strong className="text-white">Real-Time Sync:</strong> Mentor notes deliver instant push notifications to your student's live readiness dashboard!
         </div>
       </div>
     ),
@@ -189,7 +215,7 @@ export function MentorProductTour({ open, onClose }: MentorProductTourProps) {
               className="btn-gradient px-4 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1 shadow-lg shadow-indigo-500/20"
             >
               {isLast ? (
-                <>Enter Portal 🎓</>
+                <>Enter Portal</>
               ) : (
                 <>Next <ChevronRight className="h-3.5 w-3.5" /></>
               )}

@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   ArrowUpRight,
+  Download,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -31,15 +32,63 @@ import {
   Legend,
   CartesianGrid,
 } from "recharts";
-import { getCohortAnalytics } from "../lib/admin-api";
+import { getCohortAnalytics, exportCohortCsvData } from "../lib/admin-api";
 import { useTheme } from "../lib/theme-context";
+import { toast } from "sonner";
 
 export function AnalyticsPage() {
   const { resolvedTheme } = useTheme();
   const { data, isLoading } = useQuery({
     queryKey: ["adminCohortAnalytics"],
-    queryFn: getCohortAnalytics,
+    queryFn: () => getCohortAnalytics(),
   });
+
+  const handleExportAnalyticsCsv = async () => {
+    toast.loading("Compiling institutional analytics dataset...", { id: "analytics-csv" });
+    try {
+      const res = await exportCohortCsvData();
+      const rows = res.students || [];
+      const headers = [
+        "Name",
+        "Email",
+        "Target Role",
+        "Overall Readiness %",
+        "ATS Resume %",
+        "Mock Interview %",
+        "Coding Solved Count",
+        "Verified Event Proofs",
+        "Status",
+      ];
+      const csvContent = [
+        headers.join(","),
+        ...rows.map((s) =>
+          [
+            `"${s.name}"`,
+            `"${s.email}"`,
+            `"${s.targetRole}"`,
+            s.overallReadiness,
+            s.resumeScore,
+            s.avgInterviewScore,
+            s.totalProblemsSolved,
+            s.verifiedEventsCount,
+            `"${s.status}"`,
+          ].join(",")
+        ),
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Institutional_Cohort_Analytics_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success(`Exported ${rows.length} student records!`, { id: "analytics-csv" });
+    } catch {
+      toast.error("Failed to export analytics CSV", { id: "analytics-csv" });
+    }
+  };
 
   if (isLoading || !data) {
     return (
@@ -100,11 +149,20 @@ export function AnalyticsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start md:self-auto bg-slate-200/80 dark:bg-slate-950 p-2 rounded-2xl border border-slate-300 dark:border-white/10 text-xs">
-          <span className="text-slate-500 font-bold px-2">Cohort Size:</span>
-          <span className="px-3 py-1 rounded-xl bg-indigo-500 text-white font-black shadow-md">
-            {summary.totalStudents} Mentees
-          </span>
+        <div className="flex items-center gap-3 self-start md:self-auto">
+          <button
+            onClick={handleExportAnalyticsCsv}
+            className="btn-gradient px-4 py-2.5 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/20 transition hover:scale-105"
+          >
+            <Download className="h-4 w-4" /> Export Analytics CSV
+          </button>
+
+          <div className="flex items-center gap-2 bg-slate-200/80 dark:bg-slate-950 p-2 rounded-2xl border border-slate-300 dark:border-white/10 text-xs">
+            <span className="text-slate-500 font-bold px-2">Cohort:</span>
+            <span className="px-3 py-1 rounded-xl bg-indigo-500 text-white font-black shadow-md">
+              {summary.totalStudents} Mentees
+            </span>
+          </div>
         </div>
       </div>
 
