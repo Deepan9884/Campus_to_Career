@@ -16,6 +16,12 @@ import {
   Mic,
   Code2,
   Award,
+  ShieldAlert,
+  Building2,
+  Download,
+  Palette,
+  Command,
+  Sparkles,
 } from "lucide-react";
 
 interface MentorProductTourProps {
@@ -109,19 +115,105 @@ const MENTOR_TOUR_STEPS = [
   },
   {
     step: 4,
-    title: "Direct Mentor Actions & Feedback",
-    subtitle: "Deliver custom goals and guidance directly to student dashboards",
+    title: "AI Co-Pilot & Prescriptive Goal Assignment",
+    subtitle: "Deliver custom goals and AI guidance directly to student dashboards",
     icon: Send,
     iconColor: "text-purple-400",
     badge: "MENTOR ACTION SUITE",
     content: (
       <div className="space-y-3 text-xs text-slate-300">
-        <p>
-          Use the <strong className="text-white">Mentor Actions</strong> tab on any student profile to assign custom problem goals, write targeted AI-enhanced advice, or flag priority follow-ups.
-        </p>
-        <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 font-medium">
-          <strong className="text-white">Real-Time Sync:</strong> Mentor notes deliver instant push notifications to your student's live readiness dashboard!
-        </div>
+        <ul className="space-y-2">
+          <li className="flex items-start gap-2">
+            <Sparkles className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" />
+            <span>
+              <strong className="text-white">AI Mentor Co-Pilot:</strong> 1-click diagnostic analysis of student bottlenecks with instant generated guidance notes.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <CheckCircle2 className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
+            <span>
+              <strong className="text-white">Prescriptive Goal Milestones:</strong> Assign targeted tasks (e.g. <em>Solve 10 Medium DP problems</em>, <em>Rewrite Resume Summary</em>) with urgent due dates and live student dashboard synchronization.
+            </span>
+          </li>
+        </ul>
+      </div>
+    ),
+  },
+  {
+    step: 5,
+    title: "Live Proctoring Operations & Batch Unblock",
+    subtitle: "Monitor real-time exam integrity and restore candidate access",
+    icon: ShieldAlert,
+    iconColor: "text-rose-400",
+    badge: "PROCTORING COMMAND",
+    content: (
+      <div className="space-y-3 text-xs text-slate-300">
+        <ul className="space-y-2">
+          <li className="flex items-start gap-2">
+            <ShieldAlert className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
+            <span>
+              <strong className="text-white">Live Violation Monitor:</strong> View real-time logs of student tab switches, multiple faces, and mobile device detections.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+            <span>
+              <strong className="text-white">Floating Batch Unblock Dock:</strong> Select multiple blocked students from the roster or command hub to restore exam access in 1 click.
+            </span>
+          </li>
+        </ul>
+      </div>
+    ),
+  },
+  {
+    step: 6,
+    title: "Company Placement Matcher & Master CSV Export",
+    subtitle: "Filter candidates by partner hiring criteria & export cohort matrices",
+    icon: Building2,
+    iconColor: "text-cyan-400",
+    badge: "INSTITUTIONAL PLACEMENT",
+    content: (
+      <div className="space-y-3 text-xs text-slate-300">
+        <ul className="space-y-2">
+          <li className="flex items-start gap-2">
+            <Building2 className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
+            <span>
+              <strong className="text-white">Company Matcher:</strong> Set minimum readiness thresholds, target roles, and skill filters to instantly generate hiring shortlist pools.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Download className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+            <span>
+              <strong className="text-white">1-Click Master CSV Export:</strong> Download comprehensive cohort readiness matrices for placement drives and accreditation reporting.
+            </span>
+          </li>
+        </ul>
+      </div>
+    ),
+  },
+  {
+    step: 7,
+    title: "Institutional Command Hub (⌘K) & Accent Themes",
+    subtitle: "Lightning-fast spotlight navigation & dynamic UI customizations",
+    icon: Palette,
+    iconColor: "text-amber-400",
+    badge: "COMMAND HUB & CUSTOMIZATION",
+    content: (
+      <div className="space-y-3 text-xs text-slate-300">
+        <ul className="space-y-2">
+          <li className="flex items-start gap-2">
+            <Command className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
+            <span>
+              <strong className="text-white">Global Command Palette (<kbd className="px-1 py-0.5 rounded bg-slate-800 text-[11px] font-mono border border-slate-700">⌘K</kbd>):</strong> Press <strong className="text-white font-mono">⌘K</strong> anytime to search candidates, trigger tools, or toggle themes.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Palette className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+            <span>
+              <strong className="text-white">Dynamic Accent Themes:</strong> Choose between Indigo Electric, Royal Purple, Emerald Growth, Amber Glow, and Ocean Cyan with reactive aurora backgrounds.
+            </span>
+          </li>
+        </ul>
       </div>
     ),
   },
