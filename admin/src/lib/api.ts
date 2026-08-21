@@ -1,22 +1,25 @@
 const API_BASE = import.meta.env.VITE_API_URL || "/api";
 
-let accessToken: string | null =
-  typeof window !== "undefined" ? localStorage.getItem("cf-admin-token") : null;
+let inMemoryAccessToken: string | null =
+  typeof window !== "undefined" ? sessionStorage.getItem("cf-admin-token") : null;
 
 export function setAccessToken(token: string | null) {
-  accessToken = token;
-  if (token) {
-    localStorage.setItem("cf-admin-token", token);
-  } else {
-    localStorage.removeItem("cf-admin-token");
-  }
+  inMemoryAccessToken = token;
   if (typeof window !== "undefined") {
+    try {
+      localStorage.removeItem("cf-admin-token"); // Clean legacy unencrypted localStorage
+      if (token) {
+        sessionStorage.setItem("cf-admin-token", token);
+      } else {
+        sessionStorage.removeItem("cf-admin-token");
+      }
+    } catch {}
     window.dispatchEvent(new CustomEvent("cf:admin:auth-change", { detail: { token } }));
   }
 }
 
 export function getAccessToken(): string | null {
-  return accessToken;
+  return inMemoryAccessToken;
 }
 
 export class ApiError extends Error {
@@ -29,6 +32,28 @@ export class ApiError extends Error {
   }
 }
 
+let refreshing: Promise<void> | null = null;
+
+export async function tryAdminRefresh(): Promise<void> {
+  if (refreshing) return refreshing;
+  refreshing = (async () => {
+    const res = await fetch(`${API_BASE}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) {
+      setAccessToken(null);
+      throw new ApiError(401, "Admin session expired");
+    }
+    const json = await res.json();
+    setAccessToken(json.data?.accessToken || null);
+  })().finally(() => {
+    refreshing = null;
+  });
+  return refreshing;
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
   const headers: Record<string, string> = {
@@ -39,11 +64,27 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers["Content-Type"] = "application/json";
   }
 
-  if (accessToken) {
-    headers["Authorization"] = `Bearer ${accessToken}`;
+  const token = getAccessToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   let res = await fetch(url, { ...options, headers, credentials: "include" });
+
+  // Handle 401 with silent token refresh
+  if (res.status === 401 && !url.includes("/auth/refresh") && !url.includes("/auth/login")) {
+    try {
+      await tryAdminRefresh();
+      const freshToken = getAccessToken();
+      if (freshToken) {
+        headers["Authorization"] = `Bearer ${freshToken}`;
+      }
+      res = await fetch(url, { ...options, headers, credentials: "include" });
+    } catch {
+      setAccessToken(null);
+      throw new ApiError(401, "Admin session expired");
+    }
+  }
 
   let json: any;
   const text = await res.text();
@@ -77,19 +118,19 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 }
 
 export const api = {
-  get: <T>(endpoint: string) => request<T>(endpoint),
-  post: <T>(endpoint: string, body?: unknown) =>
+  get: <T>(endpoint: string, options?: RequestInit) => request<T>(endpoint, { ...options, method: "GET" }),
+  post: <T>(endpoint: string, body?: unknown, options?: RequestInit) =>
     request<T>(endpoint, {
+      ...options,
       method: "POST",
-      body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
     }),
-  patch: <T>(endpoint: string, body?: unknown) =>
+  patch: <T>(endpoint: string, body?: unknown, options?: RequestInit) =>
     request<T>(endpoint, {
+      ...options,
       method: "PATCH",
-      body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
     }),
-  delete: <T>(endpoint: string) =>
-    request<T>(endpoint, {
-      method: "DELETE",
-    }),
+  delete: <T>(endpoint: string, options?: RequestInit) =>
+    request<T>(endpoint, { ...options, method: "DELETE" }),
 };

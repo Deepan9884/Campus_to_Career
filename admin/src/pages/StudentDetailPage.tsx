@@ -200,8 +200,12 @@ function ProctoringStatusCard({
                       ? "Multiple people in frame"
                       : evt.violationType === "fullscreen_exit"
                       ? "Exited full screen mode"
+                      : evt.violationType === "fullscreen_timeout"
+                      ? "Failed to return to fullscreen (15s timeout)"
                       : evt.violationType === "tab_switch"
                       ? "Switched browser tab / window"
+                      : evt.violationType === "eye_tracking_violation"
+                      ? "Repeated eye gaze deviation (4 warnings reached)"
                       : "Restricted keyboard shortcut"}
                   </span>
                 </div>

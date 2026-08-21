@@ -14,6 +14,7 @@ import {
   Layers,
   CheckCircle2,
   Lock,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -263,6 +264,8 @@ export function LiveProctoringOperations({
                                 <Smartphone className="h-2.5 w-2.5 text-rose-400" />
                               ) : e.violationType === "multiple_faces_detected" ? (
                                 <Users className="h-2.5 w-2.5 text-orange-400" />
+                              ) : e.violationType === "eye_tracking_violation" ? (
+                                <Eye className="h-2.5 w-2.5 text-purple-400" />
                               ) : (
                                 <Maximize className="h-2.5 w-2.5 text-amber-400" />
                               )}
