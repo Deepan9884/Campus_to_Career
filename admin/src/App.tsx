@@ -30,11 +30,12 @@ import { StudentsPage } from "./pages/StudentsPage";
 import { StudentDetailPage } from "./pages/StudentDetailPage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { MentorSettingsPage } from "./pages/MentorSettingsPage";
+import { SuperDreamManagementPage } from "./pages/SuperDreamManagementPage";
 import { MentorProductTour } from "./components/MentorProductTour";
 import { CommandPalette } from "./components/CommandPalette";
 import { CompanyMatcherModal } from "./components/CompanyMatcherModal";
 import { LiveProctoringOperations } from "./components/LiveProctoringOperations";
-import { Building2, ShieldAlert, Command } from "lucide-react";
+import { Building2, ShieldAlert, Command, Crown } from "lucide-react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,52 +59,52 @@ function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
     return (
       <button
         onClick={handleCycleTheme}
-        className="w-full p-2.5 rounded-xl glass hover:bg-slate-200 dark:hover:bg-white/10 flex items-center justify-center text-slate-700 dark:text-slate-300 transition"
+        className="w-full p-2.5 rounded-xl glass hover:bg-[var(--glass-input-bg)] flex items-center justify-center text-[var(--muted-foreground)] transition"
         title={`Theme Mode: ${theme} (Click to switch)`}
       >
-        {theme === "light" && <Sun className="h-4 w-4 text-amber-500" />}
-        {theme === "dark" && <Moon className="h-4 w-4 text-indigo-400" />}
-        {theme === "system" && <Laptop className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
+        {theme === "light" && <Sun className="h-4 w-4 text-[var(--warning)]" />}
+        {theme === "dark" && <Moon className="h-4 w-4 text-[var(--primary)]" />}
+        {theme === "system" && <Laptop className="h-4 w-4 text-[var(--muted-foreground)]" />}
       </button>
     );
   }
 
   return (
-    <div className="flex items-center justify-between p-1 rounded-xl bg-slate-200/80 dark:bg-slate-900/90 border border-slate-300/80 dark:border-white/10 text-xs">
+    <div className="flex items-center justify-between p-1 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-xs">
       <button
         onClick={() => setTheme("light")}
         className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 ${
           theme === "light"
-            ? "bg-white text-indigo-600 shadow-md"
-            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            ? "bg-white text-[var(--primary)] shadow-md"
+            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
         }`}
         title="Light Mode"
       >
-        <Sun className="h-3.5 w-3.5 text-amber-500" />
+        <Sun className="h-3.5 w-3.5 text-[var(--warning)]" />
         <span>Light</span>
       </button>
       <button
         onClick={() => setTheme("dark")}
         className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 ${
           theme === "dark"
-            ? "bg-slate-800 text-indigo-400 shadow-md"
-            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            ? "bg-[var(--glass-input-bg)] text-[var(--primary)] shadow-md"
+            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
         }`}
         title="Dark Mode"
       >
-        <Moon className="h-3.5 w-3.5 text-indigo-400" />
+        <Moon className="h-3.5 w-3.5 text-[var(--primary)]" />
         <span>Dark</span>
       </button>
       <button
         onClick={() => setTheme("system")}
         className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 ${
           theme === "system"
-            ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-md"
-            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            ? "bg-white dark:bg-[var(--glass-input-bg)] text-[var(--primary)] shadow-md"
+            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
         }`}
         title="System Preference"
       >
-        <Laptop className="h-3.5 w-3.5 text-slate-500" />
+        <Laptop className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
         <span>Auto</span>
       </button>
     </div>
@@ -159,12 +160,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
   const navItems = [
     { label: "Overview", href: "/", icon: LayoutDashboard },
     { label: "Student Roster", href: "/students", icon: Users },
+    { label: "Super Dream Track", href: "/super-dream", icon: Crown },
     { label: "Cohort Analytics", href: "/analytics", icon: BarChart3 },
     { label: "Settings", href: "/settings", icon: Settings },
   ];
 
   return (
-    <div className="relative min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-50 selection:bg-indigo-500 selection:text-white flex transition-colors duration-300 overflow-x-hidden">
+    <div className="relative min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-indigo-500 selection:text-white flex transition-colors duration-300 overflow-x-hidden">
       {/* Interactive Background */}
       <InteractiveAppBackground />
 
@@ -186,13 +188,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
       {/* Left Sidebar Navigation (Expandable & Shrinkable) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 bg-white/90 dark:bg-slate-950/90 backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/10 flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl ${
+        className={`fixed top-0 bottom-0 left-0 z-50 bg-[var(--glass-strong-bg)] backdrop-blur-[40px] saturate-[180%] border-r border-[var(--border)] flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl ${
           sidebarCollapsed ? "w-[72px] p-3" : "w-64 p-5"
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         <div className="space-y-4">
           {/* Brand Logo Header & Shrink / Expand Toggle */}
-          <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 pb-4">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
             {!sidebarCollapsed ? (
               <>
                 <div className="flex items-center gap-2">
@@ -209,7 +211,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                 </div>
                 <button
                   onClick={toggleSidebar}
-                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
+                  className="p-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)] transition"
                   title="Collapse sidebar"
                 >
                   <PanelLeftClose className="h-4 w-4" />
@@ -222,7 +224,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                 </div>
                 <button
                   onClick={toggleSidebar}
-                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
+                  className="p-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)] transition"
                   title="Expand sidebar"
                 >
                   <PanelLeftOpen className="h-4 w-4" />
@@ -235,13 +237,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           {!sidebarCollapsed ? (
             <button
               onClick={() => setCommandPaletteOpen(true)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-indigo-500/40 transition text-xs shadow-sm"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[var(--primary)]/30 transition text-xs shadow-sm"
             >
               <span className="flex items-center gap-2 font-medium">
-                <Command className="h-3.5 w-3.5 text-indigo-500" />
+                <Command className="h-3.5 w-3.5 text-[var(--primary)]" />
                 Command Hub
               </span>
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-slate-600 dark:text-slate-300 font-bold border border-slate-300 dark:border-slate-700">
+              <kbd className="px-1.5 py-0.5 rounded bg-[var(--glass-input-bg)] text-[10px] font-mono text-[var(--muted-foreground)] font-bold border border-[var(--border)]">
                 ⌘K
               </kbd>
             </button>
@@ -249,7 +251,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
             <button
               onClick={() => setCommandPaletteOpen(true)}
               title="Command Hub (Cmd+K)"
-              className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-indigo-500 flex items-center justify-center hover:scale-105 transition"
+              className="w-full p-2.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--primary)] flex items-center justify-center hover:scale-105 transition"
             >
               <Command className="h-4 w-4" />
             </button>
@@ -273,12 +275,12 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                   } ${
                     isActive
                       ? "btn-gradient text-white shadow-lg shadow-indigo-500/25"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)]"
                   }`}
                 >
                   <Icon
                     className={`h-4 w-4 shrink-0 transition-transform group-hover:scale-110 ${
-                      isActive ? "text-white" : "text-indigo-500 dark:text-indigo-400"
+                      isActive ? "text-white" : "text-[var(--primary)]"
                     }`}
                   />
                   {!sidebarCollapsed && <span>{item.label}</span>}
@@ -288,22 +290,22 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
             {/* Quick Operations Sub-Group in Sidebar */}
             {!sidebarCollapsed && (
-              <div className="pt-3 border-t border-slate-200/60 dark:border-white/5 space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 pb-1">
+              <div className="pt-3 border-t border-[var(--border)] space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted-foreground)] px-3 pb-1">
                   Placement Tools
                 </p>
                 <button
                   onClick={() => setCompanyMatcherOpen(true)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 flex items-center gap-2.5 transition text-left"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/15 flex items-center gap-2.5 transition text-left"
                 >
-                  <Building2 className="h-4 w-4 text-indigo-500 shrink-0" />
+                  <Building2 className="h-4 w-4 text-[var(--primary)] shrink-0" />
                   <span>Company Matcher</span>
                 </button>
                 <button
                   onClick={() => setLiveProctoringOpen(true)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2.5 transition text-left"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--destructive)] hover:bg-[var(--destructive)]/15 flex items-center gap-2.5 transition text-left"
                 >
-                  <ShieldAlert className="h-4 w-4 text-rose-500 shrink-0" />
+                  <ShieldAlert className="h-4 w-4 text-[var(--destructive)] shrink-0" />
                   <span>Live Proctoring Radar</span>
                 </button>
               </div>
@@ -312,11 +314,11 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
         </div>
 
         {/* Sidebar Footer Actions */}
-        <div className="space-y-3 pt-4 border-t border-slate-200/80 dark:border-white/10">
+        <div className="space-y-3 pt-4 border-t border-[var(--border)]">
           {/* Theme Switcher */}
           {!sidebarCollapsed ? (
             <div>
-              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 dark:text-slate-500 mb-1.5 px-1">
+              <p className="text-[10px] uppercase tracking-wider font-extrabold text-[var(--muted-foreground)] mb-1.5 px-1">
                 Theme Mode
               </p>
               <ThemeSwitcher compact={false} />
@@ -329,16 +331,16 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           <button
             onClick={() => setShowMentorTour(true)}
             title="Mentor Guide & Product Tour"
-            className={`w-full rounded-xl glass hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-indigo-500/30 text-xs font-bold text-indigo-600 dark:text-indigo-300 flex items-center transition group ${
+            className={`w-full rounded-xl liquid-glass-card hover:brightness-110 border border-[var(--primary)]/30 text-xs font-bold text-[var(--primary)] flex items-center transition group ${
               sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2 justify-between"
             }`}
           >
             <span className="flex items-center gap-2">
-              <HelpCircle className="h-4 w-4 text-indigo-500 dark:text-indigo-400 shrink-0" />
+              <HelpCircle className="h-4 w-4 text-[var(--primary)] shrink-0" />
               {!sidebarCollapsed && <span>Mentor Guide</span>}
             </span>
             {!sidebarCollapsed && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-500 dark:text-indigo-300 font-bold">
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--primary)]/15 text-[var(--primary)] font-bold">
                 Tour
               </span>
             )}
@@ -348,25 +350,25 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           <button
             onClick={onLogout}
             title="Sign Out"
-            className={`w-full rounded-xl glass hover:bg-rose-50 dark:hover:bg-rose-950/30 border border-slate-200/80 dark:border-white/10 text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center transition hover:text-rose-600 dark:hover:text-red-400 ${
+            className={`w-full rounded-xl liquid-glass-card hover:brightness-110 border border-[var(--border)] text-xs font-semibold text-[var(--muted-foreground)] flex items-center transition hover:text-[var(--destructive)] ${
               sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2 gap-2"
             }`}
           >
-            <LogOut className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" />
+            <LogOut className="h-4 w-4 text-[var(--muted-foreground)] shrink-0" />
             {!sidebarCollapsed && <span>Sign Out</span>}
           </button>
         </div>
       </aside>
 
       {/* Mobile Top Bar with Hamburger Toggle */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 px-4 py-3 flex items-center justify-between shadow-md">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[var(--glass-strong-bg)] backdrop-blur-[40px] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-xl btn-gradient flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
             <GraduationCap className="h-4 w-4" />
           </div>
           <div>
-            <span className="font-extrabold text-slate-900 dark:text-white text-sm">Mentor Portal</span>
-            <span className="block text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold">
+            <span className="font-extrabold text-[var(--foreground)] text-sm">Mentor Portal</span>
+            <span className="block text-[10px] text-[var(--primary)] font-semibold">
               Campus to Career AI
             </span>
           </div>
@@ -374,7 +376,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10"
+            className="p-2 rounded-xl text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)]"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -394,6 +396,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
             <Route path="/" element={<OverviewPage />} />
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/students/:studentId" element={<StudentDetailPage />} />
+            <Route path="/super-dream" element={<SuperDreamManagementPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/settings" element={<MentorSettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -426,13 +429,13 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, Er
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center p-6 bg-slate-900 text-white font-sans">
-          <div className="max-w-md w-full p-6 rounded-2xl bg-slate-950 border border-red-500/30 text-center space-y-4 shadow-2xl">
-            <div className="h-12 w-12 rounded-xl bg-red-500/20 text-red-400 mx-auto flex items-center justify-center border border-red-500/30">
+        <div className="min-h-screen flex items-center justify-center p-6 bg-[var(--background)] text-[var(--foreground)] font-sans">
+          <div className="max-w-md w-full p-6 rounded-2xl bg-[var(--popover)] border border-[var(--destructive)]/30 text-center space-y-4 shadow-2xl">
+            <div className="h-12 w-12 rounded-xl bg-[var(--destructive)]/15 text-[var(--destructive)] mx-auto flex items-center justify-center border border-[var(--destructive)]/30">
               <AlertCircle className="h-6 w-6" />
             </div>
-            <h2 className="text-lg font-bold text-white">Something Went Wrong</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-lg font-bold text-[var(--foreground)]">Something Went Wrong</h2>
+            <p className="text-xs text-[var(--muted-foreground)]">
               {this.state.error?.message || "An unexpected error occurred while rendering the interface."}
             </p>
             <button
@@ -536,9 +539,9 @@ export function App() {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
-        <div className="h-10 w-10 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
-        <p className="text-xs font-bold text-slate-400">Verifying session...</p>
+      <div className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center space-y-3">
+        <div className="h-10 w-10 rounded-full border-4 border-[var(--primary)]/20 border-t-[var(--primary)] animate-spin" />
+        <p className="text-xs font-bold text-[var(--muted-foreground)]">Verifying session...</p>
       </div>
     );
   }
