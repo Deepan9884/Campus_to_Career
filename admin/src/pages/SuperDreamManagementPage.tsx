@@ -488,7 +488,7 @@ export function SuperDreamManagementPage() {
             <Clock className="w-4 h-4 text-[var(--warning)]" />
           </div>
           <p className="text-3xl font-black text-[var(--warning)] font-mono mt-1">{pendingSubmissions.length}</p>
-          <p className="text-[11px] text-[var(--warning)]/90 mt-1">Code repositories in queue</p>
+          <p className="text-[11px] text-[rgb(var(--warning-rgb)/90%)] mt-1">Code repositories in queue</p>
         </GlassCard>
 
         <GlassCard className="p-4 border-[rgb(var(--success-rgb)/30%)]">
@@ -497,7 +497,7 @@ export function SuperDreamManagementPage() {
             <TrendingUp className="w-4 h-4 text-[var(--success)]" />
           </div>
           <p className="text-3xl font-black text-[var(--success)] font-mono mt-1">85.2%</p>
-          <p className="text-[11px] text-[var(--success)]/90 mt-1">FAANG placement benchmark</p>
+          <p className="text-[11px] text-[rgb(var(--success-rgb)/90%)] mt-1">FAANG placement benchmark</p>
         </GlassCard>
 
         <GlassCard className="p-4 border-[rgb(var(--chart-5-rgb)/30%)]">
@@ -506,12 +506,12 @@ export function SuperDreamManagementPage() {
             <Award className="w-4 h-4 text-[var(--chart-5)]" />
           </div>
           <p className="text-3xl font-black text-[var(--chart-5)] font-mono mt-1">75%</p>
-          <p className="text-[11px] text-[var(--chart-5)]/90 mt-1">Tier-1 conversion rate</p>
+          <p className="text-[11px] text-[rgb(var(--chart-5-rgb)/90%)] mt-1">Tier-1 conversion rate</p>
         </GlassCard>
       </div>
 
       {/* Navigation Switcher Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 p-1.5 bg-[var(--glass-input-bg)] border border-[var(--border)] rounded-2xl scrollbar-none">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 p-1.5 bg-slate-100/90 dark:bg-white/[0.04] border border-[var(--border)] rounded-2xl scrollbar-none">
         <button
           onClick={() => setActiveTab("cohort")}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer border ${
@@ -601,7 +601,7 @@ export function SuperDreamManagementPage() {
                 placeholder="Search candidates..."
                 value={searchCandidate}
                 onChange={(e) => setSearchCandidate(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)]"
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-white/[0.06] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)]"
               />
             </div>
           </div>
@@ -620,7 +620,7 @@ export function SuperDreamManagementPage() {
                       <img
                         src={cand.avatar}
                         alt={cand.name}
-                        className="w-11 h-11 rounded-xl object-cover ring-1 ring-white/10"
+                        className="w-11 h-11 rounded-xl object-cover ring-1 ring-[var(--border)]"
                       />
                       <div>
                         <div className="flex items-center gap-1.5">
@@ -650,18 +650,18 @@ export function SuperDreamManagementPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/10 text-xs text-center">
-                  <div className="bg-[var(--glass-input-bg)] p-2 rounded-lg border border-[var(--border)]">
+                <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border/40 text-xs text-center">
+                  <div className="bg-slate-100/80 dark:bg-white/[0.05] p-2 rounded-lg border border-border/50">
                     <p className="text-[10px] text-[var(--muted-foreground)]">Active Phase</p>
                     <p className="font-bold text-[var(--chart-5)] font-mono mt-0.5">Phase 0{cand.activePhase}</p>
                   </div>
-                  <div className="bg-[var(--glass-input-bg)] p-2 rounded-lg border border-[var(--border)]">
+                  <div className="bg-slate-100/80 dark:bg-white/[0.05] p-2 rounded-lg border border-border/50">
                     <p className="text-[10px] text-[var(--muted-foreground)]">Verified Proofs</p>
                     <p className="font-bold text-[var(--success)] font-mono mt-0.5">{cand.verifiedCourses} Courses</p>
                   </div>
-                  <div className="bg-[var(--glass-input-bg)] p-2 rounded-lg border border-[var(--border)]">
-                    <p className="text-[10px] text-[var(--muted-foreground)]">Avg Test Score</p>
-                    <p className="font-bold text-[var(--chart-2)] font-mono mt-0.5">{cand.avgTestScore}%</p>
+                  <div className="bg-slate-100/80 dark:bg-white/[0.05] p-2 rounded-lg border border-border/50">
+                    <p className="text-[10px] text-[var(--muted-foreground)]">Assessments</p>
+                    <p className="font-bold text-[var(--chart-2)] font-mono mt-0.5">{cand.verifiedCourses + 1} Verified</p>
                   </div>
                 </div>
 
@@ -678,7 +678,7 @@ export function SuperDreamManagementPage() {
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                       selectedStudentId === cand.id
                         ? "bg-indigo-600 text-white"
-                        : "bg-[var(--glass-input-bg)] hover:bg-[var(--glass-input-bg-hover)] text-[var(--muted-foreground)]"
+                        : "bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.08] dark:hover:bg-white/[0.14] text-[var(--foreground)] border border-border/50"
                     }`}
                   >
                     {selectedStudentId === cand.id ? "Selected Candidate" : "Select Candidate"}
@@ -734,7 +734,7 @@ export function SuperDreamManagementPage() {
                   <p className="text-xs text-[var(--muted-foreground)] mt-1">{task.description}</p>
                 </div>
 
-                <div className="space-y-2.5 pt-3 border-t border-white/10 text-xs text-[var(--muted-foreground)]">
+                <div className="space-y-2.5 pt-3 border-t border-[var(--border)] text-xs text-[var(--muted-foreground)]">
                   <div className="flex items-center justify-between">
                     <span>Due: <strong className="text-[var(--foreground)] font-mono">{task.dueDate}</strong></span>
                     <span>Priority: <strong className={task.priority === "Urgent" ? "text-[var(--destructive)] font-bold" : "text-[var(--warning)]"}>{task.priority}</strong></span>
@@ -794,7 +794,7 @@ export function SuperDreamManagementPage() {
           </div>
 
           {pendingSubmissions.length === 0 ? (
-            <div className="p-12 rounded-2xl bg-[var(--glass-input-bg)] border border-white/10 text-center text-[var(--muted-foreground)] space-y-2">
+            <div className="p-12 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-center text-[var(--muted-foreground)] space-y-2">
               <CheckCircle2 className="w-10 h-10 text-[var(--success)] mx-auto" />
               <p className="text-base font-bold text-[var(--foreground)]">All Submissions Evaluated</p>
               <p className="text-xs">No pending student deliverables in review queue.</p>
@@ -818,14 +818,14 @@ export function SuperDreamManagementPage() {
                     <p className="text-xs text-[var(--muted-foreground)] mt-1">{task.description}</p>
 
                     {task.submissionNote && (
-                      <div className="p-3 rounded-xl bg-[var(--glass-input-bg)] border border-white/10 mt-3 text-xs">
+                      <div className="p-3 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] mt-3 text-xs">
                         <p className="text-[var(--muted-foreground)] font-medium">Candidate Submission Notes:</p>
                         <p className="text-[var(--foreground)] mt-0.5 italic">"{task.submissionNote}"</p>
                       </div>
                     )}
                   </div>
 
-                  <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-3">
+                  <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between gap-3">
                     {task.deliverableLink ? (
                       <a
                         href={task.deliverableLink}
@@ -888,7 +888,7 @@ export function SuperDreamManagementPage() {
                   <p className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed">{c.description}</p>
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+                <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5 text-xs">
                     {c.status === "completed" ? (
                       <span className="text-[var(--success)] font-bold flex items-center gap-1">
@@ -957,13 +957,13 @@ export function SuperDreamManagementPage() {
 
                   <h4 className="font-bold text-sm text-[var(--foreground)]">{t.title}</h4>
 
-                  <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-white/10 text-xs text-[var(--muted-foreground)]">
+                  <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-[var(--border)] text-xs text-[var(--muted-foreground)]">
                     <div>Duration: <strong className="text-[var(--foreground)]">{t.durationMinutes}m</strong></div>
                     <div>Sections: <strong className="text-[var(--chart-5)]">{t.sections?.length || 2}</strong></div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+                <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between">
                   <span className="text-xs text-[var(--muted-foreground)]">
                     Passing Mark: <strong className="text-[var(--success)]">{t.passingScorePercentage || 80}%</strong>
                   </span>
