@@ -306,7 +306,7 @@ export function CommandPalette({
                         onClose();
                         navigate(`/students/${s._id}`);
                       }}
-                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--glass-input-bg)] hover:brightness-125 text-left transition border border-[var(--border)] hover:border-[var(--primary)]/20 shadow-sm"
+                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--glass-input-bg)] hover:brightness-110 text-left transition border border-[var(--border)] hover:border-[var(--primary)]/30 shadow-sm"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="w-10 h-10 rounded-xl bg-[var(--primary)]/15 text-[var(--primary)] font-bold flex items-center justify-center text-sm shrink-0">
