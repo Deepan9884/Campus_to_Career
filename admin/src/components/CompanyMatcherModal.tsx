@@ -11,7 +11,6 @@ import {
   FileText,
   Mic,
   Code2,
-  Sparkles,
   ExternalLink,
   Users,
 } from "lucide-react";
@@ -33,7 +32,7 @@ const PRESETS = [
     minInterview: 75,
     minCoding: 150,
     requireProof: false,
-    badgeColor: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+    badgeColor: "bg-[var(--primary)]/20 text-[var(--primary)] border-[var(--primary)]/30",
   },
   {
     name: "Fintech & Quantitative (Goldman Sachs, Morgan Stanley)",
@@ -43,7 +42,7 @@ const PRESETS = [
     minInterview: 80,
     minCoding: 200,
     requireProof: false,
-    badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    badgeColor: "bg-[var(--chart-2)]/20 text-[var(--chart-2)] border-[var(--chart-2)]/30",
   },
   {
     name: "High-Growth Unicorn Startups (Swiggy, Razorpay, Zepto)",
@@ -53,7 +52,7 @@ const PRESETS = [
     minInterview: 70,
     minCoding: 100,
     requireProof: true,
-    badgeColor: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    badgeColor: "bg-[var(--warning)]/15 text-[var(--warning)] border-[var(--warning)]/30",
   },
   {
     name: "Global Tech Services (TCS Digital, Accenture, Infosys)",
@@ -63,7 +62,7 @@ const PRESETS = [
     minInterview: 55,
     minCoding: 40,
     requireProof: false,
-    badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+    badgeColor: "bg-[var(--success)]/15 text-[var(--success)] border-[var(--success)]/30",
   },
 ];
 
@@ -165,24 +164,24 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl bg-slate-900 text-slate-100 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] backdrop-blur-2xl"
+        className="w-full max-w-4xl bg-[var(--glass-strong-bg)] text-[var(--foreground)] border border-[var(--glass-strong-border)] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] backdrop-blur-[40px] saturate-[180%]"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/70">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--glass-input-bg)]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+            <div className="p-2.5 rounded-2xl bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/30">
               <Building2 className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-base font-black text-white flex items-center gap-2">
+              <h2 className="text-base font-black text-[var(--foreground)] flex items-center gap-2">
                 Placement Drive & Corporate Hiring Matcher
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[var(--muted-foreground)]">
                 Filter and shortlist candidates based on company placement qualification benchmarks
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition">
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-[var(--glass-input-bg)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -191,8 +190,8 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
         <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs">
           {/* Preset Buttons */}
           <div>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-indigo-400" /> Standard Hiring Partner Presets
+            <p className="text-[11px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <Building2 className="h-3.5 w-3.5 text-[var(--primary)]" /> Standard Hiring Partner Presets
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {PRESETS.map((p, idx) => (
@@ -201,15 +200,15 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                   onClick={() => handleApplyPreset(idx)}
                   className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-1.5 ${
                     selectedPreset === idx
-                      ? "bg-indigo-600/20 border-indigo-500 text-white shadow-lg ring-1 ring-indigo-500"
-                      : "bg-slate-800/60 border-slate-700/80 text-slate-300 hover:bg-slate-800 hover:text-white"
+                      ? "bg-[var(--primary)]/20 border-[var(--primary)] text-[var(--foreground)] shadow-lg ring-1 ring-[var(--primary)]"
+                      : "bg-[var(--glass-input-bg)] border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--glass-input-bg)] hover:brightness-110 hover:text-[var(--foreground)]"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <span className="font-bold text-xs leading-snug">{p.name}</span>
-                    {selectedPreset === idx && <CheckCircle2 className="h-4 w-4 text-indigo-400 shrink-0" />}
+                    {selectedPreset === idx && <CheckCircle2 className="h-4 w-4 text-[var(--primary)] shrink-0" />}
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                  <div className="flex items-center gap-2 text-[10px] text-[var(--muted-foreground)]">
                     <span>LC ≥ {p.minCoding}</span>
                     <span>•</span>
                     <span>ATS ≥ {p.minAts}%</span>
@@ -222,21 +221,21 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
           </div>
 
           {/* Sliders & Criteria Controls */}
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-4">
+          <div className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-4">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-white flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-indigo-400" /> Fine-Tune Qualification Sliders
+              <span className="font-bold text-[var(--foreground)] flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 text-[var(--primary)]" /> Fine-Tune Qualification Sliders
               </span>
-              <span className="text-[11px] text-slate-400 font-mono">
-                Matching: <strong className="text-emerald-400 font-bold text-sm">{matchedStudents.length}</strong> of {students.length} students
+              <span className="text-[11px] text-[var(--muted-foreground)] font-mono">
+                Matching: <strong className="text-[var(--success)] font-bold text-sm">{matchedStudents.length}</strong> of {students.length} students
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-1.5">
-                <div className="flex justify-between text-slate-300">
+                <div className="flex justify-between text-[var(--muted-foreground)]">
                   <span>Min Readiness:</span>
-                  <span className="font-bold text-indigo-400">{minReadiness}%</span>
+                  <span className="font-bold text-[var(--primary)]">{minReadiness}%</span>
                 </div>
                 <input
                   type="range"
@@ -248,14 +247,14 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                     setSelectedPreset(null);
                     setMinReadiness(Number(e.target.value));
                   }}
-                  className="w-full accent-indigo-500 cursor-pointer"
+                  className="w-full accent-[var(--primary)] cursor-pointer"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex justify-between text-slate-300">
+                <div className="flex justify-between text-[var(--muted-foreground)]">
                   <span>Min ATS Resume:</span>
-                  <span className="font-bold text-blue-400">{minAts}%</span>
+                  <span className="font-bold text-[var(--chart-5)]">{minAts}%</span>
                 </div>
                 <input
                   type="range"
@@ -267,14 +266,14 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                     setSelectedPreset(null);
                     setMinAts(Number(e.target.value));
                   }}
-                  className="w-full accent-blue-500 cursor-pointer"
+                  className="w-full accent-[var(--chart-5)] cursor-pointer"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex justify-between text-slate-300">
+                <div className="flex justify-between text-[var(--muted-foreground)]">
                   <span>Min Mock Interview:</span>
-                  <span className="font-bold text-purple-400">{minInterview}%</span>
+                  <span className="font-bold text-[var(--chart-2)]">{minInterview}%</span>
                 </div>
                 <input
                   type="range"
@@ -286,14 +285,14 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                     setSelectedPreset(null);
                     setMinInterview(Number(e.target.value));
                   }}
-                  className="w-full accent-purple-500 cursor-pointer"
+                  className="w-full accent-[var(--chart-2)] cursor-pointer"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex justify-between text-slate-300">
+                <div className="flex justify-between text-[var(--muted-foreground)]">
                   <span>Min Coding Solved:</span>
-                  <span className="font-bold text-emerald-400">{minCoding}+</span>
+                  <span className="font-bold text-[var(--success)]">{minCoding}+</span>
                 </div>
                 <input
                   type="range"
@@ -305,13 +304,13 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                     setSelectedPreset(null);
                     setMinCoding(Number(e.target.value));
                   }}
-                  className="w-full accent-emerald-500 cursor-pointer"
+                  className="w-full accent-[var(--success)] cursor-pointer"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-800">
-              <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+            <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
+              <label className="flex items-center gap-2 cursor-pointer text-[var(--muted-foreground)]">
                 <input
                   type="checkbox"
                   checked={requireProof}
@@ -319,19 +318,19 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                     setSelectedPreset(null);
                     setRequireProof(e.target.checked);
                   }}
-                  className="rounded border-slate-700 text-indigo-600 focus:ring-0 cursor-pointer"
+                  className="rounded border-[var(--border)] text-[var(--primary)] focus:ring-0 cursor-pointer"
                 />
                 <span>Require at least 1 verified Hackathon / Contest Podium Proof</span>
               </label>
 
               <div className="flex items-center gap-2">
-                <span className="text-slate-400">Drive Tag:</span>
+                <span className="text-[var(--muted-foreground)]">Drive Tag:</span>
                 <input
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="e.g. Google Drive 2026"
-                  className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white outline-none focus:border-indigo-500"
+                  className="px-2.5 py-1 rounded-lg bg-[var(--glass-input-bg)] border border-[var(--border)] text-xs text-[var(--foreground)] outline-none focus:border-[var(--primary)]"
                 />
               </div>
             </div>
@@ -340,13 +339,13 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
           {/* Matched Candidates Roster Table */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <p className="text-[11px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
                 Qualified Candidates ({matchedStudents.length})
               </p>
               {matchedStudents.length > 0 && (
                 <button
                   onClick={handleExportRecruiterSheet}
-                  className="btn-gradient px-3 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
+                  className="btn-gradient px-3 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 shadow-md shadow-[var(--primary)]/20"
                 >
                   <Download className="h-3.5 w-3.5" /> Export Recruiter Master Sheet (CSV)
                 </button>
@@ -354,11 +353,11 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
             </div>
 
             {isLoading ? (
-              <div className="py-12 text-center text-slate-400">Evaluating cohort readiness...</div>
+              <div className="py-12 text-center text-[var(--muted-foreground)]">Evaluating cohort readiness...</div>
             ) : matchedStudents.length > 0 ? (
-              <div className="rounded-2xl border border-slate-800 overflow-hidden bg-slate-950/60 max-h-64 overflow-y-auto">
+              <div className="rounded-2xl border border-[var(--border)] overflow-hidden bg-[var(--glass-input-bg)] max-h-64 overflow-y-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="sticky top-0 bg-slate-900 text-slate-400 font-bold border-b border-slate-800 uppercase text-[10px]">
+                  <thead className="sticky top-0 bg-[var(--glass-input-bg)] text-[var(--muted-foreground)] font-bold border-b border-[var(--border)] uppercase text-[10px]">
                     <tr>
                       <th className="py-2.5 px-4">Student</th>
                       <th className="py-2.5 px-3">Role</th>
@@ -369,20 +368,20 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                       <th className="py-2.5 px-4 text-right">Inspect</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/80">
+                  <tbody className="divide-y divide-[var(--border)]">
                     {matchedStudents.map((s) => (
-                      <tr key={s._id} className="hover:bg-slate-800/50 transition">
-                        <td className="py-2.5 px-4 font-bold text-white">{s.name}</td>
-                        <td className="py-2.5 px-3 text-slate-300">{s.targetRole}</td>
-                        <td className="py-2.5 px-3 text-center font-bold text-indigo-400">{s.overallReadiness}%</td>
-                        <td className="py-2.5 px-3 text-center font-bold text-blue-400">{s.resumeScore}%</td>
-                        <td className="py-2.5 px-3 text-center font-bold text-purple-400">{s.avgInterviewScore}%</td>
-                        <td className="py-2.5 px-3 text-center font-bold text-emerald-400">{s.totalProblemsSolved}</td>
+                      <tr key={s._id} className="hover:bg-[var(--glass-input-bg)] hover:brightness-110 transition">
+                        <td className="py-2.5 px-4 font-bold text-[var(--foreground)]">{s.name}</td>
+                        <td className="py-2.5 px-3 text-[var(--muted-foreground)]">{s.targetRole}</td>
+                        <td className="py-2.5 px-3 text-center font-bold text-[var(--primary)]">{s.overallReadiness}%</td>
+                        <td className="py-2.5 px-3 text-center font-bold text-[var(--chart-5)]">{s.resumeScore}%</td>
+                        <td className="py-2.5 px-3 text-center font-bold text-[var(--chart-2)]">{s.avgInterviewScore}%</td>
+                        <td className="py-2.5 px-3 text-center font-bold text-[var(--success)]">{s.totalProblemsSolved}</td>
                         <td className="py-2.5 px-4 text-right">
                           <Link
                             to={`/students/${s._id}`}
                             onClick={onClose}
-                            className="p-1 rounded text-indigo-400 hover:text-white inline-flex items-center gap-1"
+                            className="p-1 rounded text-[var(--primary)] hover:text-[var(--foreground)] inline-flex items-center gap-1"
                           >
                             <span>360°</span> <ExternalLink className="h-3 w-3" />
                           </Link>
@@ -393,7 +392,7 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                 </table>
               </div>
             ) : (
-              <div className="py-12 text-center text-slate-500 bg-slate-950/40 rounded-2xl border border-slate-800/60">
+              <div className="py-12 text-center text-[var(--muted-foreground)] bg-[var(--glass-input-bg)] rounded-2xl border border-[var(--border)]">
                 No candidates currently meet all threshold criteria. Lower the sliders to widen the candidate pool.
               </div>
             )}
@@ -401,18 +400,18 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
-          <span className="text-slate-400 text-xs">
-            Qualified Pool: <strong className="text-white font-bold">{matchedStudents.length} candidates</strong>
+        <div className="px-6 py-3.5 bg-[var(--glass-input-bg)] border-t border-[var(--border)] flex items-center justify-between">
+          <span className="text-[var(--muted-foreground)] text-xs">
+            Qualified Pool: <strong className="text-[var(--foreground)] font-bold">{matchedStudents.length} candidates</strong>
           </span>
           <div className="flex items-center gap-3">
-            <button onClick={onClose} className="px-4 py-2 rounded-xl text-slate-300 hover:text-white text-xs">
+            <button onClick={onClose} className="px-4 py-2 rounded-xl text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xs">
               Close
             </button>
             <button
               onClick={handleExportRecruiterSheet}
               disabled={matchedStudents.length === 0}
-              className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/20 disabled:opacity-50"
+              className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-[var(--primary)]/20 disabled:opacity-50"
             >
               <Download className="h-4 w-4" /> Download Recruiter CSV
             </button>
