@@ -8,7 +8,6 @@ import {
   ShieldCheck,
   Building2,
   Download,
-  Sparkles,
   Sun,
   Moon,
   ArrowRight,
@@ -151,23 +150,23 @@ export function CommandPalette({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl lg:max-w-4xl bg-slate-900/95 text-slate-100 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] backdrop-blur-2xl"
+        className="w-full max-w-3xl lg:max-w-4xl bg-[var(--glass-strong-bg)] text-[var(--foreground)] border border-[var(--glass-strong-border)] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] backdrop-blur-[40px] saturate-[180%]"
       >
         {/* Search Header */}
-        <div className="flex items-center px-6 py-4.5 border-b border-slate-800 gap-3.5 bg-slate-950/70">
-          <Search className="h-6 w-6 text-indigo-400 shrink-0" />
+        <div className="flex items-center px-6 py-4.5 border-b border-[var(--border)] gap-3.5 bg-[var(--glass-input-bg)]">
+          <Search className="h-6 w-6 text-[var(--primary)] shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a student name, email, or command (e.g. 'export', 'matcher', 'proctor')..."
-            className="flex-1 bg-transparent text-base sm:text-lg text-white placeholder:text-slate-400 outline-none font-medium"
+            className="flex-1 bg-transparent text-base sm:text-lg text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] outline-none font-medium"
           />
-          <div className="flex items-center gap-1 text-xs bg-slate-800/90 px-2.5 py-1 rounded-lg text-slate-400 font-mono border border-slate-700/60 shadow-sm">
+          <div className="flex items-center gap-1 text-xs bg-[var(--glass-input-bg)] px-2.5 py-1 rounded-lg text-[var(--muted-foreground)] font-mono border border-[var(--border)] shadow-sm">
             <span>ESC</span>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition">
+          <button onClick={onClose} className="p-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)] rounded-lg transition">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -176,7 +175,7 @@ export function CommandPalette({
         <div className="flex-1 overflow-y-auto p-5 space-y-5 text-sm">
           {/* Quick Actions Group */}
           <div>
-            <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-slate-400">
+            <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
               Quick Operations & Tools
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
@@ -185,18 +184,18 @@ export function CommandPalette({
                   onClose();
                   onOpenCompanyMatcher?.();
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/40 hover:bg-indigo-600/20 text-slate-200 hover:text-white border border-slate-800 hover:border-indigo-500/40 transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--primary)]/20 text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[var(--primary)]/30 transition text-left group shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-400 group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-[var(--primary)]/15 text-[var(--primary)] group-hover:scale-105 transition-transform">
                     <Building2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-white">Company Placement Matcher</p>
-                    <p className="text-xs text-slate-400 mt-0.5">Filter students by hiring partner criteria</p>
+                    <p className="font-bold text-sm text-[var(--foreground)]">Company Placement Matcher</p>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Filter students by hiring partner criteria</p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--primary)] group-hover:translate-x-0.5 transition-all" />
               </button>
 
               <button
@@ -204,36 +203,36 @@ export function CommandPalette({
                   onClose();
                   onOpenLiveProctoring?.();
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/40 hover:bg-rose-600/20 text-slate-200 hover:text-white border border-slate-800 hover:border-rose-500/40 transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--destructive)]/20 text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[var(--destructive)]/30 transition text-left group shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-rose-500/20 text-rose-400 group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-[var(--destructive)]/15 text-[var(--destructive)] group-hover:scale-105 transition-transform">
                     <ShieldAlert className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-white">Live Proctoring Operations</p>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="font-bold text-sm text-[var(--foreground)]">Live Proctoring Operations</p>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
                       {blockedUsers.length > 0 ? `${blockedUsers.length} blocked candidate(s)` : "Real-time violation stream"}
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--destructive)] group-hover:translate-x-0.5 transition-all" />
               </button>
 
               <button
                 onClick={handleExportCsv}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/40 hover:bg-emerald-600/20 text-slate-200 hover:text-white border border-slate-800 hover:border-emerald-500/40 transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--success)]/20 text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[var(--success)]/30 transition text-left group shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-[var(--success)]/15 text-[var(--success)] group-hover:scale-105 transition-transform">
                     <Download className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-white">Export Cohort Master CSV</p>
-                    <p className="text-xs text-slate-400 mt-0.5">Download placement readiness sheet</p>
+                    <p className="font-bold text-sm text-[var(--foreground)]">Export Cohort Master CSV</p>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Download placement readiness sheet</p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--success)] group-hover:translate-x-0.5 transition-all" />
               </button>
 
               <button
@@ -241,34 +240,34 @@ export function CommandPalette({
                   setTheme(resolvedTheme === "dark" ? "light" : "dark");
                   toast.success(`Switched to ${resolvedTheme === "dark" ? "Light" : "Dark"} Mode`);
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/40 hover:bg-amber-600/20 text-slate-200 hover:text-white border border-slate-800 hover:border-amber-500/40 transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--warning)]/20 text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[var(--warning)]/30 transition text-left group shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-[var(--warning)]/15 text-[var(--warning)] group-hover:scale-105 transition-transform">
                     {resolvedTheme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-white">Toggle Theme</p>
-                    <p className="text-xs text-slate-400 mt-0.5">Current: {resolvedTheme === "dark" ? "Dark Mode" : "Light Mode"}</p>
+                    <p className="font-bold text-sm text-[var(--foreground)]">Toggle Theme</p>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Current: {resolvedTheme === "dark" ? "Dark Mode" : "Light Mode"}</p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--warning)] group-hover:translate-x-0.5 transition-all" />
               </button>
             </div>
           </div>
 
           {/* Blocked Candidates Quick Unblock Action */}
           {blockedUsers.length > 0 && (
-            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-3 shadow-sm">
+            <div className="p-4 rounded-2xl bg-[var(--destructive)]/15 border border-[var(--destructive)]/30 space-y-3 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-rose-300 flex items-center gap-2 text-sm">
-                  <ShieldAlert className="h-5 w-5 text-rose-400" />
+                <span className="font-bold text-[var(--destructive)] flex items-center gap-2 text-sm">
+                  <ShieldAlert className="h-5 w-5 text-[var(--destructive)]" />
                   {blockedUsers.length} Exam Block(s) Active
                 </span>
                 <button
                   onClick={() => batchUnblockMutation.mutate(blockedUsers.map((u) => u._id))}
                   disabled={batchUnblockMutation.isPending}
-                  className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-md"
+                  className="px-3.5 py-1.5 rounded-xl bg-[var(--destructive)] hover:brightness-110 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-md"
                 >
                   <ShieldCheck className="h-4 w-4" /> Restore All Access
                 </button>
@@ -281,7 +280,7 @@ export function CommandPalette({
                       onClose();
                       navigate(`/students/${u._id}`);
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-200 hover:bg-rose-500/30 text-xs font-medium border border-rose-500/30 transition"
+                    className="px-2.5 py-1 rounded-lg bg-[var(--destructive)]/15 text-[var(--destructive)] hover:bg-[var(--destructive)]/25 text-xs font-medium border border-[var(--destructive)]/30 transition"
                   >
                     {u.name}
                   </button>
@@ -293,11 +292,11 @@ export function CommandPalette({
           {/* Student Search Results */}
           {query.trim() && (
             <div>
-              <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-slate-400">
+              <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
                 Matching Student Records ({students.length})
               </p>
               {searching ? (
-                <div className="py-10 text-center text-slate-400 text-sm">Searching students...</div>
+                <div className="py-10 text-center text-[var(--muted-foreground)] text-sm">Searching students...</div>
               ) : students.length > 0 ? (
                 <div className="space-y-1.5 mt-2">
                   {students.map((s) => (
@@ -307,25 +306,25 @@ export function CommandPalette({
                         onClose();
                         navigate(`/students/${s._id}`);
                       }}
-                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-slate-800/40 hover:bg-slate-800 text-left transition border border-slate-800 hover:border-slate-700 shadow-sm"
+                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--glass-input-bg)] text-left transition border border-[var(--border)] hover:border-[var(--border)] shadow-sm"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 font-bold flex items-center justify-center text-sm shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-[var(--primary)]/15 text-[var(--primary)] font-bold flex items-center justify-center text-sm shrink-0">
                           {s.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-bold text-white text-sm truncate">{s.name}</p>
-                          <p className="text-xs text-slate-400 truncate mt-0.5">{s.email} • {s.targetRole}</p>
+                          <p className="font-bold text-[var(--foreground)] text-sm truncate">{s.name}</p>
+                          <p className="text-xs text-[var(--muted-foreground)] truncate mt-0.5">{s.email} • {s.targetRole}</p>
                         </div>
                       </div>
-                      <span className="text-xs text-indigo-400 font-bold px-3 py-1.5 bg-indigo-500/10 rounded-lg shrink-0 border border-indigo-500/20">
+                      <span className="text-xs text-[var(--primary)] font-bold px-3 py-1.5 bg-[var(--primary)]/15 rounded-lg shrink-0 border border-[var(--primary)]/30">
                         Inspect 360° →
                       </span>
                     </button>
                   ))}
                 </div>
               ) : (
-                <div className="py-8 text-center text-slate-500 text-sm">
+                <div className="py-8 text-center text-[var(--muted-foreground)] text-sm">
                   No matching student records found for "{query}".
                 </div>
               )}
@@ -334,12 +333,12 @@ export function CommandPalette({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3.5 bg-slate-950 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+        <div className="px-6 py-3.5 bg-[var(--glass-input-bg)] border-t border-[var(--border)] text-xs text-[var(--muted-foreground)] flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <span>Press <kbd className="px-2 py-0.5 bg-slate-800 rounded-md text-slate-300 font-mono text-[11px] border border-slate-700">ESC</kbd> to exit</span>
-            <span>Use <kbd className="px-2 py-0.5 bg-slate-800 rounded-md text-slate-300 font-mono text-[11px] border border-slate-700">↑</kbd> <kbd className="px-2 py-0.5 bg-slate-800 rounded-md text-slate-300 font-mono text-[11px] border border-slate-700">↓</kbd> to navigate</span>
+            <span>Press <kbd className="px-2 py-0.5 bg-[var(--glass-input-bg)] rounded-md text-[var(--muted-foreground)] font-mono text-[11px] border border-[var(--border)]">ESC</kbd> to exit</span>
+            <span>Use <kbd className="px-2 py-0.5 bg-[var(--glass-input-bg)] rounded-md text-[var(--muted-foreground)] font-mono text-[11px] border border-[var(--border)]">↑</kbd> <kbd className="px-2 py-0.5 bg-[var(--glass-input-bg)] rounded-md text-[var(--muted-foreground)] font-mono text-[11px] border border-[var(--border)]">↓</kbd> to navigate</span>
           </div>
-          <span className="text-indigo-400 font-bold flex items-center gap-1.5">
+          <span className="text-[var(--primary)] font-bold flex items-center gap-1.5">
             <Command className="h-3.5 w-3.5" /> Career Intelligence Command Hub
           </span>
         </div>
