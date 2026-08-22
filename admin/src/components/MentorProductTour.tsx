@@ -42,7 +42,7 @@ const MENTOR_TOUR_STEPS = [
         <p>
           The Mentor Portal provides real-time visibility into your students' technical skills, ATS resume scores, mock interview recordings, and competitive coding telemetry across platforms.
         </p>
-        <div className="p-3 rounded-xl bg-[var(--primary)]/15 border border-[var(--primary)]/30 text-[var(--primary)] font-medium">
+        <div className="p-3 rounded-xl bg-[rgb(var(--primary-rgb)/15%)] border border-[rgb(var(--primary-rgb)/30%)] text-[var(--primary)] font-medium">
           <strong className="text-[var(--foreground)]">Readiness Index:</strong> Monitor composite career readiness metrics to identify top performers and mentees needing help.
         </div>
       </div>
@@ -246,8 +246,8 @@ export function MentorProductTour({ open, onClose }: MentorProductTourProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--background)]/85 backdrop-blur-md animate-in fade-in duration-200">
-      <GlassCard variant="strong" className="w-full max-w-lg p-6 space-y-6 border-[var(--primary)]/30 shadow-2xl relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[rgb(var(--background-rgb)/85%)] backdrop-blur-md animate-in fade-in duration-200">
+      <GlassCard variant="strong" className="w-full max-w-lg p-6 space-y-6 border-[rgb(var(--primary-rgb)/30%)] shadow-2xl relative overflow-hidden">
         {/* Close Button */}
         <button
           onClick={() => {
@@ -268,7 +268,7 @@ export function MentorProductTour({ open, onClose }: MentorProductTourProps) {
           </div>
 
           <div>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/30 uppercase tracking-wider">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/30%)] uppercase tracking-wider">
               {current.badge} • Step {currentStep + 1} of {MENTOR_TOUR_STEPS.length}
             </span>
             <h3 className="text-lg font-extrabold text-[var(--foreground)] mt-1">{current.title}</h3>
@@ -286,7 +286,7 @@ export function MentorProductTour({ open, onClose }: MentorProductTourProps) {
               <div
                 key={idx}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  idx === currentStep ? "w-6 bg-[var(--primary)]" : "w-1.5 bg-[var(--foreground)]/20"
+                  idx === currentStep ? "w-6 bg-[var(--primary)]" : "w-1.5 bg-[rgb(var(--foreground-rgb)/20%)]"
                 }`}
               />
             ))}
@@ -304,7 +304,7 @@ export function MentorProductTour({ open, onClose }: MentorProductTourProps) {
 
             <button
               onClick={handleNext}
-              className="btn-gradient px-4 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1 shadow-lg shadow-[var(--primary)]/20"
+              className="btn-gradient px-4 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1 shadow-lg shadow-[rgb(var(--primary-rgb)/20%)]"
             >
               {isLast ? (
                 <>Enter Portal</>

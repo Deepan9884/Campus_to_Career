@@ -89,18 +89,18 @@ export function AIInterventionModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl bg-[var(--glass-strong-bg)] text-[var(--foreground)] border border-[var(--primary)]/40 rounded-3xl ember-glow-lg overflow-hidden flex flex-col max-h-[90vh] backdrop-blur-[40px] saturate-[180%]"
+        className="w-full max-w-3xl bg-[image:var(--glass-strong-bg)] text-[var(--foreground)] border border-[rgb(var(--primary-rgb)/40%)] rounded-3xl ember-glow-lg overflow-hidden flex flex-col max-h-[90vh] backdrop-blur-[40px] saturate-[180%]"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--glass-input-bg)]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/30">
+            <div className="p-2.5 rounded-2xl bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/30%)]">
               <Bot className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-black text-[var(--foreground)]">AI Mentor Co-Pilot Intervention Diagnosis</h2>
-                <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/30">
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/30%)]">
                   Gemini Powered
                 </span>
               </div>
@@ -119,7 +119,7 @@ export function AIInterventionModal({
           {isLoading ? (
             <div className="py-24 flex flex-col items-center justify-center space-y-4">
               <div className="relative">
-                <div className="h-16 w-16 rounded-full border-4 border-[var(--primary)]/30 border-t-[var(--primary)] animate-spin" />
+                <div className="h-16 w-16 rounded-full border-4 border-[rgb(var(--primary-rgb)/30%)] border-t-[var(--primary)] animate-spin" />
                 <Bot className="h-6 w-6 text-[var(--primary)] absolute inset-0 m-auto" />
               </div>
               <div className="text-center">
@@ -141,7 +141,7 @@ export function AIInterventionModal({
           ) : (
             <>
               {/* Executive Diagnosis */}
-              <div className="p-4 rounded-2xl bg-[var(--primary)]/15 border border-[var(--primary)]/30 space-y-2">
+              <div className="p-4 rounded-2xl bg-[rgb(var(--primary-rgb)/15%)] border border-[rgb(var(--primary-rgb)/30%)] space-y-2">
                 <span className="font-bold text-[var(--primary)] flex items-center gap-1.5 text-xs">
                   <Target className="h-4 w-4 text-[var(--primary)]" /> Executive Diagnosis
                 </span>
@@ -160,7 +160,7 @@ export function AIInterventionModal({
                         key={i}
                         className="p-3 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs flex items-start gap-2"
                       >
-                        <span className="w-4 h-4 rounded-full bg-[var(--destructive)]/15 text-[var(--destructive)] font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="w-4 h-4 rounded-full bg-[rgb(var(--destructive-rgb)/15%)] text-[var(--destructive)] font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
                           {i + 1}
                         </span>
                         <span className="leading-snug">{d}</span>
@@ -213,7 +213,7 @@ export function AIInterventionModal({
                         className="p-3.5 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] flex items-center justify-between gap-4"
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="p-2 rounded-xl bg-[var(--primary)]/15 text-[var(--primary)] shrink-0">
+                          <div className="p-2 rounded-xl bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] shrink-0">
                             {t.category === "interview" ? (
                               <Mic className="h-4 w-4" />
                             ) : t.category === "resume" ? (
@@ -232,10 +232,10 @@ export function AIInterventionModal({
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                               t.priority === "urgent"
-                                ? "bg-[var(--destructive)]/15 text-[var(--destructive)] border border-[var(--destructive)]/30"
+                                ? "bg-[rgb(var(--destructive-rgb)/15%)] text-[var(--destructive)] border border-[rgb(var(--destructive-rgb)/30%)]"
                                 : t.priority === "high"
-                                ? "bg-[var(--warning)]/15 text-[var(--warning)] border border-[var(--warning)]/30"
-                                : "bg-[var(--chart-5)]/20 text-[var(--chart-5)] border border-[var(--chart-5)]/30"
+                                ? "bg-[rgb(var(--warning-rgb)/15%)] text-[var(--warning)] border border-[rgb(var(--warning-rgb)/30%)]"
+                                : "bg-[rgb(var(--chart-5-rgb)/20%)] text-[var(--chart-5)] border border-[rgb(var(--chart-5-rgb)/30%)]"
                             }`}
                           >
                             {t.priority}
@@ -263,7 +263,7 @@ export function AIInterventionModal({
             <button
               onClick={handleDeliverToStudent}
               disabled={delivering || isLoading || !plan}
-              className="btn-gradient px-5 py-2.5 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-[var(--primary)]/20 disabled:opacity-50"
+              className="btn-gradient px-5 py-2.5 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-[rgb(var(--primary-rgb)/20%)] disabled:opacity-50"
             >
               {delivering ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

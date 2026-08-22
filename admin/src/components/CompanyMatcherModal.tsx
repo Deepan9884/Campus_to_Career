@@ -32,7 +32,7 @@ const PRESETS = [
     minInterview: 75,
     minCoding: 150,
     requireProof: false,
-    badgeColor: "bg-[var(--primary)]/20 text-[var(--primary)] border-[var(--primary)]/30",
+    badgeColor: "bg-[rgb(var(--primary-rgb)/20%)] text-[var(--primary)] border-[rgb(var(--primary-rgb)/30%)]",
   },
   {
     name: "Fintech & Quantitative (Goldman Sachs, Morgan Stanley)",
@@ -42,7 +42,7 @@ const PRESETS = [
     minInterview: 80,
     minCoding: 200,
     requireProof: false,
-    badgeColor: "bg-[var(--chart-2)]/20 text-[var(--chart-2)] border-[var(--chart-2)]/30",
+    badgeColor: "bg-[rgb(var(--chart-2-rgb)/20%)] text-[var(--chart-2)] border-[rgb(var(--chart-2-rgb)/30%)]",
   },
   {
     name: "High-Growth Unicorn Startups (Swiggy, Razorpay, Zepto)",
@@ -52,7 +52,7 @@ const PRESETS = [
     minInterview: 70,
     minCoding: 100,
     requireProof: true,
-    badgeColor: "bg-[var(--warning)]/15 text-[var(--warning)] border-[var(--warning)]/30",
+    badgeColor: "bg-[rgb(var(--warning-rgb)/15%)] text-[var(--warning)] border-[rgb(var(--warning-rgb)/30%)]",
   },
   {
     name: "Global Tech Services (TCS Digital, Accenture, Infosys)",
@@ -62,7 +62,7 @@ const PRESETS = [
     minInterview: 55,
     minCoding: 40,
     requireProof: false,
-    badgeColor: "bg-[var(--success)]/15 text-[var(--success)] border-[var(--success)]/30",
+    badgeColor: "bg-[rgb(var(--success-rgb)/15%)] text-[var(--success)] border-[rgb(var(--success-rgb)/30%)]",
   },
 ];
 
@@ -164,12 +164,12 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl bg-[var(--glass-strong-bg)] text-[var(--foreground)] border border-[var(--glass-strong-border)] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] backdrop-blur-[40px] saturate-[180%]"
+        className="w-full max-w-4xl bg-[image:var(--glass-strong-bg)] text-[var(--foreground)] border border-[var(--glass-strong-border)] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] backdrop-blur-[40px] saturate-[180%]"
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--glass-input-bg)]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/30">
+            <div className="p-2.5 rounded-2xl bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/30%)]">
               <Building2 className="h-5 w-5" />
             </div>
             <div>
@@ -200,8 +200,8 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                   onClick={() => handleApplyPreset(idx)}
                   className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-1.5 ${
                     selectedPreset === idx
-                      ? "bg-[var(--primary)]/20 border-[var(--primary)] text-[var(--foreground)] shadow-lg ring-1 ring-[var(--primary)]"
-                      : "bg-[var(--glass-input-bg)] border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--glass-input-bg)] hover:brightness-110 hover:text-[var(--foreground)]"
+                      ? "bg-[rgb(var(--primary-rgb)/20%)] border-[var(--primary)] text-[var(--foreground)] shadow-lg ring-1 ring-[var(--primary)]"
+                      : "bg-[var(--glass-input-bg)] border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--glass-input-bg-hover)] hover:text-[var(--foreground)]"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -345,7 +345,7 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
               {matchedStudents.length > 0 && (
                 <button
                   onClick={handleExportRecruiterSheet}
-                  className="btn-gradient px-3 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 shadow-md shadow-[var(--primary)]/20"
+                  className="btn-gradient px-3 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 shadow-md shadow-[rgb(var(--primary-rgb)/20%)]"
                 >
                   <Download className="h-3.5 w-3.5" /> Export Recruiter Master Sheet (CSV)
                 </button>
@@ -370,7 +370,7 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
                   </thead>
                   <tbody className="divide-y divide-[var(--border)]">
                     {matchedStudents.map((s) => (
-                      <tr key={s._id} className="hover:bg-[var(--glass-input-bg)] hover:brightness-110 transition">
+                      <tr key={s._id} className="hover:bg-[var(--glass-input-bg-hover)] transition">
                         <td className="py-2.5 px-4 font-bold text-[var(--foreground)]">{s.name}</td>
                         <td className="py-2.5 px-3 text-[var(--muted-foreground)]">{s.targetRole}</td>
                         <td className="py-2.5 px-3 text-center font-bold text-[var(--primary)]">{s.overallReadiness}%</td>
@@ -411,7 +411,7 @@ export function CompanyMatcherModal({ open, onClose }: CompanyMatcherModalProps)
             <button
               onClick={handleExportRecruiterSheet}
               disabled={matchedStudents.length === 0}
-              className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-[var(--primary)]/20 disabled:opacity-50"
+              className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-[rgb(var(--primary-rgb)/20%)] disabled:opacity-50"
             >
               <Download className="h-4 w-4" /> Download Recruiter CSV
             </button>

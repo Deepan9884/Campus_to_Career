@@ -150,7 +150,7 @@ export function CommandPalette({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl lg:max-w-4xl bg-[var(--glass-strong-bg)] text-[var(--foreground)] border border-[var(--glass-strong-border)] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] backdrop-blur-[40px] saturate-[180%]"
+        className="w-full max-w-3xl lg:max-w-4xl bg-[image:var(--glass-strong-bg)] text-[var(--foreground)] border border-[var(--glass-strong-border)] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] backdrop-blur-[40px] saturate-[180%]"
       >
         {/* Search Header */}
         <div className="flex items-center px-6 py-4.5 border-b border-[var(--border)] gap-3.5 bg-[var(--glass-input-bg)]">
@@ -184,10 +184,10 @@ export function CommandPalette({
                   onClose();
                   onOpenCompanyMatcher?.();
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--primary)]/20 text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[var(--primary)]/30 transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[rgb(var(--primary-rgb)/20%)] text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] transition text-left group shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[var(--primary)]/15 text-[var(--primary)] group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] group-hover:scale-105 transition-transform">
                     <Building2 className="h-5 w-5" />
                   </div>
                   <div>
@@ -203,10 +203,10 @@ export function CommandPalette({
                   onClose();
                   onOpenLiveProctoring?.();
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--destructive)]/20 text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[var(--destructive)]/30 transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[rgb(var(--destructive-rgb)/20%)] text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--destructive-rgb)/30%)] transition text-left group shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[var(--destructive)]/15 text-[var(--destructive)] group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-[rgb(var(--destructive-rgb)/15%)] text-[var(--destructive)] group-hover:scale-105 transition-transform">
                     <ShieldAlert className="h-5 w-5" />
                   </div>
                   <div>
@@ -221,10 +221,10 @@ export function CommandPalette({
 
               <button
                 onClick={handleExportCsv}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--success)]/20 text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[var(--success)]/30 transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[rgb(var(--success-rgb)/20%)] text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--success-rgb)/30%)] transition text-left group shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[var(--success)]/15 text-[var(--success)] group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-[rgb(var(--success-rgb)/15%)] text-[var(--success)] group-hover:scale-105 transition-transform">
                     <Download className="h-5 w-5" />
                   </div>
                   <div>
@@ -240,10 +240,10 @@ export function CommandPalette({
                   setTheme(resolvedTheme === "dark" ? "light" : "dark");
                   toast.success(`Switched to ${resolvedTheme === "dark" ? "Light" : "Dark"} Mode`);
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--warning)]/20 text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[var(--warning)]/30 transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[rgb(var(--warning-rgb)/20%)] text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--warning-rgb)/30%)] transition text-left group shadow-sm"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[var(--warning)]/15 text-[var(--warning)] group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-[rgb(var(--warning-rgb)/15%)] text-[var(--warning)] group-hover:scale-105 transition-transform">
                     {resolvedTheme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                   </div>
                   <div>
@@ -258,7 +258,7 @@ export function CommandPalette({
 
           {/* Blocked Candidates Quick Unblock Action */}
           {blockedUsers.length > 0 && (
-            <div className="p-4 rounded-2xl bg-[var(--destructive)]/15 border border-[var(--destructive)]/30 space-y-3 shadow-sm">
+            <div className="p-4 rounded-2xl bg-[rgb(var(--destructive-rgb)/15%)] border border-[rgb(var(--destructive-rgb)/30%)] space-y-3 shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-[var(--destructive)] flex items-center gap-2 text-sm">
                   <ShieldAlert className="h-5 w-5 text-[var(--destructive)]" />
@@ -280,7 +280,7 @@ export function CommandPalette({
                       onClose();
                       navigate(`/students/${u._id}`);
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-[var(--destructive)]/15 text-[var(--destructive)] hover:bg-[var(--destructive)]/25 text-xs font-medium border border-[var(--destructive)]/30 transition"
+                    className="px-2.5 py-1 rounded-lg bg-[rgb(var(--destructive-rgb)/15%)] text-[var(--destructive)] hover:bg-[rgb(var(--destructive-rgb)/25%)] text-xs font-medium border border-[rgb(var(--destructive-rgb)/30%)] transition"
                   >
                     {u.name}
                   </button>
@@ -306,10 +306,10 @@ export function CommandPalette({
                         onClose();
                         navigate(`/students/${s._id}`);
                       }}
-                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--glass-input-bg)] hover:brightness-110 text-left transition border border-[var(--border)] hover:border-[var(--primary)]/30 shadow-sm"
+                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--glass-input-bg-hover)] text-left transition border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] shadow-sm"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-[var(--primary)]/15 text-[var(--primary)] font-bold flex items-center justify-center text-sm shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] font-bold flex items-center justify-center text-sm shrink-0">
                           {s.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
@@ -317,7 +317,7 @@ export function CommandPalette({
                           <p className="text-xs text-[var(--muted-foreground)] truncate mt-0.5">{s.email} • {s.targetRole}</p>
                         </div>
                       </div>
-                      <span className="text-xs text-[var(--primary)] font-bold px-3 py-1.5 bg-[var(--primary)]/15 rounded-lg shrink-0 border border-[var(--primary)]/30">
+                      <span className="text-xs text-[var(--primary)] font-bold px-3 py-1.5 bg-[rgb(var(--primary-rgb)/15%)] rounded-lg shrink-0 border border-[rgb(var(--primary-rgb)/30%)]">
                         Inspect 360° →
                       </span>
                     </button>

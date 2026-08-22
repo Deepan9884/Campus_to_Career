@@ -75,7 +75,7 @@ function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
         onClick={() => setTheme("light")}
         className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 ${
           theme === "light"
-            ? "bg-white text-[var(--primary)] shadow-md"
+            ? "bg-white dark:bg-[var(--glass-input-bg)] text-[var(--primary)] shadow-md"
             : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
         }`}
         title="Light Mode"
@@ -188,7 +188,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
       {/* Left Sidebar Navigation (Expandable & Shrinkable) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 bg-[var(--glass-strong-bg)] backdrop-blur-[40px] saturate-[180%] border-r border-[var(--border)] flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl ${
+        className={`fixed top-0 bottom-0 left-0 z-50 bg-[image:var(--glass-strong-bg)] backdrop-blur-[40px] saturate-[180%] border-r border-[var(--border)] flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl ${
           sidebarCollapsed ? "w-[72px] p-3" : "w-64 p-5"
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
@@ -237,7 +237,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           {!sidebarCollapsed ? (
             <button
               onClick={() => setCommandPaletteOpen(true)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[var(--primary)]/30 transition text-xs shadow-sm"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[rgb(var(--primary-rgb)/30%)] transition text-xs shadow-sm"
             >
               <span className="flex items-center gap-2 font-medium">
                 <Command className="h-3.5 w-3.5 text-[var(--primary)]" />
@@ -296,14 +296,14 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                 </p>
                 <button
                   onClick={() => setCompanyMatcherOpen(true)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/15 flex items-center gap-2.5 transition text-left"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] hover:bg-[rgb(var(--primary-rgb)/15%)] flex items-center gap-2.5 transition text-left"
                 >
                   <Building2 className="h-4 w-4 text-[var(--primary)] shrink-0" />
                   <span>Company Matcher</span>
                 </button>
                 <button
                   onClick={() => setLiveProctoringOpen(true)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--destructive)] hover:bg-[var(--destructive)]/15 flex items-center gap-2.5 transition text-left"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--destructive)] hover:bg-[rgb(var(--destructive-rgb)/15%)] flex items-center gap-2.5 transition text-left"
                 >
                   <ShieldAlert className="h-4 w-4 text-[var(--destructive)] shrink-0" />
                   <span>Live Proctoring Radar</span>
@@ -331,7 +331,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           <button
             onClick={() => setShowMentorTour(true)}
             title="Mentor Guide & Product Tour"
-            className={`w-full rounded-xl liquid-glass-card hover:brightness-110 border border-[var(--primary)]/30 text-xs font-bold text-[var(--primary)] flex items-center transition group ${
+            className={`w-full rounded-xl liquid-glass-card hover:brightness-110 border border-[rgb(var(--primary-rgb)/30%)] text-xs font-bold text-[var(--primary)] flex items-center transition group ${
               sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2 justify-between"
             }`}
           >
@@ -340,7 +340,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
               {!sidebarCollapsed && <span>Mentor Guide</span>}
             </span>
             {!sidebarCollapsed && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--primary)]/15 text-[var(--primary)] font-bold">
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] font-bold">
                 Tour
               </span>
             )}
@@ -361,7 +361,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
       </aside>
 
       {/* Mobile Top Bar with Hamburger Toggle */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[var(--glass-strong-bg)] backdrop-blur-[40px] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between shadow-md">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[image:var(--glass-strong-bg)] backdrop-blur-[40px] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-xl btn-gradient flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
             <GraduationCap className="h-4 w-4" />
@@ -430,8 +430,8 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, Er
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-[var(--background)] text-[var(--foreground)] font-sans">
-          <div className="max-w-md w-full p-6 rounded-2xl bg-[var(--popover)] border border-[var(--destructive)]/30 text-center space-y-4 shadow-2xl">
-            <div className="h-12 w-12 rounded-xl bg-[var(--destructive)]/15 text-[var(--destructive)] mx-auto flex items-center justify-center border border-[var(--destructive)]/30">
+          <div className="max-w-md w-full p-6 rounded-2xl bg-[var(--popover)] border border-[rgb(var(--destructive-rgb)/30%)] text-center space-y-4 shadow-2xl">
+            <div className="h-12 w-12 rounded-xl bg-[rgb(var(--destructive-rgb)/15%)] text-[var(--destructive)] mx-auto flex items-center justify-center border border-[rgb(var(--destructive-rgb)/30%)]">
               <AlertCircle className="h-6 w-6" />
             </div>
             <h2 className="text-lg font-bold text-[var(--foreground)]">Something Went Wrong</h2>
@@ -540,7 +540,7 @@ export function App() {
   if (isVerifying) {
     return (
       <div className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center space-y-3">
-        <div className="h-10 w-10 rounded-full border-4 border-[var(--primary)]/20 border-t-[var(--primary)] animate-spin" />
+        <div className="h-10 w-10 rounded-full border-4 border-[rgb(var(--primary-rgb)/20%)] border-t-[var(--primary)] animate-spin" />
         <p className="text-xs font-bold text-[var(--muted-foreground)]">Verifying session...</p>
       </div>
     );
