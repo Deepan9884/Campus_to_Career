@@ -104,6 +104,10 @@ ehthumbs.db
 *.sqlite3
 
 # Build artifacts
+dist/
+.output/
+.nitro/
+.vercel/
 build/
 out/
 public/build/
