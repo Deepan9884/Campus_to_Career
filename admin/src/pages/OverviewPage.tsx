@@ -27,10 +27,10 @@ import {
   CheckCircle2,
   X,
   Activity,
-  Sparkles,
   Building2,
   ShieldAlert,
   ListTodo,
+  Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -826,7 +826,7 @@ export function OverviewPage() {
                         className="flex-1 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-[10px] font-black text-indigo-600 dark:text-indigo-300 transition flex items-center justify-center gap-1 shadow-sm"
                         title="AI Co-Pilot 2-Week Remedial Plan"
                       >
-                        <Sparkles className="h-3 w-3 text-indigo-500" /> AI Plan
+                        <Bot className="h-3 w-3 text-indigo-500" /> AI Plan
                       </button>
                       <button
                         onClick={() => setTaskStudent(st)}

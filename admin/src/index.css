@@ -136,7 +136,7 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -154,9 +154,14 @@
   }
 
   h1, h2 {
-    font-family: "DM Serif Display", Georgia, serif;
+    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+  h3, h4, h5, h6 {
+    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
     letter-spacing: -0.015em;
-    font-weight: 400;
+    font-weight: 600;
   }
 }
 

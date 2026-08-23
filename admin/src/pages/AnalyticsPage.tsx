@@ -10,7 +10,6 @@ import {
   Code2,
   Loader2,
   Target,
-  Sparkles,
   TrendingUp,
   Award,
   Zap,
@@ -138,7 +137,7 @@ export function AnalyticsPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-indigo-500" /> Deep Cohort Intelligence
+              <Award className="h-3 w-3 text-indigo-500" /> Deep Cohort Intelligence
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">

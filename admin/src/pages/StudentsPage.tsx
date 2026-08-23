@@ -28,8 +28,8 @@ import {
   ShieldAlert,
   Building2,
   Download,
-  Sparkles,
   ListTodo,
+  Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -473,7 +473,7 @@ export function StudentsPage() {
                             className="p-1.5 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 transition shadow-sm"
                             title="AI Co-Pilot Diagnosis & 2-Week Plan"
                           >
-                            <Sparkles className="h-3.5 w-3.5" />
+                            <Bot className="h-3.5 w-3.5" />
                           </button>
 
                           {/* Assign Goal Button */}
