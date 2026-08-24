@@ -33,9 +33,9 @@ import {
   X,
   Lock,
   Download,
-  Sparkles,
   ListTodo,
   Trash2,
+  Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -416,7 +416,7 @@ export function StudentDetailPage() {
               className="px-3.5 py-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
               title="AI Co-Pilot Diagnosis & 2-Week Plan"
             >
-              <Sparkles className="h-3.5 w-3.5 text-indigo-500" /> AI Co-Pilot
+              <Bot className="h-3.5 w-3.5 text-indigo-500" /> AI Co-Pilot
             </button>
 
             {/* Assign Goal */}
@@ -678,7 +678,7 @@ export function StudentDetailPage() {
                 onClick={() => setShowAIModal(true)}
                 className="px-3.5 py-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
               >
-                <Sparkles className="h-3.5 w-3.5" /> AI Co-Pilot
+                <Bot className="h-3.5 w-3.5" /> AI Co-Pilot
               </button>
               <button
                 onClick={() => setShowTaskModal(true)}
