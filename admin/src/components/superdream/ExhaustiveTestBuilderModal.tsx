@@ -97,92 +97,33 @@ export function ExhaustiveTestBuilderModal({
   const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4>(1);
 
   // Step 1: Identity & Proctoring
-  const [testTitle, setTestTitle] = useState("FAANG Speed Architecture & High-Concurrency Exam");
-  const [testCategory, setTestCategory] = useState("Distributed Systems & Concurrency");
-  const [testDifficulty, setTestDifficulty] = useState<"Super Dream (FAANG)" | "Expert" | "Advanced">("Super Dream (FAANG)");
-  const [targetPhase, setTargetPhase] = useState(2);
+  const [testTitle, setTestTitle] = useState("");
+  const [testCategory, setTestCategory] = useState("DSA Master");
+  const [testDifficulty, setTestDifficulty] = useState<"Super Dream (FAANG)" | "Expert" | "Advanced">("Advanced");
+  const [targetPhase, setTargetPhase] = useState(1);
   const [targetCandidate, setTargetCandidate] = useState("all");
-  const [totalDurationMinutes, setTotalDurationMinutes] = useState(60);
-  const [passingScorePercentage, setPassingScorePercentage] = useState(80);
-  const [windowStart, setWindowStart] = useState("2026-09-01T09:00");
-  const [windowEnd, setWindowEnd] = useState("2026-09-05T23:59");
+  const [totalDurationMinutes, setTotalDurationMinutes] = useState(45);
+  const [passingScorePercentage, setPassingScorePercentage] = useState(70);
+  const [windowStart, setWindowStart] = useState("");
+  const [windowEnd, setWindowEnd] = useState("");
   const [retakeAllowed, setRetakeAllowed] = useState(false);
 
   // Security & Proctoring
-  const [webcamRequired, setWebcamRequired] = useState(true);
+  const [webcamRequired, setWebcamRequired] = useState(false);
   const [fullscreenEnforced, setFullscreenEnforced] = useState(true);
-  const [tabSwitchLimit, setTabSwitchLimit] = useState(2);
-  const [aiFaceDetection, setAiFaceDetection] = useState(true);
-  const [copyPasteDisabled, setCopyPasteDisabled] = useState(true);
+  const [tabSwitchLimit, setTabSwitchLimit] = useState(3);
+  const [aiFaceDetection, setAiFaceDetection] = useState(false);
+  const [copyPasteDisabled, setCopyPasteDisabled] = useState(false);
 
   // Step 2 & 3: Sections & Questions
   const [sections, setSections] = useState<TestSectionConfig[]>([
     {
       id: "sec-1",
-      title: "Section A: Distributed Systems Core MCQ",
+      title: "Section A: Technical Assessment",
       type: "mcq",
-      timeLimitMinutes: 20,
-      mcqQuestions: [
-        {
-          id: "q-mcq-1",
-          question: "In the Raft consensus algorithm, how does a candidate node transition into the Leader state?",
-          options: [
-            "Receiving affirmative votes from a majority of all nodes in the cluster for that term",
-            "Waiting for 3 consecutive heartbeat cycles with zero election timeouts",
-            "Having the highest IP address in the cluster discovery ledger",
-            "Writing to an external etcd cluster directly",
-          ],
-          correctOptionIndex: 0,
-          positiveMarks: 4,
-          negativeMarks: 1,
-          explanation: "Raft leader election requires majority quorum (N/2 + 1) affirmative votes from cluster nodes.",
-          topic: "Distributed Consensus",
-        },
-      ],
-      codingQuestions: [],
-    },
-    {
-      id: "sec-2",
-      title: "Section B: High-Throughput Disruptor Sandbox",
-      type: "coding",
-      timeLimitMinutes: 40,
+      timeLimitMinutes: 30,
       mcqQuestions: [],
-      codingQuestions: [
-        {
-          id: "q-code-1",
-          title: "Implement a Zero-Copy Lock-Free Ring Buffer",
-          problemStatement: "Design and implement a single-producer single-consumer ring buffer with zero mutex contention and power-of-two mask indexing.",
-          constraints: "Time Limit: 1000ms • Memory Limit: 64MB • L3 Cache False Sharing Prevention Required",
-          allowedLanguages: ["C++", "Rust", "Go", "Java"],
-          starterBoilerplate: {
-            "C++": `// Complete the RingBuffer class\n#include <atomic>\n#include <cstdint>\n\ntemplate<typename T, size_t Capacity>\nclass RingBuffer {\n  // Align to cache-line to avoid false sharing\n  alignas(64) std::atomic<uint64_t> head_{0};\n  alignas(64) std::atomic<uint64_t> tail_{0};\n  T buffer_[Capacity];\npublic:\n  bool push(const T& item) {\n    // Implement lock-free push\n    return true;\n  }\n  bool pop(T& item) {\n    // Implement lock-free pop\n    return true;\n  }\n};`,
-            "Rust": `// Rust Lock-free Ring Buffer\nuse std::sync::atomic::{AtomicUsize, Ordering};\n\npub struct RingBuffer<T> {\n    // Implement struct\n}`,
-            "Go": `package main\n\nimport "sync/atomic"\n\ntype RingBuffer struct {\n    // Implement struct\n}`,
-            "Java": `public class RingBuffer<T> {\n    // Implement class\n}`,
-          },
-          testCases: [
-            {
-              id: "tc-1",
-              input: "Capacity: 1024, Push: 1000000 integers via concurrent threads",
-              expectedOutput: "1000000 integers popped in strictly ordered sequence with 0 data loss",
-              isHidden: false,
-              explanation: "Verifies basic atomic head/tail wrap-around correctness.",
-              timeLimitMs: 1000,
-              memoryLimitMb: 64,
-            },
-            {
-              id: "tc-2",
-              input: "Saturated high-throughput stress test with 4 producer threads and buffer full backpressure",
-              expectedOutput: "Graceful non-blocking drop or yield without deadlocks",
-              isHidden: true,
-              timeLimitMs: 800,
-              memoryLimitMb: 32,
-            },
-          ],
-          attachedPdfName: "disruptor_architecture_spec_v2.pdf",
-          attachedPdfSize: "1.4 MB",
-        },
-      ],
+      codingQuestions: [],
     },
   ]);
 
@@ -521,10 +462,10 @@ export function ExhaustiveTestBuilderModal({
                       className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-rose-400"
                     >
                       <option value="all">All Cohort Candidates (2026 Batch)</option>
-                      <option value="std-1">Deepan S (Phase 2)</option>
-                      <option value="std-2">Priya Nair (Phase 2)</option>
-                      <option value="std-3">Rohan Varma (Phase 1)</option>
-                      <option value="std-4">Ananya Sharma (Phase 3)</option>
+                      <option value="std-1">Candidate 1 (Phase 2)</option>
+                      <option value="std-2">Candidate 2 (Phase 2)</option>
+                      <option value="std-3">Candidate 3 (Phase 1)</option>
+                      <option value="std-4">Candidate 4 (Phase 3)</option>
                     </select>
                   </div>
                 </div>

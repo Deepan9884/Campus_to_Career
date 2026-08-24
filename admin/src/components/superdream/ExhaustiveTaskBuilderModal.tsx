@@ -60,27 +60,25 @@ export function ExhaustiveTaskBuilderModal({
   onClose,
   onSaveTask,
 }: ExhaustiveTaskBuilderModalProps) {
-  const [taskTitle, setTaskTitle] = useState("Implement Distributed Vector Search Indexer in Rust / C++");
-  const [taskCategory, setTaskCategory] = useState<PhasedTaskConfig["category"]>("System Design");
-  const [taskPhase, setTaskPhase] = useState<1 | 2 | 3 | 4>(2);
-  const [taskDueDate, setTaskDueDate] = useState("2026-09-15");
-  const [gracePeriodDays, setGracePeriodDays] = useState(3);
-  const [taskPriority, setTaskPriority] = useState<"High" | "Urgent" | "Normal">("Urgent");
+  const [taskTitle, setTaskTitle] = useState("");
+  const [taskCategory, setTaskCategory] = useState<PhasedTaskConfig["category"]>("DSA");
+  const [taskPhase, setTaskPhase] = useState<1 | 2 | 3 | 4>(1);
+  const [taskDueDate, setTaskDueDate] = useState("");
+  const [gracePeriodDays, setGracePeriodDays] = useState(0);
+  const [taskPriority, setTaskPriority] = useState<"High" | "Urgent" | "Normal">("Normal");
   const [targetCandidateId, setTargetCandidateId] = useState("all");
-  const [taskDesc, setTaskDesc] = useState(
-    "Design a multi-threaded Hierarchical Navigable Small World (HNSW) vector indexer with SIMD cosine distance calculations and lock-free insertion."
-  );
+  const [taskDesc, setTaskDesc] = useState("");
 
   // Deliverables checklist
   const [reqGithub, setReqGithub] = useState(true);
-  const [reqLiveDemo, setReqLiveDemo] = useState(true);
-  const [reqArchPdf, setReqArchPdf] = useState(true);
-  const [reqBenchmarkSuite, setReqBenchmarkSuite] = useState(true);
+  const [reqLiveDemo, setReqLiveDemo] = useState(false);
+  const [reqArchPdf, setReqArchPdf] = useState(false);
+  const [reqBenchmarkSuite, setReqBenchmarkSuite] = useState(false);
 
   // Benchmarks
-  const [minQps, setMinQps] = useState(50000);
-  const [maxLatencyP99, setMaxLatencyP99] = useState(3.5);
-  const [zeroLeaks, setZeroLeaks] = useState(true);
+  const [minQps, setMinQps] = useState(0);
+  const [maxLatencyP99, setMaxLatencyP99] = useState(0);
+  const [zeroLeaks, setZeroLeaks] = useState(false);
 
   // Rubric weights
   const [archPct, setArchPct] = useState(40);
@@ -88,8 +86,8 @@ export function ExhaustiveTaskBuilderModal({
   const [codeQualityPct, setCodeQualityPct] = useState(30);
 
   // Attached spec
-  const [attachedPdfName, setAttachedPdfName] = useState<string | undefined>("hnsw_vector_engine_specification.pdf");
-  const [attachedPdfSize, setAttachedPdfSize] = useState<string | undefined>("2.1 MB");
+  const [attachedPdfName, setAttachedPdfName] = useState<string | undefined>(undefined);
+  const [attachedPdfSize, setAttachedPdfSize] = useState<string | undefined>(undefined);
 
   if (!open) return null;
 
@@ -116,7 +114,7 @@ export function ExhaustiveTaskBuilderModal({
       phase: taskPhase,
       description: taskDesc,
       targetCandidateId,
-      assignedBy: "Dr. Rajesh Kumar (Lead Architect)",
+      assignedBy: "Faculty Mentor",
       assignedDate: new Date().toISOString().split("T")[0],
       dueDate: taskDueDate,
       gracePeriodDays: Number(gracePeriodDays),
@@ -248,10 +246,10 @@ export function ExhaustiveTaskBuilderModal({
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white"
                 >
                   <option value="all">Entire Super Dream Cohort (Batch 2026)</option>
-                  <option value="std-1">Deepan S (Phase 2)</option>
-                  <option value="std-2">Priya Nair (Phase 2)</option>
-                  <option value="std-3">Rohan Varma (Phase 1)</option>
-                  <option value="std-4">Ananya Sharma (Phase 3)</option>
+                  <option value="std-1">Candidate 1 (Phase 2)</option>
+                  <option value="std-2">Candidate 2 (Phase 2)</option>
+                  <option value="std-3">Candidate 3 (Phase 1)</option>
+                  <option value="std-4">Candidate 4 (Phase 3)</option>
                 </select>
               </div>
 

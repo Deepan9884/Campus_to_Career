@@ -51,40 +51,23 @@ export function ExhaustiveCourseCuratorModal({
   onClose,
   onSaveCourse,
 }: ExhaustiveCourseCuratorModalProps) {
-  const [courseTitle, setCourseTitle] = useState("CS 244B: Advanced Distributed Systems & Consensus");
-  const [provider, setProvider] = useState("Stanford Online");
-  const [instructor, setInstructor] = useState("Prof. David Mazières & Prof. Mendel Rosenblum");
-  const [duration, setDuration] = useState("8 Weeks (48 Hours)");
-  const [difficulty, setDifficulty] = useState<"Advanced" | "Expert" | "Master">("Master");
-  const [targetLpaTier, setTargetLpaTier] = useState("25 - 45 LPA (FAANG)");
-  const [description, setDescription] = useState(
-    "Rigorous exploration of linearizable storage, state machine replication via Raft & Multi-Paxos, and Byzantine fault tolerance."
-  );
-  const [topicsString, setTopicsString] = useState("Raft Consensus, Multi-Paxos Invariants, LSM Trees, Vector Clocks");
+  const [courseTitle, setCourseTitle] = useState("");
+  const [provider, setProvider] = useState("");
+  const [instructor, setInstructor] = useState("");
+  const [duration, setDuration] = useState("");
+  const [difficulty, setDifficulty] = useState<"Advanced" | "Expert" | "Master">("Advanced");
+  const [targetLpaTier, setTargetLpaTier] = useState("20+ LPA (Super Dream)");
+  const [description, setDescription] = useState("");
+  const [topicsString, setTopicsString] = useState("");
 
   // Verification Policy
-  const [minSyllabusCoverage, setMinSyllabusCoverage] = useState(96);
+  const [minSyllabusCoverage, setMinSyllabusCoverage] = useState(90);
   const [mandatoryNameMatch, setMandatoryNameMatch] = useState(true);
   const [requireCryptoSig, setRequireCryptoSig] = useState(true);
   const [tamperCheck, setTamperCheck] = useState(true);
 
   // Weekly breakdown
-  const [weeklyModules, setWeeklyModules] = useState<CourseWeekModule[]>([
-    {
-      weekNumber: 1,
-      title: "Week 01: Linearizability & Replicated State Machines",
-      subtopics: ["CAP Theorem Tradeoffs", "Safety vs Liveness", "Sequential Consistency"],
-      estimatedHours: 6,
-      mandatoryReadingPaper: "Paxos Made Simple (Leslie Lamport, 2001)",
-    },
-    {
-      weekNumber: 2,
-      title: "Week 02: Raft Leader Election & Log Replication",
-      subtopics: ["Term Invariants", "Split-Brain Election Timeouts", "Log Compaction & Snapshots"],
-      estimatedHours: 8,
-      mandatoryReadingPaper: "In Search of an Understandable Consensus Algorithm (Ongaro & Ousterhout)",
-    },
-  ]);
+  const [weeklyModules, setWeeklyModules] = useState<CourseWeekModule[]>([]);
 
   if (!open) return null;
 

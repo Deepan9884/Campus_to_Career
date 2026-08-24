@@ -54,45 +54,23 @@ export function ExhaustiveRoadmapBuilderModal({
   onClose,
   onSaveRoadmapModule,
 }: ExhaustiveRoadmapBuilderModalProps) {
-  const [moduleTitle, setModuleTitle] = useState("High-Concurrency Memory Models & Lock-Free Data Structures");
-  const [domainTag, setDomainTag] = useState("High Concurrency");
-  const [phase, setPhase] = useState(2);
-  const [description, setDescription] = useState(
-    "CPU cache line coherence (MESI/MOESI), false sharing mitigation, memory fences, and non-blocking queue synchronization."
-  );
+  const [moduleTitle, setModuleTitle] = useState("");
+  const [domainTag, setDomainTag] = useState("");
+  const [phase, setPhase] = useState(1);
+  const [description, setDescription] = useState("");
 
-  const [topics, setTopics] = useState<RoadmapTopicConfig[]>([
-    {
-      id: "t-1",
-      name: "CPU Cache Coherence & False Sharing Elimination",
-      estimatedHours: 12,
-      whitepaperRef: "What Every Programmer Should Know About Memory (Ulrich Drepper)",
-      handsOnLabRequired: true,
-    },
-    {
-      id: "t-2",
-      name: "CAS (Compare-And-Swap) & ABA Problem Resolution via Tagged Pointers",
-      estimatedHours: 16,
-      whitepaperRef: "The Art of Multiprocessor Programming (Herlihy & Shavit)",
-      handsOnLabRequired: true,
-    },
-  ]);
+  const [topics, setTopics] = useState<RoadmapTopicConfig[]>([]);
 
-  const [quizTitle, setQuizTitle] = useState("Checkpoint Quiz: Memory Hierarchy & Atomic Invariants");
-  const [quizQuestions, setQuizQuestions] = useState([
+  const [quizTitle, setQuizTitle] = useState("");
+  const [quizQuestions, setQuizQuestions] = useState<
     {
-      id: "q-1",
-      question: "Why is cache line padding (typically 64 bytes) necessary in concurrent ring buffer head/tail pointers?",
-      options: [
-        "To prevent false sharing where writes to head invalidate the L1/L2 cache line containing tail on another CPU core",
-        "To satisfy compiler alignment warnings only",
-        "To compress the memory footprint into 32 bits",
-        "To convert atomic variables into standard non-atomic integers",
-      ],
-      correctIndex: 0,
-      explanation: "False sharing occurs when independent variables reside in the same 64-byte cache line, causing unnecessary cache invalidations across CPU cores.",
-    },
-  ]);
+      id: string;
+      question: string;
+      options: string[];
+      correctIndex: number;
+      explanation: string;
+    }[]
+  >([]);
 
   if (!open) return null;
 

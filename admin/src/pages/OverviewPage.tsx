@@ -249,22 +249,27 @@ export function OverviewPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Top Executive Command Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white/70 dark:bg-slate-900/70 p-4 sm:p-5 rounded-3xl border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg relative overflow-hidden">
-        <div className="space-y-1 relative z-10">
+      <div className="elite-panel hero-card-shimmer relative flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 sm:p-6 rounded-3xl overflow-hidden">
+        {/* Decorative corner gradient */}
+        <div className="absolute top-0 right-0 w-72 h-36 rounded-bl-[100px] opacity-20 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.6), transparent 70%)" }}
+        />
+        <div className="space-y-1.5 relative z-10">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 flex items-center gap-1.5 shadow-sm">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 live-dot" />
               Live Telemetry
             </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
-              Assigned: <strong className="text-slate-900 dark:text-white">{totalCount} Mentees</strong>
+            <span className="text-xs text-[var(--muted-foreground)] font-semibold">
+              Assigned: <strong className="text-[var(--foreground)]">{totalCount} Mentees</strong>
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-            Mentor Command Center
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+            <span className="gradient-text-warm">Mentor Command</span>{" "}
+            <span className="text-[var(--foreground)]">Center</span>
           </h1>
-          <p className="text-xs text-slate-600 dark:text-slate-400 max-w-xl">
-            Real-time diagnostic telemetry, skill deficiency analysis, and placement readiness tracking for your assigned mentees.
+          <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Placement readiness and performance tracking.
           </p>
         </div>
 
@@ -272,28 +277,28 @@ export function OverviewPage() {
         <div className="flex flex-wrap items-center gap-2.5 relative z-10 self-start lg:self-center">
           <button
             onClick={() => setShowAddModal(true)}
-            className="btn-gradient px-4 py-2.5 rounded-xl text-xs font-black text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 transition hover:scale-105"
+            className="btn-gradient px-4 py-2.5 rounded-xl text-xs font-black text-white flex items-center gap-2 shadow-lg shadow-indigo-500/30 transition hover:scale-105"
           >
             <UserPlus className="h-4 w-4" /> Add Mentee
           </button>
 
           <button
             onClick={handleExportCohortCSV}
-            className="px-3.5 py-2.5 rounded-xl glass hover:bg-slate-100 dark:hover:bg-white/10 text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 flex items-center gap-2 transition"
+            className="px-3.5 py-2.5 rounded-xl bg-[var(--glass-input-bg)] hover:bg-[rgba(255,255,255,0.10)] text-xs font-bold text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] flex items-center gap-2 transition"
             title="Export Mentees CSV"
           >
-            <Download className="h-4 w-4 text-indigo-500" /> Export CSV
+            <Download className="h-4 w-4 text-[var(--primary)]" /> Export CSV
           </button>
 
           <button
             onClick={handleRefresh}
             disabled={isRefetchingRoster || isRefetchingCohort}
-            className="p-2.5 rounded-xl glass hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition"
+            className="p-2.5 rounded-xl bg-[var(--glass-input-bg)] hover:bg-[rgba(255,255,255,0.10)] text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] transition"
             title="Refresh Telemetry"
           >
             <RefreshCw
-              className={`h-4 w-4 text-slate-500 dark:text-slate-400 ${
-                isRefetchingRoster || isRefetchingCohort ? "animate-spin text-indigo-500" : ""
+              className={`h-4 w-4 text-[var(--muted-foreground)] ${
+                isRefetchingRoster || isRefetchingCohort ? "animate-spin text-[var(--primary)]" : ""
               }`}
             />
           </button>
@@ -301,104 +306,104 @@ export function OverviewPage() {
       </div>
 
       {/* Hiring Readiness & Placement Funnel Hub */}
-      <GlassCard
-        variant="strong"
-        className="p-6 sm:p-7 border-indigo-500/30 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent dark:from-indigo-950/50 dark:via-slate-900/80 dark:to-purple-950/50 relative overflow-hidden"
-      >
+      <div className="elite-panel hero-card-shimmer relative p-6 sm:p-7 rounded-3xl overflow-hidden">
+        {/* Background gradient accent */}
+        <div className="absolute inset-0 rounded-3xl pointer-events-none opacity-30"
+          style={{ background: "radial-gradient(ellipse at 20% 0%, rgba(139,92,246,0.4) 0%, transparent 60%)" }}
+        />
         <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-xl">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1 uppercase tracking-wider">
-                <Zap className="h-3 w-3 text-indigo-500 dark:text-indigo-400" /> Hiring Readiness Funnel
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[rgb(var(--primary-rgb)/18%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/25%)] flex items-center gap-1.5 uppercase tracking-wider">
+                <Zap className="h-3 w-3" /> Readiness Funnel
               </span>
-              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
-                Target Benchmark: <strong className="text-emerald-600 dark:text-emerald-400">≥75% Readiness</strong>
+              <span className="text-[11px] font-bold text-[var(--muted-foreground)]">
+                Target Benchmark: <strong className="text-emerald-400">≥75%</strong>
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              Mentorship Placement Funnel
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+              <span className="gradient-text">Mentorship Placement</span>{" "}
+              <span className="text-[var(--foreground)]">Funnel</span>
             </h2>
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Composite telemetry evaluated across ATS resumes, technical mock interviews, verified proofs, and DSA problem solving.
-            </p>
           </div>
 
-          {/* Clean Metric Badges (No Cheesy Symbols) */}
-          <div className="grid grid-cols-3 gap-3 w-full xl:w-auto shrink-0 bg-white/80 dark:bg-slate-950/80 p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-md">
+          {/* Clean Metric Badges */}
+          <div className="grid grid-cols-3 gap-0 w-full xl:w-auto shrink-0 rounded-2xl overflow-hidden border border-[var(--border)] divide-x divide-[var(--border)]"
+            style={{ background: "rgba(0,0,0,0.25)", backdropFilter: "blur(20px)" }}>
             {/* Placement Ready */}
-            <div className="text-center px-2 sm:px-4 border-r border-slate-200 dark:border-white/10">
-              <div className="flex items-center justify-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-2xl sm:text-3xl font-black">{placementReadyCount}</span>
+            <div className="text-center px-5 py-4">
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                <span className="text-3xl font-black text-emerald-400">{placementReadyCount}</span>
               </div>
-              <p className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 mt-0.5">Placement Ready</p>
-              <span className="text-[10px] text-slate-500 font-semibold">({readyPct}%)</span>
+              <p className="text-[11px] font-bold text-emerald-400">Placement Ready</p>
+              <span className="text-[10px] text-[var(--muted-foreground)] font-semibold">({readyPct}%)</span>
             </div>
 
             {/* Developing */}
-            <div className="text-center px-2 sm:px-4 border-r border-slate-200 dark:border-white/10">
-              <div className="flex items-center justify-center gap-1.5 text-amber-600 dark:text-amber-400">
-                <span className="h-2 w-2 rounded-full bg-amber-500" />
-                <span className="text-2xl sm:text-3xl font-black">{developingCount}</span>
+            <div className="text-center px-5 py-4">
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+                <span className="text-3xl font-black text-amber-400">{developingCount}</span>
               </div>
-              <p className="text-[11px] font-bold text-amber-700 dark:text-amber-300 mt-0.5">Developing</p>
-              <span className="text-[10px] text-slate-500 font-semibold">({devPct}%)</span>
+              <p className="text-[11px] font-bold text-amber-400">Developing</p>
+              <span className="text-[10px] text-[var(--muted-foreground)] font-semibold">({devPct}%)</span>
             </div>
 
             {/* Intervention Required */}
-            <div className="text-center px-2 sm:px-4">
-              <div className="flex items-center justify-center gap-1.5 text-rose-600 dark:text-rose-400">
-                <span className="h-2 w-2 rounded-full bg-rose-500" />
-                <span className="text-2xl sm:text-3xl font-black">{interventionCount}</span>
+            <div className="text-center px-5 py-4">
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <span className="h-2.5 w-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.8)]" />
+                <span className="text-3xl font-black text-rose-400">{interventionCount}</span>
               </div>
-              <p className="text-[11px] font-bold text-rose-700 dark:text-rose-300 mt-0.5">Intervention</p>
-              <span className="text-[10px] text-slate-500 font-semibold">({alertPct}%)</span>
+              <p className="text-[11px] font-bold text-rose-400">Intervention</p>
+              <span className="text-[10px] text-[var(--muted-foreground)] font-semibold">({alertPct}%)</span>
             </div>
           </div>
         </div>
 
         {/* Funnel Progress Visualizer Bar */}
-        <div className="mt-6 pt-5 border-t border-slate-200/80 dark:border-white/10 space-y-2">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-bold text-slate-800 dark:text-slate-200">
+        <div className="mt-6 pt-5 border-t border-[var(--border)] space-y-2 relative z-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-bold text-[var(--foreground)]">
             <span className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-indigo-500" />
+              <Target className="h-4 w-4 text-[var(--primary)]" />
               Mentees Placement Readiness Distribution
             </span>
-            <span className="text-indigo-600 dark:text-indigo-300 font-extrabold bg-indigo-500/10 px-2.5 py-0.5 rounded-lg border border-indigo-500/20">
+            <span className="text-[var(--primary)] font-extrabold bg-[rgb(var(--primary-rgb)/12%)] px-2.5 py-0.5 rounded-lg border border-[rgb(var(--primary-rgb)/20%)]">
               {avgCohortReadiness}% Average Readiness
             </span>
           </div>
 
-          <div className="h-3.5 w-full bg-slate-200 dark:bg-slate-900 rounded-full overflow-hidden flex p-0.5 border border-slate-300 dark:border-white/10 shadow-inner">
+          <div className="h-3.5 w-full bg-[rgba(0,0,0,0.35)] rounded-full overflow-hidden flex p-0.5 border border-[var(--border)] shadow-inner">
             {totalCount > 0 ? (
               <>
                 <div
                   style={{ width: `${Math.max(readyPct > 0 ? 5 : 0, readyPct)}%` }}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-l-full transition-all duration-500"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-l-full transition-all duration-700 shadow-[0_0_8px_rgba(52,211,153,0.6)]"
                   title={`Placement Ready: ${readyPct}% (${placementReadyCount} mentees)`}
                 />
                 <div
                   style={{ width: `${Math.max(devPct > 0 ? 5 : 0, devPct)}%` }}
-                  className="bg-gradient-to-r from-amber-500 to-yellow-400 h-full transition-all duration-500"
+                  className="bg-gradient-to-r from-amber-500 to-yellow-400 h-full transition-all duration-700"
                   title={`Developing: ${devPct}% (${developingCount} mentees)`}
                 />
                 <div
                   style={{ width: `${Math.max(alertPct > 0 ? 5 : 0, alertPct)}%` }}
-                  className="bg-gradient-to-r from-rose-500 to-red-400 h-full rounded-r-full transition-all duration-500"
+                  className="bg-gradient-to-r from-rose-500 to-red-400 h-full rounded-r-full transition-all duration-700 shadow-[0_0_8px_rgba(251,113,133,0.5)]"
                   title={`Intervention Required: ${alertPct}% (${interventionCount} mentees)`}
                 />
               </>
             ) : (
-              <div className="w-full bg-slate-300 dark:bg-slate-800 h-full rounded-full" />
+              <div className="w-full bg-[rgba(255,255,255,0.05)] h-full rounded-full" />
             )}
           </div>
         </div>
 
         {/* Live Cohort Insight */}
         {totalCount > 0 && (
-          <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-              <Activity className="h-4 w-4 text-indigo-500 shrink-0" />
+          <div className="mt-4 pt-3 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3 text-xs relative z-10">
+            <div className="flex items-center gap-2 text-[var(--muted-foreground)]">
+              <Activity className="h-4 w-4 text-[var(--primary)] shrink-0" />
               <span>
                 {missingSkills.length > 0
                   ? `Focus area: ${missingSkills[0].skill} is lacking across ${missingSkills[0].count} mentees.`
@@ -407,178 +412,177 @@ export function OverviewPage() {
             </div>
 
             {topPerformer && (
-              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 font-medium">
+              <div className="flex items-center gap-2 text-[var(--muted-foreground)] font-medium">
                 <span>
-                  Highest readiness: <strong className="text-slate-900 dark:text-white font-bold">{topPerformer.name}</strong> ({topPerformer.overallReadiness}%)
+                  Highest readiness: <strong className="text-[var(--foreground)] font-bold">{topPerformer.name}</strong> ({topPerformer.overallReadiness}%)
                 </span>
               </div>
             )}
           </div>
         )}
-      </GlassCard>
+      </div>
 
-      {/* 6-Card Rich Telemetry KPI Grid (Accurate to Assigned Mentees) */}
+      {/* 6-Card Rich Telemetry KPI Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
         {/* KPI 1: Assigned Mentees */}
-        <GlassCard className="p-4 space-y-2 border-indigo-500/20">
+        <div className="kpi-card kpi-card-violet space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 border border-indigo-500/30">
-              <Users className="h-4 w-4" />
+            <div className="p-2 rounded-xl bg-violet-500/25 border border-violet-500/30 shadow-[0_0_12px_rgba(139,92,246,0.3)]">
+              <Users className="h-4 w-4 text-violet-300" />
             </div>
-            <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-full">
-              Mentees
+            <span className="text-[10px] font-black text-violet-300 bg-violet-500/20 px-2 py-0.5 rounded-full border border-violet-500/20">
+              Roster
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Assigned Mentees</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{totalCount}</p>
-            <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold truncate">Active cohort</p>
+            <p className="text-[11px] text-[var(--muted-foreground)] font-medium">Assigned Mentees</p>
+            <p className="text-2xl font-black text-violet-300 tracking-tight">{totalCount}</p>
+            <p className="text-[10px] text-violet-400/70 font-semibold truncate">Active cohort</p>
           </div>
-        </GlassCard>
+        </div>
 
         {/* KPI 2: ATS Resume Score */}
-        <GlassCard className="p-4 space-y-2 border-blue-500/20">
+        <div className="kpi-card kpi-card-blue space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-blue-500/20 text-blue-500 dark:text-blue-400 border border-blue-500/30">
-              <FileText className="h-4 w-4" />
+            <div className="p-2 rounded-xl bg-blue-500/25 border border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.3)]">
+              <FileText className="h-4 w-4 text-blue-300" />
             </div>
-            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-300 bg-blue-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-black text-blue-300 bg-blue-500/20 px-2 py-0.5 rounded-full border border-blue-500/20">
               ATS
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Avg ATS Resume</p>
-            <p className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-tight">{avgResumeScore}%</p>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">Resume evaluation</p>
+            <p className="text-[11px] text-[var(--muted-foreground)] font-medium">Avg ATS Resume</p>
+            <p className="text-2xl font-black text-blue-300 tracking-tight">{avgResumeScore}%</p>
+            <p className="text-[10px] text-blue-400/70 font-medium truncate">Resume evaluation</p>
           </div>
-        </GlassCard>
+        </div>
 
         {/* KPI 3: Mock Interview Avg */}
-        <GlassCard className="p-4 space-y-2 border-purple-500/20">
+        <div className="kpi-card kpi-card-purple space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-purple-500/20 text-purple-500 dark:text-purple-400 border border-purple-500/30">
-              <Mic className="h-4 w-4" />
+            <div className="p-2 rounded-xl bg-purple-500/25 border border-purple-500/30 shadow-[0_0_12px_rgba(168,85,247,0.3)]">
+              <Mic className="h-4 w-4 text-purple-300" />
             </div>
-            <span className="text-[10px] font-bold text-purple-600 dark:text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-black text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded-full border border-purple-500/20">
               Mock
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Mock Interview</p>
-            <p className="text-2xl font-black text-purple-600 dark:text-purple-400 tracking-tight">{avgInterviewScore}%</p>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">Technical rounds</p>
+            <p className="text-[11px] text-[var(--muted-foreground)] font-medium">Mock Interview</p>
+            <p className="text-2xl font-black text-purple-300 tracking-tight">{avgInterviewScore}%</p>
+            <p className="text-[10px] text-purple-400/70 font-medium truncate">Technical rounds</p>
           </div>
-        </GlassCard>
+        </div>
 
         {/* KPI 4: Coding Solved */}
-        <GlassCard className="p-4 space-y-2 border-emerald-500/20">
+        <div className="kpi-card kpi-card-emerald space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30">
-              <Code2 className="h-4 w-4" />
+            <div className="p-2 rounded-xl bg-emerald-500/25 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+              <Code2 className="h-4 w-4 text-emerald-300" />
             </div>
-            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-black text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/20">
               DSA
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Coding Solved</p>
-            <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">{totalCodingProblems}</p>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">Total problems</p>
+            <p className="text-[11px] text-[var(--muted-foreground)] font-medium">Coding Solved</p>
+            <p className="text-2xl font-black text-emerald-300 tracking-tight">{totalCodingProblems}</p>
+            <p className="text-[10px] text-emerald-400/70 font-medium truncate">Total problems</p>
           </div>
-        </GlassCard>
+        </div>
 
         {/* KPI 5: Verified Proofs */}
-        <GlassCard className="p-4 space-y-2 border-amber-500/20">
+        <div className="kpi-card kpi-card-amber space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-500 dark:text-amber-400 border border-amber-500/30">
-              <ShieldCheck className="h-4 w-4" />
+            <div className="p-2 rounded-xl bg-amber-500/25 border border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.3)]">
+              <ShieldCheck className="h-4 w-4 text-amber-300" />
             </div>
-            <span className="text-[10px] font-bold text-amber-600 dark:text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/20">
               Proofs
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Verified Proofs</p>
-            <p className="text-2xl font-black text-amber-600 dark:text-amber-400 tracking-tight">{totalVerifiedProofs}</p>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">Credentials</p>
+            <p className="text-[11px] text-[var(--muted-foreground)] font-medium">Verified Proofs</p>
+            <p className="text-2xl font-black text-amber-300 tracking-tight">{totalVerifiedProofs}</p>
+            <p className="text-[10px] text-amber-400/70 font-medium truncate">Credentials</p>
           </div>
-        </GlassCard>
+        </div>
 
         {/* KPI 6: Readiness Index */}
-        <GlassCard className="p-4 space-y-2 border-pink-500/20">
+        <div className="kpi-card kpi-card-pink space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-pink-500/20 text-pink-500 dark:text-pink-400 border border-pink-500/30">
-              <TrendingUp className="h-4 w-4" />
+            <div className="p-2 rounded-xl bg-pink-500/25 border border-pink-500/30 shadow-[0_0_12px_rgba(236,72,153,0.3)]">
+              <TrendingUp className="h-4 w-4 text-pink-300" />
             </div>
-            <span className="text-[10px] font-bold text-pink-600 dark:text-pink-300 bg-pink-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-black text-pink-300 bg-pink-500/20 px-2 py-0.5 rounded-full border border-pink-500/20">
               Index
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Readiness Index</p>
-            <p className="text-2xl font-black text-pink-600 dark:text-pink-400 tracking-tight">{avgCohortReadiness}%</p>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">{placementReadyCount} ready for hire</p>
+            <p className="text-[11px] text-[var(--muted-foreground)] font-medium">Readiness Index</p>
+            <p className="text-2xl font-black text-pink-300 tracking-tight">{avgCohortReadiness}%</p>
+            <p className="text-[10px] text-pink-400/70 font-medium truncate">{placementReadyCount} ready for hire</p>
           </div>
-        </GlassCard>
+        </div>
       </div>
 
       {/* Main 2-Column Command Workspace */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Left Column: Skill Deficiency Heatmap */}
         <div className="space-y-6 lg:col-span-1">
-          <GlassCard className="p-6 space-y-5 border-amber-500/20">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
+          <div className="elite-panel rounded-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <div>
-                <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Target className="h-4 w-4 text-amber-500" /> Skill Deficiency Heatmap
+                <h3 className="text-sm font-extrabold text-[var(--foreground)] flex items-center gap-2">
+                  <span className="section-accent-line" />
+                  <Target className="h-4 w-4 text-amber-400" /> Skill Gaps Heatmap
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                  Missing skills identified across mentees
-                </p>
               </div>
-              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-black bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 uppercase">
+              <span className="text-[10px] text-amber-400 font-black bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/25 uppercase">
                 Gaps
               </span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {missingSkills.length > 0 ? (
                 missingSkills.slice(0, 6).map((item, idx) => {
                   const pct = Math.min(100, Math.round((item.count / Math.max(1, totalCount)) * 100));
                   return (
-                    <div key={idx} className="space-y-1.5 p-2.5 rounded-xl bg-slate-100/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/5">
+                    <div key={idx} className="space-y-1.5 p-2.5 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[var(--border)] hover:border-amber-500/25 transition-colors">
                       <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="text-slate-900 dark:text-white">
+                        <span className="text-[var(--foreground)]">
                           {item.skill}
                         </span>
-                        <span className="text-amber-600 dark:text-amber-400 font-extrabold">{item.count} mentees lacking</span>
+                        <span className="text-amber-400 font-extrabold text-[10px]">{item.count} lacking</span>
                       </div>
 
-                      <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden">
                         <div
                           style={{ width: `${pct}%` }}
-                          className="h-full bg-gradient-to-r from-amber-500 to-rose-500 rounded-full"
+                          className="h-full bg-gradient-to-r from-amber-500 to-rose-500 rounded-full shadow-[0_0_6px_rgba(245,158,11,0.5)]"
                         />
                       </div>
                     </div>
                   );
                 })
               ) : (
-                <div className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
-                  No skill gap data detected for your mentees yet.
+                <div className="py-8 text-center text-xs text-[var(--muted-foreground)]">
+                  No skill gaps detected.
                 </div>
               )}
             </div>
-          </GlassCard>
+          </div>
 
           {/* Target Role Breakdown */}
           {topTargetRoles.length > 0 && (
-            <GlassCard className="p-6 space-y-4 border-indigo-500/20">
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
-                <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
+            <div className="elite-panel rounded-2xl p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                <h3 className="text-sm font-extrabold text-[var(--foreground)] flex items-center gap-2">
+                  <span className="section-accent-line" />
                   Target Roles
                 </h3>
-                <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] text-[var(--primary)] font-bold bg-[rgb(var(--primary-rgb)/12%)] px-2 py-0.5 rounded-full border border-[rgb(var(--primary-rgb)/20%)]">
                   {topTargetRoles.length} Roles
                 </span>
               </div>
@@ -589,37 +593,35 @@ export function OverviewPage() {
                   return (
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-slate-800 dark:text-slate-200 truncate max-w-[180px]">{roleItem.role}</span>
-                        <span className="text-indigo-600 dark:text-indigo-400 font-bold">{roleItem.count} ({rolePct}%)</span>
+                        <span className="text-[var(--foreground)] truncate max-w-[180px]">{roleItem.role}</span>
+                        <span className="text-[var(--primary)] font-bold">{roleItem.count} ({rolePct}%)</span>
                       </div>
-                      <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                        <div style={{ width: `${rolePct}%` }} className="h-full bg-indigo-500 rounded-full" />
+                      <div className="h-1.5 w-full bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden">
+                        <div style={{ width: `${rolePct}%` }} className="h-full bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] rounded-full" />
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </GlassCard>
+            </div>
           )}
         </div>
 
         {/* Right Column: Mentees Readiness Directory */}
         <div className="space-y-6 lg:col-span-2">
-          <GlassCard className="p-6 space-y-5 border-slate-200 dark:border-white/10">
+          <div className="elite-panel rounded-2xl p-6 space-y-5">
             {/* Directory Header & In-page Filter Toolbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
               <div>
-                <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <Users className="h-5 w-5 text-indigo-500" /> Mentees Readiness Directory
+                <h3 className="text-base font-black text-[var(--foreground)] flex items-center gap-2">
+                  <span className="section-accent-line" style={{ height: "1em" }} />
+                  <Users className="h-5 w-5 text-[var(--primary)]" /> Mentee Directory
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Real-time student progress telemetry & 360° profile inspection
-                </p>
               </div>
 
               <Link
                 to="/students"
-                className="btn-gradient px-4 py-2 rounded-xl text-xs font-extrabold text-white inline-flex items-center gap-1.5 shadow-md shadow-indigo-500/20 shrink-0 self-start sm:self-center"
+                className="btn-gradient px-4 py-2 rounded-xl text-xs font-extrabold text-white inline-flex items-center gap-1.5 shadow-md shadow-indigo-500/25 shrink-0 self-start sm:self-center hover:scale-105 transition-transform"
               >
                 Full Roster View <ChevronRight className="h-3.5 w-3.5" />
               </Link>
@@ -628,7 +630,7 @@ export function OverviewPage() {
             {/* Filter Tabs & Quick Search */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               {/* Filter Pills */}
-              <div className="flex bg-slate-200/80 dark:bg-slate-900/80 border border-slate-300/80 dark:border-white/10 p-1 rounded-xl flex-wrap gap-1">
+              <div className="flex bg-[rgba(0,0,0,0.25)] border border-[var(--border)] p-1 rounded-xl flex-wrap gap-1">
                 {[
                   { key: "all", label: `All (${students.length})` },
                   { key: "top", label: `Ready (${placementReadyCount})` },
@@ -640,8 +642,8 @@ export function OverviewPage() {
                     onClick={() => setStatusFilter(tab.key as any)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
                       statusFilter === tab.key
-                        ? "btn-gradient text-white shadow-sm"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                        ? "btn-gradient text-white shadow-md shadow-indigo-500/30"
+                        : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.06)]"
                     }`}
                   >
                     {tab.label}
@@ -651,18 +653,18 @@ export function OverviewPage() {
 
               {/* Quick Search */}
               <div className="relative min-w-[200px]">
-                <Search className="h-3.5 w-3.5 absolute left-3 top-2.5 text-slate-400" />
+                <Search className="h-3.5 w-3.5 absolute left-3 top-2.5 text-[var(--muted-foreground)]" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Filter mentee name or role..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl glass-input text-xs outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="w-full pl-8 pr-3 py-1.5 rounded-xl glass-input text-xs outline-none"
                 />
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm("")}
-                    className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    className="absolute right-2.5 top-2 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -672,7 +674,7 @@ export function OverviewPage() {
 
             {/* Mentees Cards List */}
             {filteredStudents.length > 0 ? (
-              <div className="space-y-3.5">
+              <div className="space-y-2.5">
                 {filteredStudents.map((student) => {
                   const isAtRisk = student.status === "At Risk" || student.overallReadiness < 45;
                   const isTop = student.status === "Top Performer" || student.overallReadiness >= 75;
@@ -680,51 +682,59 @@ export function OverviewPage() {
                   return (
                     <div
                       key={student._id}
-                      className={`p-4 rounded-2xl glass border transition-all duration-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:shadow-lg ${
+                      className={`relative p-4 rounded-2xl transition-all duration-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 overflow-hidden ${
                         isAtRisk
-                          ? "border-rose-500/30 hover:border-rose-500/50 bg-rose-500/5"
+                          ? "bg-[rgba(244,63,94,0.06)] border border-rose-500/25 hover:border-rose-500/45 hover:shadow-[0_4px_20px_rgba(244,63,94,0.15)]"
                           : isTop
-                          ? "border-emerald-500/30 hover:border-emerald-500/50 bg-emerald-500/5"
-                          : "border-slate-200 dark:border-white/10 hover:border-indigo-500/40"
+                          ? "bg-[rgba(16,185,129,0.06)] border border-emerald-500/25 hover:border-emerald-500/45 hover:shadow-[0_4px_20px_rgba(16,185,129,0.15)]"
+                          : "bg-[rgba(255,255,255,0.04)] border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] hover:shadow-[0_4px_20px_rgba(139,92,246,0.12)]"
                       }`}
+                      style={{ backdropFilter: "blur(12px)" }}
                     >
-                      <div className="flex items-center gap-4 min-w-0">
+                      {/* Left coloured accent bar */}
+                      <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-l-2xl ${
+                        isAtRisk ? "bg-gradient-to-b from-rose-500 to-rose-700"
+                          : isTop ? "bg-gradient-to-b from-emerald-400 to-emerald-600"
+                          : "bg-gradient-to-b from-[var(--primary)] to-[var(--accent)]"
+                      }`} />
+
+                      <div className="flex items-center gap-4 min-w-0 pl-2">
                         <ScoreRing score={student.overallReadiness} size={50} stroke={5} />
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p className="text-sm font-black text-slate-900 dark:text-white truncate" title={student.name}>
+                            <p className="text-sm font-black text-[var(--foreground)] truncate" title={student.name}>
                               {student.name}
                             </p>
                             <span
                               className={`text-[10px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider ${
                                 isTop
-                                  ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30"
+                                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"
                                   : isAtRisk
-                                  ? "bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30"
-                                  : "bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30"
+                                  ? "bg-rose-500/15 text-rose-400 border border-rose-500/25"
+                                  : "bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/25%)]"
                               }`}
                             >
                               {student.status}
                             </span>
                           </div>
 
-                          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium truncate mt-0.5" title={student.targetRole}>
+                          <p className="text-xs text-[var(--muted-foreground)] font-medium truncate mt-0.5" title={student.targetRole}>
                             {student.targetRole}
                           </p>
 
                           {/* Multi-Telemetry Stat Badges */}
-                          <div className="flex flex-wrap items-center gap-2.5 text-[11px] mt-2">
-                            <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold border border-blue-500/20">
+                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] mt-1.5">
+                            <span className="px-2 py-0.5 rounded-md bg-blue-500/12 text-blue-400 font-bold border border-blue-500/20">
                               ATS: {student.resumeScore}%
                             </span>
-                            <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold border border-purple-500/20">
+                            <span className="px-2 py-0.5 rounded-md bg-purple-500/12 text-purple-400 font-bold border border-purple-500/20">
                               Mock: {student.avgInterviewScore}%
                             </span>
-                            <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">
+                            <span className="px-2 py-0.5 rounded-md bg-emerald-500/12 text-emerald-400 font-bold border border-emerald-500/20">
                               Solved: {student.totalProblemsSolved}
                             </span>
                             {student.verifiedEventsCount > 0 && (
-                              <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/20">
+                              <span className="px-2 py-0.5 rounded-md bg-amber-500/12 text-amber-400 font-bold border border-amber-500/20">
                                 {student.verifiedEventsCount} Proofs
                               </span>
                             )}
@@ -736,16 +746,16 @@ export function OverviewPage() {
                       <div className="flex items-center gap-2 self-end md:self-center shrink-0">
                         <button
                           onClick={() => setFeedbackStudent(student)}
-                          className="px-3 py-2 rounded-xl glass hover:bg-indigo-50 dark:hover:bg-indigo-950/50 border border-indigo-500/30 text-xs font-bold text-indigo-600 dark:text-indigo-300 flex items-center gap-1.5 transition shadow-sm"
+                          className="px-3 py-2 rounded-xl bg-[rgb(var(--primary-rgb)/10%)] hover:bg-[rgb(var(--primary-rgb)/20%)] border border-[rgb(var(--primary-rgb)/25%)] text-xs font-bold text-[var(--primary)] flex items-center gap-1.5 transition shadow-sm"
                           title="Send Quick Guidance Note to Student"
                         >
-                          <Send className="h-3.5 w-3.5 text-indigo-500" />
+                          <Send className="h-3.5 w-3.5" />
                           <span>Guide</span>
                         </button>
 
                         <Link
                           to={`/students/${student._id}`}
-                          className="btn-gradient px-4 py-2 rounded-xl text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md shadow-indigo-500/20 transition hover:scale-105"
+                          className="btn-gradient px-4 py-2 rounded-xl text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md shadow-indigo-500/25 transition hover:scale-105"
                         >
                           Inspect 360° <ChevronRight className="h-3.5 w-3.5" />
                         </Link>
@@ -755,12 +765,12 @@ export function OverviewPage() {
                 })}
               </div>
             ) : (
-              <div className="p-8 text-center rounded-2xl glass border border-slate-200 dark:border-white/10 space-y-3">
-                <Users className="h-10 w-10 text-indigo-500 mx-auto" />
-                <h4 className="text-base font-bold text-slate-900 dark:text-white">
+              <div className="p-8 text-center rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[var(--border)] space-y-3">
+                <Users className="h-10 w-10 text-[var(--primary)] mx-auto opacity-60" />
+                <h4 className="text-base font-bold text-[var(--foreground)]">
                   {students.length === 0 ? "You Have No Assigned Mentees Yet" : "No Mentees Match Filter Criteria"}
                 </h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                <p className="text-xs text-[var(--muted-foreground)] max-w-sm mx-auto">
                   {students.length === 0
                     ? "Click 'Add Mentee' above to assign registered students to your mentor command center."
                     : "Try clearing your search query or reset your filter."}
@@ -778,14 +788,14 @@ export function OverviewPage() {
                       setSearchTerm("");
                       setStatusFilter("all");
                     }}
-                    className="px-4 py-2 rounded-xl glass text-xs font-bold text-indigo-600 dark:text-indigo-300 border border-indigo-500/30"
+                    className="px-4 py-2 rounded-xl bg-[rgb(var(--primary-rgb)/10%)] text-xs font-bold text-[var(--primary)] border border-[rgb(var(--primary-rgb)/25%)]"
                   >
                     Reset Filters
                   </button>
                 )}
               </div>
             )}
-          </GlassCard>
+          </div>
 
           {/* Urgent Intervention Spotlight Card */}
           {urgentAtRisk.length > 0 && (

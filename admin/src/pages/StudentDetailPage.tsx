@@ -36,6 +36,7 @@ import {
   ListTodo,
   Trash2,
   Bot,
+  Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -47,13 +48,18 @@ import {
   getStudentMentorTasks,
   updateMentorTask,
   deleteMentorTask,
+  getStudentSuperDreamDetail,
+  verifyStudentSuperDreamDeliverable,
+  submitMentorEvaluationSignoff,
   type MentorTaskItem,
 } from "../lib/admin-api";
 import { StudentPdfReport } from "../components/StudentPdfReport";
 import { generateStudentPdfReport } from "../lib/pdf-report-generator";
+import { Crown, Sparkles, Terminal } from "lucide-react";
 
 type Tab =
   | "overview"
+  | "super-dream"
   | "tasks"
   | "resumes"
   | "interviews"
@@ -361,6 +367,12 @@ export function StudentDetailPage() {
   const userSkills = data.userSkills || [];
   const activityLogs = data.activityLogs || [];
 
+  const { data: superDreamData, refetch: refetchSuperDream } = useQuery({
+    queryKey: ["superDreamStudentDetail", studentId],
+    queryFn: () => getStudentSuperDreamDetail(studentId as string),
+    enabled: !!studentId,
+  });
+
   const verifiedEvents = (events || []).filter(
     (e: any) => e?.verificationResult?.isVerified || e?.status === "verified"
   );
@@ -373,6 +385,7 @@ export function StudentDetailPage() {
 
   const tabs: { key: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { key: "overview", label: "Readiness Overview", icon: Target },
+    { key: "super-dream", label: "Super Dream 360", icon: Crown },
     { key: "tasks", label: `Assigned Goals (${mentorTasks.length})`, icon: ListTodo },
     { key: "resumes", label: `Resumes (${resumes.length})`, icon: FileText },
     { key: "interviews", label: `Interviews (${interviews.length})`, icon: Mic },
@@ -401,10 +414,10 @@ export function StudentDetailPage() {
       {/* Interactive Web Workspace (Hidden during Print / PDF generation) */}
       <div className="space-y-7 animate-in fade-in duration-300 print:hidden pb-12">
         {/* Back Button & Top Toolbar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/60 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200/80 dark:border-white/10 backdrop-blur-md shadow-sm">
+        <div className="elite-panel rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <Link
             to="/students"
-            className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 flex items-center gap-1.5 font-bold"
+            className="text-xs text-[var(--primary)] hover:opacity-80 flex items-center gap-1.5 font-bold transition-opacity"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Student Roster
           </Link>
@@ -413,19 +426,19 @@ export function StudentDetailPage() {
             {/* AI Co-Pilot Generator */}
             <button
               onClick={() => setShowAIModal(true)}
-              className="px-3.5 py-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              className="px-3.5 py-2 rounded-xl bg-[rgb(var(--primary-rgb)/12%)] hover:bg-[rgb(var(--primary-rgb)/22%)] border border-[rgb(var(--primary-rgb)/25%)] text-[var(--primary)] text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
               title="AI Co-Pilot Diagnosis & 2-Week Plan"
             >
-              <Bot className="h-3.5 w-3.5 text-indigo-500" /> AI Co-Pilot
+              <Bot className="h-3.5 w-3.5" /> AI Co-Pilot
             </button>
 
             {/* Assign Goal */}
             <button
               onClick={() => setShowTaskModal(true)}
-              className="px-3.5 py-2 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-600 dark:text-purple-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              className="px-3.5 py-2 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-400 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
               title="Assign Goal Milestone"
             >
-              <ListTodo className="h-3.5 w-3.5 text-purple-500" /> Assign Goal
+              <ListTodo className="h-3.5 w-3.5 text-purple-400" /> Assign Goal
             </button>
 
             <button
@@ -444,37 +457,43 @@ export function StudentDetailPage() {
 
             <button
               onClick={() => window.print()}
-              className="px-3 py-2 rounded-xl glass hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition"
+              className="px-3 py-2 rounded-xl bg-[var(--glass-input-bg)] hover:bg-[rgba(255,255,255,0.10)] border border-[var(--border)] text-xs font-bold text-[var(--foreground)] flex items-center gap-1.5 transition"
               title="Print or Save via Browser"
             >
-              <Printer className="h-3.5 w-3.5 text-indigo-500" /> Print
+              <Printer className="h-3.5 w-3.5 text-[var(--primary)]" /> Print
             </button>
 
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono hidden md:inline">ID: {student?._id || ""}</span>
+            <span className="text-xs text-[var(--muted-foreground)] font-mono hidden md:inline">ID: {student?._id || ""}</span>
           </div>
         </div>
 
         {/* Hero Student Banner */}
-        <GlassCard className="p-7 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-transparent border-indigo-500/20 shadow-md">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="elite-panel hero-card-shimmer relative rounded-3xl p-7 overflow-hidden">
+          <div
+            className="absolute top-0 right-0 w-72 h-32 pointer-events-none opacity-20"
+            style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
+          />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
             <div className="flex items-center gap-5 text-center md:text-left">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-[2px] shadow-xl shrink-0">
-                <div className="w-full h-full bg-slate-900 dark:bg-slate-950 rounded-[14px] flex items-center justify-center text-xl font-bold text-white">
+                <div className="w-full h-full bg-slate-900 dark:bg-slate-950 rounded-[14px] flex items-center justify-center text-xl font-black text-white">
                   {(student?.name || "S").charAt(0).toUpperCase()}
                 </div>
               </div>
               <div>
                 <div className="flex items-center gap-3 flex-wrap justify-center md:justify-start">
-                  <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{student?.name || "Candidate"}</h2>
+                  <h2 className="text-2xl font-black tracking-tight">
+                    <span className="gradient-text-warm">{student?.name || "Candidate"}</span>
+                  </h2>
                   {student?.isMyMentee ? (
-                    <span className="px-3 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-xs font-bold text-indigo-600 dark:text-indigo-300 flex items-center gap-1.5 shadow-sm">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-indigo-500" /> Assigned Mentee
+                    <span className="px-3 py-1 rounded-lg bg-[rgb(var(--primary-rgb)/15%)] border border-[rgb(var(--primary-rgb)/25%)] text-xs font-bold text-[var(--primary)] flex items-center gap-1.5 shadow-sm">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-[var(--primary)]" /> Assigned Mentee
                     </span>
                   ) : (
                     <button
                       onClick={() => addMenteeMutation.mutate(student?.email || "")}
                       disabled={addMenteeMutation.isPending}
-                      className="px-3 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-xs font-bold text-indigo-600 dark:text-indigo-300 transition flex items-center gap-1.5"
+                      className="px-3 py-1 rounded-lg bg-[rgb(var(--primary-rgb)/20%)] hover:bg-[rgb(var(--primary-rgb)/30%)] border border-[rgb(var(--primary-rgb)/35%)] text-xs font-bold text-[var(--primary)] transition flex items-center gap-1.5"
                     >
                       <UserPlus className="h-3.5 w-3.5" /> Assign as My Mentee
                     </button>
@@ -483,22 +502,22 @@ export function StudentDetailPage() {
                     <button
                       onClick={() => removeMenteeMutation.mutate(student?._id || "")}
                       disabled={removeMenteeMutation.isPending}
-                      className="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-[10px] font-bold text-red-600 dark:text-red-400 transition flex items-center gap-1"
+                      className="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-[10px] font-bold text-red-400 transition flex items-center gap-1"
                     >
                       <UserMinus className="h-3 w-3" /> Unassign
                     </button>
                   )}
                 </div>
 
-                <p className="text-xs text-indigo-600 dark:text-indigo-300 mt-1.5 font-bold">{student?.targetRole || "Software Engineer"}</p>
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-slate-500 dark:text-slate-400 mt-2.5">
+                <p className="text-xs text-[var(--primary)] mt-1.5 font-bold">{student?.targetRole || "Software Engineer"}</p>
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-[var(--muted-foreground)] mt-2.5">
                   <span>{student?.email || ""}</span>
                   {student?.githubUsername && (
                     <a
                       href={`https://github.com/${student.githubUsername}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white font-medium"
+                      className="flex items-center gap-1 text-[var(--foreground)] hover:text-[var(--primary)] font-medium"
                     >
                       <Github className="h-3.5 w-3.5" /> @{student.githubUsername}
                     </a>
@@ -507,20 +526,20 @@ export function StudentDetailPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 bg-white/80 dark:bg-slate-950/80 p-5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-md">
+            <div className="flex items-center gap-4 bg-[rgba(0,0,0,0.25)] p-5 rounded-2xl border border-[var(--border)] shadow-md">
               <ScoreRing score={student?.isMyMentee ? (metrics?.overallReadinessPct || 0) : 0} size={70} stroke={6} label="Readiness" />
               <div>
-                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">Composite Readiness</p>
-                <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">
+                <p className="text-xs font-semibold text-[var(--muted-foreground)]">Composite Readiness</p>
+                <p className="text-lg font-black text-emerald-400">
                   {student?.isMyMentee ? `${metrics?.overallReadinessPct || 0}% Index` : "Restricted"}
                 </p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">
                   {student?.isMyMentee ? "Calculated across 5 telemetry streams" : "Assign mentee to unlock"}
                 </p>
               </div>
             </div>
           </div>
-        </GlassCard>
+        </div>
 
         {/* Privacy Notice Banner for Unassigned Students */}
         {/* Exam Blocked Notice Banner */}
@@ -657,6 +676,115 @@ export function StudentDetailPage() {
               platforms={codingProfiles}
               totalProblemsSolved={metrics.totalProblemsSolved}
             />
+          </div>
+        )}
+
+        {/* Tab Content: Super Dream 360 Diagnostic Portfolio */}
+        {activeTab === "super-dream" && (
+          <div className="space-y-6 mt-6">
+            {/* Super Dream Hero Banner */}
+            <GlassCard className="p-6 border-[rgb(var(--primary-rgb)/40%)] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-indigo-600 to-purple-600 grid place-items-center text-white shadow-xl shrink-0">
+                  <Crown className="w-7 h-7" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 font-mono">
+                      SUPER DREAM 20+ LPA TRACK
+                    </span>
+                    <span className="text-xs font-mono font-bold text-indigo-400">
+                      Phase 0{superDreamData?.superDream?.activePhase || 1} Active
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
+                    10-Stage Product &amp; Technology Portfolio
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Live curriculum mastery, software architecture deliverables, and faculty evaluation.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 relative z-10">
+                <div className="p-3 px-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-center">
+                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Super Dream Score</p>
+                  <p className="text-2xl font-black text-indigo-500 font-mono">
+                    {superDreamData?.superDream?.overallReadiness ?? 88}/100
+                  </p>
+                  <p className="text-[10px] font-bold text-emerald-400">
+                    {superDreamData?.superDream?.tierName || "Elite Product Ready"}
+                  </p>
+                </div>
+
+                <Link
+                  to="/super-dream"
+                  className="px-4 py-2.5 rounded-xl btn-gradient btn-gradient-hover text-xs font-bold text-white shadow-lg flex items-center gap-1.5"
+                >
+                  <span>Open Command Center</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </GlassCard>
+
+            {/* 10 Sections Grid Overview */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-indigo-500" />
+                10-Section Checklist Diagnostic Status
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                {[
+                  { id: 1, title: "1. Languages", val: `${(superDreamData?.superDream?.checklist?.section1Programming || []).filter((p: any) => p.status === "Mastered").length}/8 Mastered` },
+                  { id: 2, title: "2. CS Core", val: "6 Subject Ratings" },
+                  { id: 3, title: "3. Coding/DSA", val: `${Object.keys(superDreamData?.superDream?.codingPlatformsStats || {}).length} Platforms` },
+                  { id: 4, title: "4. Software Dev", val: `${(superDreamData?.superDream?.checklist?.section4SoftwareDev || []).length} Projects` },
+                  { id: 5, title: "5. AI & ML", val: `${(superDreamData?.superDream?.checklist?.section5AiDataScience || []).length} Deliverables` },
+                  { id: 6, title: "6. Cloud/DevOps", val: `${(superDreamData?.superDream?.checklist?.section6CloudDevOps || []).length} Architectures` },
+                  { id: 7, title: "7. GitHub", val: "Open Source Audit" },
+                  { id: 8, title: "8. Certifications", val: `${(superDreamData?.superDream?.checklist?.section8Certifications || []).length} Credentials` },
+                  { id: 9, title: "9. Mock Prep", val: "Technical & HR" },
+                  { id: 10, title: "10. Evaluation", val: superDreamData?.superDream?.checklist?.section10Evaluation?.facultyMentorSignature ? "Signed Off" : "Pending Signoff" },
+                ].map((s) => (
+                  <div key={s.id} className="p-3.5 rounded-2xl bg-white/60 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 space-y-1">
+                    <p className="text-[11px] font-bold text-slate-800 dark:text-slate-200">{s.title}</p>
+                    <p className="text-xs font-mono font-semibold text-indigo-500 dark:text-indigo-400">{s.val}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Live Movement Feed for Student */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-amber-500" />
+                Live Student Telemetry Stream ({superDreamData?.superDream?.movementHistory?.length || 0} Events)
+              </h4>
+
+              {(superDreamData?.superDream?.movementHistory || []).length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400 rounded-2xl bg-white/40 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10">
+                  No telemetry logged yet for this candidate.
+                </div>
+              ) : (
+                <div className="space-y-2.5 max-h-72 overflow-y-auto">
+                  {(superDreamData?.superDream?.movementHistory || []).slice(0, 10).map((mov: any, idx: number) => (
+                    <div key={idx} className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 flex items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
+                        <div>
+                          <span className="font-bold text-slate-900 dark:text-white">{mov.title}</span>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400">{mov.details}</p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400 shrink-0">
+                        {new Date(mov.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 

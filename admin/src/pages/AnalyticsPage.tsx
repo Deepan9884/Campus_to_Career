@@ -133,86 +133,94 @@ export function AnalyticsPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Top Title Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/70 dark:bg-slate-900/70 p-5 rounded-3xl border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
-              <Award className="h-3 w-3 text-indigo-500" /> Deep Cohort Intelligence
-            </span>
+      <div className="elite-panel hero-card-shimmer relative rounded-3xl p-5 sm:p-6 overflow-hidden">
+        <div className="absolute top-0 right-0 w-72 h-32 pointer-events-none opacity-20"
+          style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
+        />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/25%)] flex items-center gap-1.5">
+                <Award className="h-3 w-3" /> Deep Cohort Intelligence
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
+              <BarChart3 className="h-7 w-7 text-[var(--primary)]" />
+              <span className="gradient-text">Cohort Analytics</span>{" "}
+              <span className="text-[var(--foreground)]">& Intelligence</span>
+            </h2>
+            <p className="text-xs text-[var(--muted-foreground)] mt-0.5 max-w-xl pl-9">
+              Readiness distribution and performance metrics.
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-            <BarChart3 className="h-7 w-7 text-indigo-500" /> Cohort Analytics & Intelligence Matrix
-          </h2>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 max-w-xl">
-            Aggregated placement readiness velocity, skill deficiency telemetry, and hiring funnel benchmarks.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-3 self-start md:self-auto">
-          <button
-            onClick={handleExportAnalyticsCsv}
-            className="btn-gradient px-4 py-2.5 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/20 transition hover:scale-105"
-          >
-            <Download className="h-4 w-4" /> Export Analytics CSV
-          </button>
+          <div className="flex items-center gap-3 self-start md:self-auto relative z-10">
+            <button
+              onClick={handleExportAnalyticsCsv}
+              className="btn-gradient px-4 py-2.5 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/30 transition hover:scale-105"
+            >
+              <Download className="h-4 w-4" /> Export Analytics CSV
+            </button>
 
-          <div className="flex items-center gap-2 bg-slate-200/80 dark:bg-slate-950 p-2 rounded-2xl border border-slate-300 dark:border-white/10 text-xs">
-            <span className="text-slate-500 font-bold px-2">Cohort:</span>
-            <span className="px-3 py-1 rounded-xl bg-indigo-500 text-white font-black shadow-md">
-              {summary.totalStudents} Mentees
-            </span>
+            <div className="flex items-center gap-2 bg-[rgba(0,0,0,0.25)] p-2 rounded-2xl border border-[var(--border)] text-xs">
+              <span className="text-[var(--muted-foreground)] font-bold px-2">Cohort:</span>
+              <span className="px-3 py-1 rounded-xl btn-gradient text-white font-black shadow-md">
+                {summary.totalStudents} Mentees
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Summary KPI Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <GlassCard className="p-4 space-y-1 text-center border-indigo-500/20">
-          <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-500 w-fit mx-auto mb-1">
-            <Users className="h-5 w-5" />
+        <div className="kpi-card kpi-card-violet space-y-2 text-center">
+          <div className="p-2.5 rounded-2xl bg-violet-500/25 border border-violet-500/30 shadow-[0_0_10px_rgba(139,92,246,0.3)] w-fit mx-auto">
+            <Users className="h-5 w-5 text-violet-300" />
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Assigned Mentees</p>
-          <p className="text-3xl font-black text-slate-900 dark:text-white">{summary.totalStudents}</p>
-          <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold">Active Cohort Roster</p>
-        </GlassCard>
+          <p className="text-xs text-[var(--muted-foreground)] font-medium">Assigned Mentees</p>
+          <p className="text-3xl font-black text-violet-300">{summary.totalStudents}</p>
+          <p className="text-[10px] text-violet-400/70 font-semibold">Active Cohort Roster</p>
+        </div>
 
-        <GlassCard className="p-4 space-y-1 text-center border-blue-500/20">
-          <div className="p-2.5 rounded-2xl bg-blue-500/20 text-blue-500 w-fit mx-auto mb-1">
-            <FileText className="h-5 w-5" />
+        <div className="kpi-card kpi-card-blue space-y-2 text-center">
+          <div className="p-2.5 rounded-2xl bg-blue-500/25 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.3)] w-fit mx-auto">
+            <FileText className="h-5 w-5 text-blue-300" />
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Avg ATS Resume Match</p>
-          <p className="text-3xl font-black text-blue-600 dark:text-blue-400">{summary.avgResumeScore}%</p>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">{summary.analyzedResumesCount || 0} evaluated</p>
-        </GlassCard>
+          <p className="text-xs text-[var(--muted-foreground)] font-medium">Avg ATS Resume Match</p>
+          <p className="text-3xl font-black text-blue-300">{summary.avgResumeScore}%</p>
+          <p className="text-[10px] text-blue-400/70 font-semibold">{summary.analyzedResumesCount || 0} evaluated</p>
+        </div>
 
-        <GlassCard className="p-4 space-y-1 text-center border-purple-500/20">
-          <div className="p-2.5 rounded-2xl bg-purple-500/20 text-purple-500 w-fit mx-auto mb-1">
-            <Mic className="h-5 w-5" />
+        <div className="kpi-card kpi-card-purple space-y-2 text-center">
+          <div className="p-2.5 rounded-2xl bg-purple-500/25 border border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.3)] w-fit mx-auto">
+            <Mic className="h-5 w-5 text-purple-300" />
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Avg Mock Interview Score</p>
-          <p className="text-3xl font-black text-purple-600 dark:text-purple-400">{summary.avgInterviewScore}%</p>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">{summary.completedInterviewsCount || 0} completed</p>
-        </GlassCard>
+          <p className="text-xs text-[var(--muted-foreground)] font-medium">Avg Mock Interview Score</p>
+          <p className="text-3xl font-black text-purple-300">{summary.avgInterviewScore}%</p>
+          <p className="text-[10px] text-purple-400/70 font-semibold">{summary.completedInterviewsCount || 0} completed</p>
+        </div>
 
-        <GlassCard className="p-4 space-y-1 text-center border-emerald-500/20">
-          <div className="p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-500 w-fit mx-auto mb-1">
-            <Code2 className="h-5 w-5" />
+        <div className="kpi-card kpi-card-emerald space-y-2 text-center">
+          <div className="p-2.5 rounded-2xl bg-emerald-500/25 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.3)] w-fit mx-auto">
+            <Code2 className="h-5 w-5 text-emerald-300" />
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Total Solved Problems</p>
-          <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400">{summary.totalCodingProblems}</p>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">Multi-platform telemetry</p>
-        </GlassCard>
+          <p className="text-xs text-[var(--muted-foreground)] font-medium">Total Solved Problems</p>
+          <p className="text-3xl font-black text-emerald-300">{summary.totalCodingProblems}</p>
+          <p className="text-[10px] text-emerald-400/70 font-semibold">Multi-platform telemetry</p>
+        </div>
       </div>
 
       {/* Analytics Charts Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Chart 1: Hiring Readiness Funnel */}
-        <GlassCard className="p-6 space-y-4 border-emerald-500/20">
-          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
-            <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-              <Target className="h-4 w-4 text-emerald-500" /> Hiring Readiness Distribution Funnel
+        <div className="elite-panel rounded-2xl p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+            <h3 className="text-sm font-extrabold text-[var(--foreground)] flex items-center gap-2">
+              <span className="section-accent-line" />
+              <Target className="h-4 w-4 text-emerald-400" /> Hiring Readiness Distribution Funnel
             </h3>
-            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/20">
               3 TIERS
             </span>
           </div>
@@ -248,15 +256,16 @@ export function AnalyticsPage() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </GlassCard>
+        </div>
 
         {/* Chart 2: Skill Deficiency Heatmap Bar */}
-        <GlassCard className="p-6 space-y-4 border-amber-500/20">
-          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
-            <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-              <Target className="h-4 w-4 text-amber-500" /> Cohort Skill Deficiency Heatmap
+        <div className="elite-panel rounded-2xl p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+            <h3 className="text-sm font-extrabold text-[var(--foreground)] flex items-center gap-2">
+              <span className="section-accent-line" />
+              <Target className="h-4 w-4 text-amber-400" /> Cohort Skill Deficiency Heatmap
             </h3>
-            <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/25">
               HIGH PRIORITY
             </span>
           </div>
@@ -282,21 +291,22 @@ export function AnalyticsPage() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-xs text-slate-500 dark:text-slate-400">
+              <div className="h-full flex items-center justify-center text-xs text-[var(--muted-foreground)]">
                 No skill deficiency data available
               </div>
             )}
           </div>
-        </GlassCard>
+        </div>
       </div>
 
       {/* Target Roles Distribution */}
-      <GlassCard className="p-6 space-y-4 border-indigo-500/20">
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
-          <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <Zap className="h-4 w-4 text-indigo-500" /> Mentees Target Role Distribution Matrix
+      <div className="elite-panel rounded-2xl p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+          <h3 className="text-sm font-extrabold text-[var(--foreground)] flex items-center gap-2">
+            <span className="section-accent-line" />
+            <Zap className="h-4 w-4 text-[var(--primary)]" /> Mentees Target Role Distribution Matrix
           </h3>
-          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">
+          <span className="text-[10px] font-bold text-[var(--primary)] bg-[rgb(var(--primary-rgb)/12%)] px-2.5 py-0.5 rounded-full border border-[rgb(var(--primary-rgb)/20%)]">
             {roleChartData.length} SPECIALIZATIONS
           </span>
         </div>
@@ -318,16 +328,16 @@ export function AnalyticsPage() {
                     boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
                   }}
                 />
-                <Bar dataKey="Students" fill="#6366f1" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="Students" fill="var(--primary)" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-full flex items-center justify-center text-xs text-slate-500 dark:text-slate-400">
+            <div className="h-full flex items-center justify-center text-xs text-[var(--muted-foreground)]">
               No target roles data available
             </div>
           )}
         </div>
-      </GlassCard>
+      </div>
     </div>
   );
 }

@@ -281,3 +281,397 @@ export async function exportCohortCsvData(): Promise<{ students: StudentSummary[
   return api.get("/admin/cohort/export-csv");
 }
 
+/* ================================================================== */
+/* Super Dream Operations & 10-Section Mentor Live Inspection API      */
+/* ================================================================== */
+
+export interface SuperDreamCohortStudent {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  targetRole: string;
+  readinessIndex: number;
+  tierName: string;
+  activePhase: number;
+  verifiedCourses: number;
+  completedTasks: number;
+  avgTestScore: number;
+  status: "Qualified" | "In Training" | "Review Required";
+  verifiedDeliverablesCount: number;
+  lastActivityAt: string;
+  recentMovements: Array<{
+    actionType: string;
+    sectionId: number;
+    title: string;
+    details: string;
+    metadata?: any;
+    timestamp: string;
+  }>;
+  hasFullData: boolean;
+}
+
+export interface SuperDreamCohortResponse {
+  total: number;
+  cohort: SuperDreamCohortStudent[];
+}
+
+export interface SuperDreamStudentDetailResponse {
+  student: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    targetRole: string;
+    githubUsername?: string;
+    createdAt: string;
+  };
+  superDream: {
+    _id: string;
+    student: string;
+    checklist: any;
+    codingPlatformsStats: Record<string, any>;
+    csQuizAttempts: Record<string, any>;
+    visitedCsCourses: string[];
+    allocatedProjects: any[];
+    allocatedAiProjects: any[];
+    courses: any[];
+    tests: any[];
+    mentorRoadmap: any[];
+    travelMilestones: any[];
+    movementHistory: Array<{
+      actionType: string;
+      sectionId: number;
+      title: string;
+      details: string;
+      metadata?: any;
+      timestamp: string;
+    }>;
+    overallReadiness: number;
+    tierName: string;
+    activePhase: number;
+    verifiedDeliverablesCount: number;
+    lastActivityAt: string;
+  };
+  resumeData?: {
+    hasResume: boolean;
+    totalResumes: number;
+    latestResume: {
+      _id: string;
+      filename: string;
+      atsScore: number;
+      targetRole?: string;
+      matchedKeywords: string[];
+      missingKeywords: string[];
+      strengths: string[];
+      improvements: string[];
+      summary: string;
+      extractedText?: string;
+      status: string;
+      updatedAt: string;
+    } | null;
+  };
+  interviewData?: {
+    totalSessions: number;
+    completedSessions: number;
+    avgScore: number;
+    technicalCount: number;
+    systemDesignCount: number;
+    hrCount: number;
+    aptitudeCount: number;
+    recentSessions: Array<{
+      id: string;
+      title: string;
+      overallScore: number;
+      status: string;
+      targetRole?: string;
+      createdAt: string;
+    }>;
+  };
+}
+
+export async function getSuperDreamCohort(
+  search = "",
+  phase?: number
+): Promise<SuperDreamCohortResponse> {
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+  if (phase) params.append("phase", String(phase));
+  const qs = params.toString() ? `?${params.toString()}` : "";
+  return api.get<SuperDreamCohortResponse>(`/super-dream/cohort${qs}`);
+}
+
+export async function getStudentSuperDreamDetail(
+  studentId: string
+): Promise<SuperDreamStudentDetailResponse> {
+  return api.get<SuperDreamStudentDetailResponse>(`/super-dream/student/${studentId}`);
+}
+
+export async function verifyStudentSuperDreamDeliverable(
+  studentId: string,
+  payload: {
+    sectionKey?: string;
+    itemId: string;
+    verified: boolean;
+    feedback?: string;
+    rating?: number;
+  }
+): Promise<{ message: string; superDream: any }> {
+  return api.post<{ message: string; superDream: any }>(
+    `/super-dream/student/${studentId}/verify`,
+    payload
+  );
+}
+
+export async function submitMentorEvaluationSignoff(
+  studentId: string,
+  payload: {
+    strengths?: string;
+    areasForImprovement?: string;
+    actionPlanNextSemester?: string;
+    recommendedLearningPaths?: string[];
+    facultyMentorSignature?: string;
+    hodSignature?: string;
+  }
+): Promise<{ message: string; superDream: any }> {
+  return api.post<{ message: string; superDream: any }>(
+    `/super-dream/student/${studentId}/signoff`,
+    payload
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EXAM CREATION, EVALUATION, AND RESULT DISCLOSURE API
+// ═══════════════════════════════════════════════════════════════════════════
+
+export interface McqQuestionData {
+  questionId: string;
+  question: string;
+  options: string[];
+  correctOptionIndex: number;
+  correctAnswer?: string;
+  positiveMarks: number;
+  negativeMarks: number;
+  explanation: string;
+  topic: string;
+  difficulty: "easy" | "medium" | "hard";
+  imageUrl?: string;
+  diagramUrl?: string;
+}
+
+export interface CodingQuestionData {
+  id: string;
+  title: string;
+  difficulty: "Easy" | "Medium" | "Hard" | "FAANG Tier";
+  category: string;
+  sourceUrl?: string;
+  problemStatement: string;
+  diagramUrl?: string;
+  inputFormat: string;
+  outputFormat: string;
+  constraints: string[];
+  marks: number;
+  starterCodes?: Record<string, string>;
+  testCases: {
+    input: string;
+    expectedOutput: string;
+    description: string;
+    isHidden: boolean;
+  }[];
+}
+
+export interface ExamSectionData {
+  sectionId: string;
+  title: string;
+  type: "mcq" | "coding";
+  difficulty: "easy" | "medium" | "hard" | "faang";
+  topics: string[];
+  timeLimitMinutes: number;
+  targetQuestionCount?: number;
+  mcqQuestions: McqQuestionData[];
+  codingQuestions: CodingQuestionData[];
+}
+
+export interface ExamItem {
+  _id: string;
+  title: string;
+  description: string;
+  examType: "mcq" | "coding" | "mixed";
+  category: string;
+  difficulty: string;
+  durationMinutes: number;
+  passingScorePercentage: number;
+  totalMarks: number;
+  targetAudience: "all" | "mentees" | "selected";
+  assignedStudents?: { _id: string; name: string; email: string; profile?: { registerNumber?: string } }[];
+  sections: ExamSectionData[];
+  proctoringConfig: {
+    webcamRequired: boolean;
+    fullscreenEnforced: boolean;
+    tabSwitchLimit: number;
+    aiFaceDetection: boolean;
+    copyPasteDisabled: boolean;
+  };
+  isResultDisclosed: boolean;
+  allowRetakes?: boolean;
+  isPublished: boolean;
+  createdAt: string;
+  stats?: {
+    totalSubmissions: number;
+    avgScore: number;
+    passedCount: number;
+  };
+}
+
+export interface QuestionScoreDetail {
+  questionId: string;
+  questionTitle: string;
+  type: "mcq" | "coding";
+  userAnswer: string;
+  selectedOptionIndex?: number;
+  correctOptionIndex?: number;
+  isCorrect: boolean;
+  score: number;
+  maxMarks: number;
+  testCasesPassed?: number;
+  totalTestCases?: number;
+  executionTimeMs?: number;
+  feedback?: string;
+}
+
+export interface ExamResultRow {
+  submissionId: string;
+  studentId: string;
+  rank: number;
+  studentName: string;
+  studentEmail: string;
+  studentAvatar?: string;
+  registerNumber: string;
+  department: string;
+  batch: string;
+  questionScores: QuestionScoreDetail[];
+  sectionScores: {
+    sectionId: string;
+    sectionTitle: string;
+    type: "mcq" | "coding";
+    score: number;
+    maxScore: number;
+    percentage: number;
+  }[];
+  totalScore: number;
+  maxScore: number;
+  percentage: number;
+  passed: boolean;
+  durationSeconds: number;
+  proctoringIntegrity: number;
+  violationsCount: number;
+  isBlocked?: boolean;
+  blockedReason?: string;
+  status: string;
+  submittedAt: string;
+}
+
+export interface ExamResultsResponse {
+  exam: {
+    _id: string;
+    title: string;
+    examType: "mcq" | "coding" | "mixed";
+    category: string;
+    difficulty: string;
+    durationMinutes: number;
+    passingScorePercentage: number;
+    totalMarks: number;
+    isResultDisclosed: boolean;
+    sections: ExamSectionData[];
+  };
+  summary: {
+    totalSubmissions: number;
+    passedCount: number;
+    failedCount: number;
+    passPercentage: number;
+    avgScore: number;
+    highestScore: number;
+    lowestScore: number;
+  };
+  resultsTable: ExamResultRow[];
+}
+
+export async function createAdminExam(payload: Partial<ExamItem>): Promise<ExamItem> {
+  return api.post<ExamItem>("/exams/admin/create", payload);
+}
+
+export async function getAdminExams(type = "all", search = ""): Promise<ExamItem[]> {
+  const params = new URLSearchParams();
+  if (type && type !== "all") params.append("examType", type);
+  if (search) params.append("search", search);
+  const qs = params.toString() ? `?${params.toString()}` : "";
+  return api.get<ExamItem[]>(`/exams/admin${qs}`);
+}
+
+export async function getAdminExamDetail(examId: string): Promise<ExamItem> {
+  return api.get<ExamItem>(`/exams/admin/${examId}`);
+}
+
+export async function deleteAdminExam(examId: string): Promise<void> {
+  return api.delete<void>(`/exams/admin/${examId}`);
+}
+
+export async function toggleAdminExamDisclosure(
+  examId: string,
+  isResultDisclosed?: boolean
+): Promise<{ examId: string; isResultDisclosed: boolean }> {
+  return api.patch<{ examId: string; isResultDisclosed: boolean }>(
+    `/exams/admin/${examId}/toggle-disclosure`,
+    { isResultDisclosed }
+  );
+}
+
+export async function toggleAdminExamRetakes(
+  examId: string,
+  allowRetakes?: boolean
+): Promise<{ examId: string; allowRetakes: boolean }> {
+  return api.patch<{ examId: string; allowRetakes: boolean }>(
+    `/exams/admin/${examId}/toggle-retakes`,
+    { allowRetakes }
+  );
+}
+
+export async function getAdminExamResults(examId: string): Promise<ExamResultsResponse> {
+  return api.get<ExamResultsResponse>(`/exams/admin/${examId}/results`);
+}
+
+export async function parseCodingLink(urlOrTitle: string): Promise<CodingQuestionData> {
+  return api.post<CodingQuestionData>("/exams/admin/parse-coding-link", { urlOrTitle });
+}
+
+export async function generateAiMcqs(
+  topics: string[],
+  difficulty: "easy" | "medium" | "hard" = "medium",
+  count = 5
+): Promise<McqQuestionData[]> {
+  return api.post<McqQuestionData[]>("/exams/admin/generate-ai-mcqs", {
+    topics,
+    difficulty,
+    count,
+  });
+}
+
+export async function generateAiCoding(
+  topic: string,
+  difficulty: string = "Medium"
+): Promise<CodingQuestionData> {
+  return api.post<CodingQuestionData>("/exams/admin/generate-ai-coding", {
+    topic,
+    difficulty,
+  });
+}
+
+export async function unblockStudentExam(
+  examId: string,
+  studentId: string
+): Promise<{ studentId: string; examId: string; isBlocked: boolean; message?: string }> {
+  return api.patch<any>(`/exams/admin/${examId}/students/${studentId}/unblock`, {});
+}
+
+
+

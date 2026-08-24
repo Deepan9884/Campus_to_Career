@@ -78,6 +78,8 @@ export function MentorSettingsPage() {
   const { data: mentor, isLoading } = useQuery({
     queryKey: ["adminMentorProfile"],
     queryFn: getMentorProfile,
+    retry: 1,
+    staleTime: 60000,
   });
 
   useEffect(() => {
@@ -153,14 +155,6 @@ export function MentorSettingsPage() {
     });
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-24">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-      </div>
-    );
-  }
-
   const tabs = [
     { id: "appearance", label: "Appearance & Theme", icon: Palette },
     { id: "mentorship", label: "Mentorship & Cohort", icon: Sliders },
@@ -173,33 +167,41 @@ export function MentorSettingsPage() {
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1 uppercase tracking-wider">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" /> Mentor Settings Center
+      <div className="elite-panel hero-card-shimmer relative rounded-3xl p-5 sm:p-6 overflow-hidden">
+        <div
+          className="absolute top-0 right-0 w-72 h-32 pointer-events-none opacity-20"
+          style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
+        />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/25%)] flex items-center gap-1 uppercase tracking-wider">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> Mentor Settings Center
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
+              <SlidersHorizontal className="h-6 w-6 text-[var(--primary)]" />
+              <span className="gradient-text-warm">Mentor Preferences</span>{" "}
+              <span className="text-[var(--foreground)]">& Control Hub</span>
+            </h2>
+            <p className="text-xs text-[var(--muted-foreground)] mt-0.5 pl-8">
+              Manage your account preferences, notifications, and theme settings.
+            </p>
+          </div>
+
+          {/* Current Active Mode Badge */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[rgba(0,0,0,0.25)] border border-[var(--border)] shrink-0 self-start md:self-auto">
+            <span className="text-xs text-[var(--muted-foreground)] font-semibold">Active Theme:</span>
+            <span className="px-2.5 py-0.5 rounded-lg text-xs font-black uppercase tracking-wider bg-[rgb(var(--primary-rgb)/20%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/30%)] flex items-center gap-1">
+              {resolvedTheme === "light" ? <Sun className="h-3.5 w-3.5 text-amber-400" /> : <Moon className="h-3.5 w-3.5 text-indigo-300" />}
+              {theme === "system" ? `System (${resolvedTheme})` : resolvedTheme}
             </span>
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-            <SlidersHorizontal className="h-6 w-6 text-indigo-500" /> Mentor Preferences & Theme Control
-          </h2>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
-            Customize Light & Dark mode aesthetics, cohort alert rules, notification digests, and security credentials.
-          </p>
-        </div>
-
-        {/* Current Active Mode Badge */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-200/80 dark:bg-slate-900 border border-slate-300 dark:border-white/10 shrink-0 self-start md:self-auto">
-          <span className="text-xs text-slate-600 dark:text-slate-400 font-semibold">Active Theme:</span>
-          <span className="px-2 py-0.5 rounded-lg text-xs font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
-            {resolvedTheme === "light" ? <Sun className="h-3.5 w-3.5 text-amber-500" /> : <Moon className="h-3.5 w-3.5 text-indigo-400" />}
-            {theme === "system" ? `System (${resolvedTheme})` : resolvedTheme}
-          </span>
         </div>
       </div>
 
       {/* Navigation Tab Bar */}
-      <div className="flex overflow-x-auto gap-2 pb-1 border-b border-slate-200 dark:border-white/10 no-scrollbar">
+      <div className="flex overflow-x-auto gap-2 pb-1 border-b border-[var(--border)] no-scrollbar">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -207,10 +209,10 @@ export function MentorSettingsPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap transition ${
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all duration-200 ${
                 isActive
                   ? "btn-gradient text-white shadow-lg shadow-indigo-500/25"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/5"
+                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.06)]"
               }`}
             >
               <Icon className="h-4 w-4 shrink-0" />
@@ -231,9 +233,6 @@ export function MentorSettingsPage() {
                 <Palette className="h-5 w-5 text-indigo-500" />
                 <div>
                   <h3 className="text-base font-bold text-slate-900 dark:text-white">Theme & Color Mode</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Select your preferred visual environment for daytime and nighttime placement monitoring.
-                  </p>
                 </div>
               </div>
 
@@ -259,9 +258,9 @@ export function MentorSettingsPage() {
                   <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 grid place-items-center mb-3">
                     <Sun className="h-5 w-5" />
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Light Mode</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Clean, high-contrast light theme. Best for bright daylight office environments.
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Light</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Light mode
                   </p>
                 </div>
 
@@ -285,9 +284,9 @@ export function MentorSettingsPage() {
                   <div className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 grid place-items-center mb-3">
                     <Moon className="h-5 w-5" />
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Dark Mode</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Deep slate liquid glass mode. Reduces eye strain during late-night code reviews.
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">Dark</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Dark mode
                   </p>
                 </div>
 
@@ -311,9 +310,9 @@ export function MentorSettingsPage() {
                   <div className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 grid place-items-center mb-3">
                     <Laptop className="h-5 w-5" />
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">System Sync</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Automatically switches between Light & Dark based on your operating system settings.
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">System</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Follow OS settings
                   </p>
                 </div>
               </div>
@@ -417,9 +416,6 @@ export function MentorSettingsPage() {
               <Sliders className="h-5 w-5 text-indigo-500" />
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">Cohort Thresholds & Office Hours</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Configure intervention alert triggers and mentee office hour booking channels.
-                </p>
               </div>
             </div>
 
@@ -427,10 +423,10 @@ export function MentorSettingsPage() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" /> At-Risk Readiness Warning Threshold
+                  <AlertTriangle className="h-4 w-4 text-amber-500" /> At-Risk Warning Threshold
                 </label>
                 <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-black">
-                  {mentorPreferences.atRiskThreshold}% Overall Readiness
+                  {mentorPreferences.atRiskThreshold}% Readiness
                 </span>
               </div>
               <input
@@ -444,15 +440,12 @@ export function MentorSettingsPage() {
                 }}
                 className="w-full h-2 bg-slate-300 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
               />
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Mentees scoring below <strong className="text-rose-500">{mentorPreferences.atRiskThreshold}%</strong> in overall readiness will automatically be highlighted in red with an "At Risk" intervention tag.
-              </p>
             </div>
 
             {/* Office Hours Calendly URL */}
             <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-2">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                1-on-1 Office Hours Booking Link (Calendly / Meet)
+                1-on-1 Office Hours Link (Calendly / Meet)
               </label>
               <div className="relative">
                 <Calendar className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
@@ -460,23 +453,20 @@ export function MentorSettingsPage() {
                   type="url"
                   value={mentorPreferences.officeHoursUrl}
                   onChange={(e) => updatePreferences({ officeHoursUrl: e.target.value })}
-                  placeholder="https://calendly.com/mentor-name/30min"
+                  placeholder="https://calendly.com/mentor/30min"
                   className="w-full glass-input rounded-xl pl-9 pr-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500/50"
                 />
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                This booking URL is embedded in student action plans so mentees can schedule direct feedback sessions.
-              </p>
             </div>
 
             {/* Inactivity Encouragement Automation */}
             <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-slate-900/50">
               <div className="space-y-0.5">
                 <p className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <Zap className="h-4 w-4 text-indigo-500" /> Auto-Encouragement Check-in Emails
+                  <Zap className="h-4 w-4 text-indigo-500" /> Auto-Encouragement Emails
                 </p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Automatically dispatch a friendly check-in email if a mentee has zero coding or interview activity for 3+ days.
+                  Send reminder after 3 days of inactivity
                 </p>
               </div>
               <input
@@ -502,23 +492,20 @@ export function MentorSettingsPage() {
             <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
               <Bell className="h-5 w-5 text-indigo-500" />
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">Email Digest & Alert Triggers</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Choose how frequently you receive mentee activity summaries and instant intervention notifications.
-                </p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Email Digest & Alerts</h3>
               </div>
             </div>
 
             {/* Email Digest Frequency */}
             <div className="space-y-3">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                Mentorship Email Digest Schedule
+                Email Digest Schedule
               </label>
               <div className="grid sm:grid-cols-3 gap-3">
                 {[
-                  { id: "daily", label: "Daily Summary (8 AM)", desc: "Morning summary of mentee scores & activity." },
-                  { id: "weekly", label: "Weekly Digest (Mondays)", desc: "Comprehensive weekly placement report." },
-                  { id: "off", label: "Mute Email Reports", desc: "Only inspect stats directly in dashboard." },
+                  { id: "daily", label: "Daily Summary", desc: "Every morning at 8 AM" },
+                  { id: "weekly", label: "Weekly Digest", desc: "Every Monday morning" },
+                  { id: "off", label: "Disabled", desc: "No scheduled emails" },
                 ].map((opt) => (
                   <button
                     key={opt.id}
@@ -545,21 +532,21 @@ export function MentorSettingsPage() {
             {/* Alert Checkboxes */}
             <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-3">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                Instant Intervention Alert Triggers
+                Intervention Alerts
               </label>
               <div className="space-y-2">
                 {[
                   {
                     key: "notifyOnLowMockScore",
-                    label: "Alert when a mentee scores below 60% in a Mock Interview session",
+                    label: "Alert when mock interview score is below 60%",
                   },
                   {
                     key: "notifyOnLowResumeScore",
-                    label: "Alert when a mentee uploads an unoptimized ATS resume (< 55% match)",
+                    label: "Alert when resume score is below 55%",
                   },
                   {
                     key: "notifyOnInactivity",
-                    label: "Alert when a mentee drops off activity for 5 consecutive days",
+                    label: "Alert after 5 consecutive days of inactivity",
                   },
                 ].map((item) => (
                   <label

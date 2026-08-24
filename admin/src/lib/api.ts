@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || "/api";
+export const API_BASE = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
 
 let inMemoryAccessToken: string | null =
   typeof window !== "undefined" ? sessionStorage.getItem("cf-admin-token") : null;

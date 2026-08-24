@@ -221,92 +221,99 @@ export function StudentsPage() {
   return (
     <div className="space-y-6">
       {/* Header & Controls */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-            <Users className="h-6 w-6 text-indigo-500 shrink-0" /> Student Directory & Placement Roster
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Monitor, filter, and inspect career readiness indicators for your assigned mentees
-          </p>
-        </div>
+      <div className="elite-panel hero-card-shimmer relative rounded-3xl p-5 sm:p-6 overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-28 pointer-events-none opacity-20"
+          style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
+        />
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 relative z-10">
+          <div>
+            <h2 className="text-2xl font-black tracking-tight flex items-center gap-2">
+              <Users className="h-6 w-6 text-[var(--primary)] shrink-0" />
+              <span className="gradient-text-warm">Student Directory</span>{" "}
+              <span className="text-[var(--foreground)]">& Placement Roster</span>
+            </h2>
+            <p className="text-xs text-[var(--muted-foreground)] mt-0.5 pl-8">
+              Cohort directory and readiness indicators.
+            </p>
+          </div>
 
-        {/* Action Controls */}
-        <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto">
-          {/* Company Matcher Launcher */}
-          <button
-            onClick={() => setShowCompanyMatcher(true)}
-            className="px-3.5 py-2 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
-          >
-            <Building2 className="h-4 w-4 text-indigo-500" /> Company Matcher
-          </button>
+          {/* Action Controls */}
+          <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto">
+            {/* Company Matcher Launcher */}
+            <button
+              onClick={() => setShowCompanyMatcher(true)}
+              className="px-3.5 py-2 rounded-xl bg-[rgb(var(--primary-rgb)/12%)] hover:bg-[rgb(var(--primary-rgb)/22%)] border border-[rgb(var(--primary-rgb)/25%)] text-[var(--primary)] text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+            >
+              <Building2 className="h-4 w-4" /> Company Matcher
+            </button>
 
-          {/* Export CSV */}
-          <button
-            onClick={handleExportCsv}
-            className="px-3.5 py-2 rounded-xl glass hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center gap-1.5 transition"
-          >
-            <Download className="h-4 w-4 text-slate-500" /> Export CSV
-          </button>
+            {/* Export CSV */}
+            <button
+              onClick={handleExportCsv}
+              className="px-3.5 py-2 rounded-xl bg-[var(--glass-input-bg)] hover:bg-[rgba(255,255,255,0.10)] border border-[var(--border)] text-[var(--foreground)] text-xs font-bold flex items-center gap-1.5 transition"
+            >
+              <Download className="h-4 w-4 text-[var(--muted-foreground)]" /> Export CSV
+            </button>
 
-          {/* Add Mentee Button */}
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="btn-gradient px-4 py-2 rounded-xl text-xs font-extrabold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 transition hover:scale-105 shrink-0 whitespace-nowrap"
-          >
-            <UserPlus className="h-4 w-4" /> Add Mentee
-          </button>
+            {/* Add Mentee Button */}
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="btn-gradient px-4 py-2 rounded-xl text-xs font-extrabold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/30 transition hover:scale-105 shrink-0 whitespace-nowrap"
+            >
+              <UserPlus className="h-4 w-4" /> Add Mentee
+            </button>
 
-          {/* Search Box */}
-          <div className="relative flex-1 sm:w-64 min-w-[200px]">
-            <Search className="h-4 w-4 absolute left-3 top-2.5 text-slate-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Search student by name, email, or role..."
-              className="w-full pl-9 pr-8 py-2 rounded-xl glass-input text-xs outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
-            />
-            {search && (
-              <button
-                onClick={() => {
-                  setSearch("");
+            {/* Search Box */}
+            <div className="relative flex-1 sm:w-64 min-w-[200px]">
+              <Search className="h-4 w-4 absolute left-3 top-2.5 text-[var(--muted-foreground)]" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-900 dark:hover:text-white"
-              >
+                placeholder="Search student by name, email, or role..."
+                className="w-full pl-9 pr-8 py-2 rounded-xl glass-input text-xs outline-none"
+              />
+              {search && (
+                <button
+                  onClick={() => {
+                    setSearch("");
+                    setPage(1);
+                  }}
+                  className="absolute right-2.5 top-2.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                >
                 <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
-          {/* Filter Bar */}
-          <div className="flex bg-slate-200/80 dark:bg-slate-900/80 border border-slate-300 dark:border-white/10 p-1 rounded-xl flex-wrap">
-            {[
-              { key: "my-mentees", label: "My Mentees" },
-              { key: "all", label: "All Directory" },
-              { key: "top-performer", label: "Ready (≥75%)" },
-              { key: "at-risk", label: "Intervention (<40%)" },
-              { key: "blocked", label: "🔴 Blocked" },
-            ].map((f) => (
-              <button
-                key={f.key}
-                onClick={() => {
-                  setFilter(f.key);
-                  setPage(1);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
-                  filter === f.key
-                    ? "btn-gradient text-white shadow-md shadow-indigo-500/20"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
+            {/* Filter Bar */}
+            <div className="flex bg-[rgba(0,0,0,0.25)] border border-[var(--border)] p-1 rounded-xl flex-wrap gap-0.5">
+              {[
+                { key: "my-mentees", label: "My Mentees" },
+                { key: "all", label: "All Directory" },
+                { key: "top-performer", label: "Ready (≥75%)" },
+                { key: "at-risk", label: "Intervention (<40%)" },
+                { key: "blocked", label: "🔴 Blocked" },
+              ].map((f) => (
+                <button
+                  key={f.key}
+                  onClick={() => {
+                    setFilter(f.key);
+                    setPage(1);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
+                    filter === f.key
+                      ? "btn-gradient text-white shadow-md shadow-indigo-500/25"
+                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.06)]"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

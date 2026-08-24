@@ -19,7 +19,7 @@ import {
   PanelLeftOpen,
   AlertCircle,
 } from "lucide-react";
-import { getAccessToken, setAccessToken } from "./lib/api";
+import { getAccessToken, setAccessToken, API_BASE } from "./lib/api";
 import { ThemeProvider, useTheme } from "./lib/theme-context";
 import { InteractiveAppBackground } from "./components/InteractiveAppBackground";
 import { getCohortAnalytics } from "./lib/admin-api";
@@ -31,11 +31,13 @@ import { StudentDetailPage } from "./pages/StudentDetailPage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { MentorSettingsPage } from "./pages/MentorSettingsPage";
 import { SuperDreamManagementPage } from "./pages/SuperDreamManagementPage";
+import { ExamsManagementPage } from "./pages/ExamsManagementPage";
+import { AdminResultsPage } from "./pages/AdminResultsPage";
 import { MentorProductTour } from "./components/MentorProductTour";
 import { CommandPalette } from "./components/CommandPalette";
 import { CompanyMatcherModal } from "./components/CompanyMatcherModal";
 import { LiveProctoringOperations } from "./components/LiveProctoringOperations";
-import { Building2, ShieldAlert, Command, Crown } from "lucide-react";
+import { Building2, ShieldAlert, Command, Crown, FileCode, Award } from "lucide-react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -159,6 +161,8 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
   const navItems = [
     { label: "Overview", href: "/", icon: LayoutDashboard },
+    { label: "Exams & Assessments", href: "/exams", icon: FileCode },
+    { label: "Results & Disclosures", href: "/results", icon: Award },
     { label: "Student Roster", href: "/students", icon: Users },
     { label: "Super Dream Track", href: "/super-dream", icon: Crown },
     { label: "Cohort Analytics", href: "/analytics", icon: BarChart3 },
@@ -188,13 +192,25 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
       {/* Left Sidebar Navigation (Expandable & Shrinkable) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 bg-[image:var(--glass-strong-bg)] backdrop-blur-[40px] saturate-[180%] border-r border-[var(--border)] flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl ${
+        className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col justify-between transition-all duration-300 ease-in-out ${
           sidebarCollapsed ? "w-[72px] p-3" : "w-64 p-5"
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        style={{
+          background: "linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(14,11,30,0.80) 60%, rgba(14,11,30,0.92) 100%)",
+          backdropFilter: "blur(52px) saturate(200%)",
+          WebkitBackdropFilter: "blur(52px) saturate(200%)",
+          borderRight: "1px solid rgba(167,139,250,0.18)",
+          boxShadow: "4px 0 48px rgba(0,0,0,0.4), inset -1px 0 0 rgba(167,139,250,0.10)",
+        }}
       >
+        {/* Top gradient shimmer line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-none"
+          style={{ background: "linear-gradient(90deg, transparent 0%, rgba(167,139,250,0.7) 40%, rgba(249,168,212,0.6) 70%, transparent 100%)" }}
+        />
+
         <div className="space-y-4">
           {/* Brand Logo Header & Shrink / Expand Toggle */}
-          <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-4 pt-1">
             {!sidebarCollapsed ? (
               <>
                 <div className="flex items-center gap-2">
@@ -219,7 +235,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
               </>
             ) : (
               <div className="flex flex-col items-center w-full gap-3">
-                <div className="h-9 w-9 rounded-xl btn-gradient flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                <div className="h-9 w-9 rounded-xl btn-gradient flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
                   <GraduationCap className="h-5 w-5" />
                 </div>
                 <button
@@ -237,7 +253,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           {!sidebarCollapsed ? (
             <button
               onClick={() => setCommandPaletteOpen(true)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[rgb(var(--primary-rgb)/30%)] transition text-xs shadow-sm"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[rgb(var(--primary-rgb)/40%)] hover:bg-[rgb(var(--primary-rgb)/8%)] transition text-xs shadow-sm"
             >
               <span className="flex items-center gap-2 font-medium">
                 <Command className="h-3.5 w-3.5 text-[var(--primary)]" />
@@ -251,14 +267,14 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
             <button
               onClick={() => setCommandPaletteOpen(true)}
               title="Command Hub (Cmd+K)"
-              className="w-full p-2.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--primary)] flex items-center justify-center hover:scale-105 transition"
+              className="w-full p-2.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--primary)] flex items-center justify-center hover:scale-105 hover:border-[rgb(var(--primary-rgb)/40%)] transition"
             >
               <Command className="h-4 w-4" />
             </button>
           )}
 
           {/* Navigation Items */}
-          <nav className="space-y-1.5">
+          <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive =
@@ -274,13 +290,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                     sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2.5 gap-3"
                   } ${
                     isActive
-                      ? "btn-gradient text-white shadow-lg shadow-indigo-500/25"
-                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)]"
+                      ? "btn-gradient text-white shadow-[0_4px_20px_rgba(139,92,246,0.45),0_0_0_1px_rgba(167,139,250,0.3)]"
+                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.06)]"
                   }`}
                 >
                   <Icon
                     className={`h-4 w-4 shrink-0 transition-transform group-hover:scale-110 ${
-                      isActive ? "text-white" : "text-[var(--primary)]"
+                      isActive ? "text-white drop-shadow-sm" : "text-[var(--primary)]"
                     }`}
                   />
                   {!sidebarCollapsed && <span>{item.label}</span>}
@@ -290,20 +306,23 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
             {/* Quick Operations Sub-Group in Sidebar */}
             {!sidebarCollapsed && (
-              <div className="pt-3 border-t border-[var(--border)] space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted-foreground)] px-3 pb-1">
-                  Placement Tools
-                </p>
+              <div className="pt-3 border-t border-[var(--border)] space-y-0.5">
+                <div className="flex items-center gap-2 px-3 pb-1.5 pt-0.5">
+                  <span className="section-accent-line" style={{ height: "0.7em" }} />
+                  <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted-foreground)]">
+                    Placement Tools
+                  </p>
+                </div>
                 <button
                   onClick={() => setCompanyMatcherOpen(true)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] hover:bg-[rgb(var(--primary-rgb)/15%)] flex items-center gap-2.5 transition text-left"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] hover:bg-[rgb(var(--primary-rgb)/12%)] flex items-center gap-2.5 transition text-left"
                 >
                   <Building2 className="h-4 w-4 text-[var(--primary)] shrink-0" />
                   <span>Company Matcher</span>
                 </button>
                 <button
                   onClick={() => setLiveProctoringOpen(true)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--destructive)] hover:bg-[rgb(var(--destructive-rgb)/15%)] flex items-center gap-2.5 transition text-left"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--destructive)] hover:bg-[rgb(var(--destructive-rgb)/12%)] flex items-center gap-2.5 transition text-left"
                 >
                   <ShieldAlert className="h-4 w-4 text-[var(--destructive)] shrink-0" />
                   <span>Live Proctoring Radar</span>
@@ -314,7 +333,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
         </div>
 
         {/* Sidebar Footer Actions */}
-        <div className="space-y-3 pt-4 border-t border-[var(--border)]">
+        <div className="space-y-2.5 pt-4 border-t border-[var(--border)]">
           {/* Theme Switcher */}
           {!sidebarCollapsed ? (
             <div>
@@ -331,16 +350,16 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           <button
             onClick={() => setShowMentorTour(true)}
             title="Mentor Guide & Product Tour"
-            className={`w-full rounded-xl liquid-glass-card hover:brightness-110 border border-[rgb(var(--primary-rgb)/30%)] text-xs font-bold text-[var(--primary)] flex items-center transition group ${
+            className={`w-full rounded-xl border border-[rgb(var(--primary-rgb)/30%)] bg-[rgb(var(--primary-rgb)/10%)] hover:bg-[rgb(var(--primary-rgb)/18%)] text-xs font-bold text-[var(--primary)] flex items-center transition-all duration-200 group ${
               sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2 justify-between"
             }`}
           >
             <span className="flex items-center gap-2">
-              <HelpCircle className="h-4 w-4 text-[var(--primary)] shrink-0" />
+              <HelpCircle className="h-4 w-4 text-[var(--primary)] shrink-0 group-hover:scale-110 transition-transform" />
               {!sidebarCollapsed && <span>Mentor Guide</span>}
             </span>
             {!sidebarCollapsed && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] font-bold">
+              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[rgb(var(--primary-rgb)/20%)] text-[var(--primary)] font-black border border-[rgb(var(--primary-rgb)/20%)]">
                 Tour
               </span>
             )}
@@ -350,11 +369,11 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           <button
             onClick={onLogout}
             title="Sign Out"
-            className={`w-full rounded-xl liquid-glass-card hover:brightness-110 border border-[var(--border)] text-xs font-semibold text-[var(--muted-foreground)] flex items-center transition hover:text-[var(--destructive)] ${
+            className={`w-full rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.03)] hover:bg-[rgb(var(--destructive-rgb)/10%)] hover:border-[rgb(var(--destructive-rgb)/30%)] text-xs font-semibold text-[var(--muted-foreground)] flex items-center transition-all duration-200 hover:text-[var(--destructive)] group ${
               sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2 gap-2"
             }`}
           >
-            <LogOut className="h-4 w-4 text-[var(--muted-foreground)] shrink-0" />
+            <LogOut className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--destructive)] shrink-0 transition-colors" />
             {!sidebarCollapsed && <span>Sign Out</span>}
           </button>
         </div>
@@ -394,6 +413,8 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
         <div className="max-w-7xl mx-auto space-y-7">
           <Routes>
             <Route path="/" element={<OverviewPage />} />
+            <Route path="/exams" element={<ExamsManagementPage />} />
+            <Route path="/results" element={<AdminResultsPage />} />
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/students/:studentId" element={<StudentDetailPage />} />
             <Route path="/super-dream" element={<SuperDreamManagementPage />} />
@@ -493,11 +514,12 @@ export function App() {
     }
 
     let isMounted = true;
-    fetch("/api/admin/profile", {
+    fetch(`${API_BASE}/admin/profile`, {
       headers: {
         Authorization: `Bearer ${currentToken}`,
         "Content-Type": "application/json",
       },
+      credentials: "include",
     })
       .then((res) => {
         if (!res.ok) {
