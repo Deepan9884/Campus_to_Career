@@ -49,6 +49,8 @@ import {
   LayoutGrid,
   ArrowRight,
   UserPlus,
+  UserMinus,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -57,6 +59,7 @@ import {
   verifyStudentSuperDreamDeliverable,
   submitMentorEvaluationSignoff,
   assignSuperDreamMentee,
+  unassignSuperDreamMentee,
   type SuperDreamCohortStudent,
 } from "../lib/admin-api";
 import {
@@ -119,11 +122,30 @@ export function SuperDreamManagementPage() {
     onSuccess: (res) => {
       toast.success(res.message || "Student successfully assigned to your Super Dream roster!");
       queryClient.invalidateQueries({ queryKey: ["superDreamCohort"] });
+      queryClient.invalidateQueries({ queryKey: ["adminStudentsList"] });
+      queryClient.invalidateQueries({ queryKey: ["adminCohortAnalytics"] });
       setShowAssignMenteeModal(false);
       setAssignStudentInput("");
     },
     onError: (err: any) => {
       toast.error(err.message || "Failed to assign student to mentee roster");
+    },
+  });
+
+  // Unassign Mentee Mutation
+  const unassignMenteeMutation = useMutation({
+    mutationFn: (studentId: string) => unassignSuperDreamMentee(studentId),
+    onSuccess: (res) => {
+      toast.success(res.message || "Student unassigned from your roster");
+      queryClient.invalidateQueries({ queryKey: ["superDreamCohort"] });
+      queryClient.invalidateQueries({ queryKey: ["adminStudentsList"] });
+      queryClient.invalidateQueries({ queryKey: ["adminCohortAnalytics"] });
+      if (selectedStudentId) {
+        setSelectedStudentId("");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to unassign student");
     },
   });
 
@@ -1594,10 +1616,26 @@ export function SuperDreamManagementPage() {
                       </div>
                     </div>
 
-                    {/* Action Button */}
-                    <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs font-bold text-indigo-400 group-hover:text-indigo-300">
-                      <span>Inspect 360 Diagnostic Report</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                    {/* Action Buttons Strip */}
+                    <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm(`Remove ${cand.name} (${cand.email}) from your mentee and Super Dream roster?`)) {
+                            unassignMenteeMutation.mutate(cand.id);
+                          }
+                        }}
+                        className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/15 border border-red-500/20 transition flex items-center gap-1.5 cursor-pointer"
+                        title="Unassign this student from your roster"
+                      >
+                        <UserMinus className="w-3.5 h-3.5" />
+                        <span>Unassign</span>
+                      </button>
+
+                      <div className="flex items-center gap-1 text-xs font-bold text-indigo-400 group-hover:text-indigo-300">
+                        <span>Inspect 360 Report</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -1620,7 +1658,19 @@ export function SuperDreamManagementPage() {
               <span>Back to All Candidates ({candidates.length})</span>
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  if (confirm(`Remove ${selectedCandidate?.name || "this student"} from your mentee and Super Dream roster?`)) {
+                    unassignMenteeMutation.mutate(selectedStudentId);
+                  }
+                }}
+                className="px-3 py-1.5 rounded-xl text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/15 border border-red-500/30 transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Remove Mentee from Roster</span>
+              </button>
+
               <span className="text-xs text-[var(--muted-foreground)] font-mono">
                 Candidate ID: {selectedStudentId}
               </span>

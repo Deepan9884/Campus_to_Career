@@ -728,5 +728,12 @@ export async function assignSuperDreamMentee(studentIdOrEmail: string): Promise<
   });
 }
 
+export async function unassignSuperDreamMentee(studentIdOrEmail: string): Promise<{ message: string; unassignedStudentId: string }> {
+  return api.post<{ message: string; unassignedStudentId: string }>("/super-dream/unassign-mentee", {
+    studentId: studentIdOrEmail.includes("@") ? undefined : studentIdOrEmail,
+    studentEmail: studentIdOrEmail.includes("@") ? studentIdOrEmail : undefined,
+  });
+}
+
 
 
