@@ -685,6 +685,17 @@ export async function toggleAdminExamRetakes(
   );
 }
 
+export async function assignExamStudents(
+  examId: string,
+  targetAudience: "all" | "mentees" | "selected" = "selected",
+  assignedStudents: string[] = []
+): Promise<{ examId: string; targetAudience: string; assignedCount: number; assignedStudents: string[] }> {
+  return api.patch<{ examId: string; targetAudience: string; assignedCount: number; assignedStudents: string[] }>(
+    `/exams/admin/${examId}/assign-students`,
+    { targetAudience, assignedStudents }
+  );
+}
+
 export async function getAdminExamResults(examId: string): Promise<ExamResultsResponse> {
   return api.get<ExamResultsResponse>(`/exams/admin/${examId}/results`);
 }

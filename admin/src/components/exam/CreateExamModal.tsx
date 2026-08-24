@@ -1413,22 +1413,67 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                         ))}
                       </div>
 
-                      {/* Selected Students Picker */}
+                      {/* Selected Students & Batch Picker */}
                       {targetAudience === "selected" && (
-                        <div className="space-y-3 pt-2">
-                          <input
-                            type="text"
-                            value={studentSearch}
-                            onChange={(e) => setStudentSearch(e.target.value)}
-                            placeholder="Search students by name or email..."
-                            className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white"
-                          />
+                        <div className="space-y-4 pt-2">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                            <div className="flex items-center gap-2">
+                              <span className="px-3 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 font-extrabold text-xs border border-indigo-500/30">
+                                {selectedStudentIds.length} Candidate(s) Selected for this Test Batch
+                              </span>
+                            </div>
 
-                          <div className="max-h-48 overflow-y-auto space-y-1 border border-slate-800 rounded-xl p-2 bg-slate-900">
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const filtered = studentsRoster.filter((st) => {
+                                    const matchesSearch =
+                                      !studentSearch ||
+                                      st.name?.toLowerCase().includes(studentSearch.toLowerCase()) ||
+                                      st.email?.toLowerCase().includes(studentSearch.toLowerCase()) ||
+                                      ((st as any).registerNumber && (st as any).registerNumber.toLowerCase().includes(studentSearch.toLowerCase()));
+                                    return matchesSearch;
+                                  });
+                                  const allIds = Array.from(new Set([...selectedStudentIds, ...filtered.map((s) => s._id)]));
+                                  setSelectedStudentIds(allIds);
+                                  toast.success(`Selected ${filtered.length} candidates`);
+                                }}
+                                className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer"
+                              >
+                                Select All Filtered ({studentsRoster.filter((st) => !studentSearch || st.name.toLowerCase().includes(studentSearch.toLowerCase()) || st.email.toLowerCase().includes(studentSearch.toLowerCase())).length})
+                              </button>
+
+                              {selectedStudentIds.length > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedStudentIds([])}
+                                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-400 font-bold text-xs transition cursor-pointer"
+                                >
+                                  Clear Selection
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="relative">
+                            <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                            <input
+                              type="text"
+                              value={studentSearch}
+                              onChange={(e) => setStudentSearch(e.target.value)}
+                              placeholder="Search candidates by name, email, or register number..."
+                              className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none"
+                            />
+                          </div>
+
+                          <div className="max-h-56 overflow-y-auto space-y-1.5 border border-slate-800 rounded-2xl p-2.5 bg-slate-900/90">
                             {studentsRoster
                               .filter((st) =>
+                                !studentSearch ||
                                 st.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
-                                st.email.toLowerCase().includes(studentSearch.toLowerCase())
+                                st.email.toLowerCase().includes(studentSearch.toLowerCase()) ||
+                                ((st as any).registerNumber && (st as any).registerNumber.toLowerCase().includes(studentSearch.toLowerCase()))
                               )
                               .map((st) => {
                                 const isSelected = selectedStudentIds.includes(st._id);
@@ -1442,15 +1487,49 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                                         setSelectedStudentIds([...selectedStudentIds, st._id]);
                                       }
                                     }}
-                                    className={`p-2.5 rounded-lg flex items-center justify-between cursor-pointer text-xs ${
-                                      isSelected ? "bg-indigo-600 text-white font-bold" : "hover:bg-slate-800 text-slate-300"
+                                    className={`p-2.5 rounded-xl flex items-center justify-between cursor-pointer text-xs transition border ${
+                                      isSelected
+                                        ? "bg-indigo-600/20 border-indigo-500/50 text-white font-bold"
+                                        : "bg-slate-950/60 border-slate-800/80 hover:border-slate-700 text-slate-300"
                                     }`}
                                   >
-                                    <div>
-                                      <span>{st.name}</span>
-                                      <span className="text-[10px] opacity-70 block">{st.email}</span>
+                                    <div className="flex items-center gap-2.5">
+                                      <div
+                                        className={`w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs ${
+                                          isSelected ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-400"
+                                        }`}
+                                      >
+                                        {st.name.charAt(0)}
+                                      </div>
+                                      <div>
+                                        <div className="flex items-center gap-1.5">
+                                          <span className="font-bold text-white">{st.name}</span>
+                                          {(st as any).registerNumber && (
+                                            <span className="text-[10px] font-mono text-indigo-300 font-semibold">
+                                              ({(st as any).registerNumber})
+                                            </span>
+                                          )}
+                                        </div>
+                                        <span className="text-[10px] text-slate-400 block">{st.email}</span>
+                                      </div>
                                     </div>
-                                    {isSelected && <Check className="h-4 w-4" />}
+
+                                    <div className="flex items-center gap-2">
+                                      {st.targetRole && (
+                                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 hidden sm:inline-block">
+                                          {st.targetRole}
+                                        </span>
+                                      )}
+                                      <div
+                                        className={`w-5 h-5 rounded-md flex items-center justify-center border transition ${
+                                          isSelected
+                                            ? "bg-indigo-600 border-indigo-500 text-white"
+                                            : "border-slate-700 bg-slate-800/50 text-transparent"
+                                        }`}
+                                      >
+                                        <Check className="h-3.5 w-3.5" />
+                                      </div>
+                                    </div>
                                   </div>
                                 );
                               })}

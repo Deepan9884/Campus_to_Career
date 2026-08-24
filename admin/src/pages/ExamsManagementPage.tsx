@@ -36,7 +36,10 @@ import {
   stopAdminExam,
   toggleAdminExamDisclosure,
   toggleAdminExamRetakes,
+  assignExamStudents,
+  getStudentsList,
   type ExamItem,
+  type StudentSummary,
 } from "../lib/admin-api";
 import { CreateExamModal } from "../components/exam/CreateExamModal";
 import { QuestionPaperPreviewModal } from "../components/exam/QuestionPaperPreviewModal";
@@ -50,6 +53,7 @@ export function ExamsManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedExamForPreview, setSelectedExamForPreview] = useState<ExamItem | null>(null);
+  const [selectedExamForBatch, setSelectedExamForBatch] = useState<ExamItem | null>(null);
 
   // Fetch all exams
   const { data: exams = [], isLoading, refetch } = useQuery({
@@ -428,6 +432,38 @@ export function ExamsManagementPage() {
                       {exam.allowRetakes ? "Disable" : "Allow"}
                     </button>
                   </div>
+
+                  {/* Candidate Cohort Batch Row */}
+                  <div className="p-2.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-3.5 w-3.5 text-indigo-400" />
+                      <div>
+                        <span className="text-[11px] font-bold block text-[var(--foreground)]">
+                          {exam.targetAudience === "selected" || (exam.assignedStudents && exam.assignedStudents.length > 0)
+                            ? `Selected Batch (${exam.assignedStudents?.length || 0} Students)`
+                            : exam.targetAudience === "mentees"
+                            ? "My Mentees Only"
+                            : "All Registered Students"}
+                        </span>
+                        <span className="text-[9px] text-[var(--muted-foreground)]">
+                          {exam.targetAudience === "selected" || (exam.assignedStudents && exam.assignedStudents.length > 0)
+                            ? "Strictly restricted to selected batch"
+                            : exam.targetAudience === "mentees"
+                            ? "Only visible to your mentees"
+                            : "Visible to all registered students"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedExamForBatch(exam)}
+                      className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 transition cursor-pointer flex items-center gap-1"
+                    >
+                      <Users className="h-3 w-3" />
+                      <span>Assign Batch</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Card Action Buttons */}
@@ -506,6 +542,273 @@ export function ExamsManagementPage() {
         onClose={() => setSelectedExamForPreview(null)}
         exam={selectedExamForPreview}
       />
+
+      {/* ── ASSIGN BATCH MODAL ───────────────────────────────────────────── */}
+      {selectedExamForBatch && (
+        <AssignBatchModal
+          exam={selectedExamForBatch}
+          onClose={() => setSelectedExamForBatch(null)}
+          onSuccess={() => {
+            setSelectedExamForBatch(null);
+            queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── ASSIGN BATCH MODAL COMPONENT ───────────────────────────────────────────
+function AssignBatchModal({
+  exam,
+  onClose,
+  onSuccess,
+}: {
+  exam: ExamItem;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [targetAudience, setTargetAudience] = useState<"all" | "mentees" | "selected">(
+    exam.targetAudience || "all"
+  );
+  const [selectedIds, setSelectedIds] = useState<string[]>(() => {
+    if (Array.isArray(exam.assignedStudents)) {
+      return exam.assignedStudents.map((s: any) => (typeof s === "string" ? s : s._id));
+    }
+    return [];
+  });
+  const [search, setSearch] = useState("");
+  const [students, setStudents] = useState<StudentSummary[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    getStudentsList()
+      .then((res) => {
+        setStudents(res.students || []);
+      })
+      .catch((err) => {
+        console.error("Failed to load students roster", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
+  const filteredStudents = students.filter((s) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (
+      s.name.toLowerCase().includes(q) ||
+      s.email.toLowerCase().includes(q) ||
+      ((s as any).registerNumber && (s as any).registerNumber.toLowerCase().includes(q))
+    );
+  });
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await assignExamStudents(
+        exam._id,
+        targetAudience,
+        targetAudience === "selected" ? selectedIds : []
+      );
+      toast.success(
+        targetAudience === "selected"
+          ? `Successfully assigned test to ${selectedIds.length} candidate(s)`
+          : targetAudience === "mentees"
+          ? "Exam restricted to your assigned mentees"
+          : "Exam opened to all registered students"
+      );
+      onSuccess();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update batch assignment");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-slate-950 border border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150 p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+              <Users className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-white">
+                Assign Test Batch & Target Candidates
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5 truncate max-w-md">
+                Exam: <strong className="text-indigo-300">{exam.title}</strong>
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Audience Selector Tabs */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Target Audience Policy
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {[
+              { id: "all", label: "All Students", desc: "Open to whole directory" },
+              { id: "mentees", label: "My Mentees Only", desc: "Assigned mentees only" },
+              { id: "selected", label: "Selected Batch", desc: "Designated candidate list" },
+            ].map((aud) => (
+              <div
+                key={aud.id}
+                onClick={() => setTargetAudience(aud.id as any)}
+                className={`p-3.5 rounded-2xl border transition cursor-pointer space-y-1 ${
+                  targetAudience === aud.id
+                    ? "bg-indigo-950/50 border-indigo-500 ring-1 ring-indigo-500 text-white font-bold"
+                    : "bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700"
+                }`}
+              >
+                <span className="text-xs font-bold block text-white">{aud.label}</span>
+                <p className="text-[10px] text-slate-400 leading-tight">{aud.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Candidate Selector for Selected Batch */}
+        {targetAudience === "selected" && (
+          <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span className="text-xs font-extrabold text-indigo-300 px-3 py-1 rounded-xl bg-indigo-500/20 border border-indigo-500/30">
+                {selectedIds.length} Candidate(s) Selected
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const allIds = Array.from(new Set([...selectedIds, ...filteredStudents.map((s) => s._id)]));
+                    setSelectedIds(allIds);
+                    toast.success(`Selected ${filteredStudents.length} candidates`);
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer"
+                >
+                  Select All Filtered ({filteredStudents.length})
+                </button>
+
+                {selectedIds.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIds([])}
+                    className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 hover:text-rose-300 text-slate-400 font-bold text-xs transition cursor-pointer"
+                  >
+                    Clear Selection
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="relative">
+              <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search candidates by name, email, register number..."
+                className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none"
+              />
+            </div>
+
+            <div className="max-h-60 overflow-y-auto space-y-1.5 border border-slate-800 rounded-2xl p-2.5 bg-slate-900/80">
+              {isLoading ? (
+                <div className="p-8 text-center text-xs text-slate-400">Loading student directory...</div>
+              ) : filteredStudents.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-500">No candidates match search query.</div>
+              ) : (
+                filteredStudents.map((st) => {
+                  const isSelected = selectedIds.includes(st._id);
+                  return (
+                    <div
+                      key={st._id}
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedIds(selectedIds.filter((id) => id !== st._id));
+                        } else {
+                          setSelectedIds([...selectedIds, st._id]);
+                        }
+                      }}
+                      className={`p-2.5 rounded-xl flex items-center justify-between cursor-pointer text-xs transition border ${
+                        isSelected
+                          ? "bg-indigo-600/20 border-indigo-500/50 text-white font-bold"
+                          : "bg-slate-950/60 border-slate-800/80 hover:border-slate-700 text-slate-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className={`w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs ${
+                            isSelected ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-400"
+                          }`}
+                        >
+                          {st.name.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-white">{st.name}</span>
+                            {(st as any).registerNumber && (
+                              <span className="text-[10px] font-mono text-indigo-300 font-semibold">
+                                ({(st as any).registerNumber})
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-slate-400 block">{st.email}</span>
+                        </div>
+                      </div>
+
+                      <div
+                        className={`w-5 h-5 rounded-md flex items-center justify-center border transition ${
+                          isSelected
+                            ? "bg-indigo-600 border-indigo-500 text-white"
+                            : "border-slate-700 bg-slate-800/50 text-transparent"
+                        }`}
+                      >
+                        ✓
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Actions Footer */}
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition cursor-pointer"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            disabled={isSaving || (targetAudience === "selected" && selectedIds.length === 0)}
+            onClick={handleSave}
+            className="btn-gradient px-5 py-2.5 rounded-xl text-xs font-black text-white shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition cursor-pointer disabled:opacity-50"
+          >
+            {isSaving ? "Saving Batch..." : "Save Batch Assignment"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
