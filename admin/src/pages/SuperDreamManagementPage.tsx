@@ -48,6 +48,7 @@ import {
   FileSpreadsheet,
   LayoutGrid,
   ArrowRight,
+  UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -1486,19 +1487,36 @@ export function SuperDreamManagementPage() {
 
             {/* Candidates Card Panel Grid */}
             {candidates.length === 0 ? (
-              <div className="p-12 text-center rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-3">
-                <Users className="w-10 h-10 text-slate-500 mx-auto" />
-                <h4 className="text-sm font-bold text-[var(--foreground)]">No Candidates Found</h4>
-                <p className="text-xs text-[var(--muted-foreground)]">Try clearing your search filter or selecting another phase.</p>
-                <button
-                  onClick={() => {
-                    setPhaseFilter(undefined);
-                    setSearchCandidate("");
-                  }}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-500 transition cursor-pointer"
-                >
-                  Reset Filters
-                </button>
+              <div className="p-12 text-center rounded-3xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-4 max-w-lg mx-auto my-6 shadow-xl">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400">
+                  <Users className="w-7 h-7" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-base font-extrabold text-[var(--foreground)]">No Mentees Assigned Yet</h4>
+                  <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+                    Only students specifically assigned to your mentee roster will appear in your Super Dream cohort. Click below to assign a student to your cohort.
+                  </p>
+                </div>
+                <div className="flex items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => setShowAssignMenteeModal(true)}
+                    className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>Assign Mentee to Super Dream</span>
+                  </button>
+                  {(searchCandidate || phaseFilter !== undefined) && (
+                    <button
+                      onClick={() => {
+                        setPhaseFilter(undefined);
+                        setSearchCandidate("");
+                      }}
+                      className="px-3 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-white/10 text-[var(--foreground)] hover:bg-slate-300 dark:hover:bg-white/20 transition cursor-pointer"
+                    >
+                      Clear Filters
+                    </button>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-2">

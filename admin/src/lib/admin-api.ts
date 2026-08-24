@@ -427,11 +427,13 @@ export interface SuperDreamStudentDetailResponse {
 
 export async function getSuperDreamCohort(
   search = "",
-  phase?: number
+  phase?: number,
+  scope = "my-mentees"
 ): Promise<SuperDreamCohortResponse> {
   const params = new URLSearchParams();
   if (search) params.append("search", search);
   if (phase) params.append("phase", String(phase));
+  if (scope) params.append("scope", scope);
   const qs = params.toString() ? `?${params.toString()}` : "";
   return api.get<SuperDreamCohortResponse>(`/super-dream/cohort${qs}`);
 }
