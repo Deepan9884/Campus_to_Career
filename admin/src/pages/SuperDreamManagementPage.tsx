@@ -55,6 +55,7 @@ import {
   getStudentSuperDreamDetail,
   verifyStudentSuperDreamDeliverable,
   submitMentorEvaluationSignoff,
+  assignSuperDreamMentee,
   type SuperDreamCohortStudent,
 } from "../lib/admin-api";
 import {
@@ -108,6 +109,22 @@ export function SuperDreamManagementPage() {
   const [showCourseCuratorModal, setShowCourseCuratorModal] = useState(false);
   const [showRoadmapBuilderModal, setShowRoadmapBuilderModal] = useState(false);
   const [showResumeTextModal, setShowResumeTextModal] = useState(false);
+  const [showAssignMenteeModal, setShowAssignMenteeModal] = useState(false);
+  const [assignStudentInput, setAssignStudentInput] = useState("");
+
+  // Assign Mentee Mutation
+  const assignMenteeMutation = useMutation({
+    mutationFn: (input: string) => assignSuperDreamMentee(input),
+    onSuccess: (res) => {
+      toast.success(res.message || "Student successfully assigned to your Super Dream roster!");
+      queryClient.invalidateQueries({ queryKey: ["superDreamCohort"] });
+      setShowAssignMenteeModal(false);
+      setAssignStudentInput("");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to assign student to mentee roster");
+    },
+  });
 
   // Section 10 Evaluation Signoff State
   const [strengthsInput, setStrengthsInput] = useState("");
@@ -1355,6 +1372,12 @@ export function SuperDreamManagementPage() {
           )}
 
           <button
+            onClick={() => setShowAssignMenteeModal(true)}
+            className="btn-gradient px-3.5 py-2 rounded-xl text-xs font-bold text-white transition flex items-center gap-1.5 shadow-md shadow-indigo-500/25 cursor-pointer"
+          >
+            <UserCheck className="w-3.5 h-3.5" /> Assign Mentee
+          </button>
+          <button
             onClick={() => setShowTaskBuilderModal(true)}
             className="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-500/25 cursor-pointer"
           >
@@ -1911,6 +1934,70 @@ export function SuperDreamManagementPage() {
                 className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition cursor-pointer"
               >
                 Close Inspector
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── ASSIGN MENTEE TO SUPER DREAM MODAL ───────────────────────── */}
+      {showAssignMenteeModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl text-slate-100 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl btn-gradient text-white">
+                  <UserCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm text-white">Assign Student to Mentee Cohort</h3>
+                  <p className="text-[11px] text-slate-400">Link student to your Super Dream & mentee roster</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAssignMenteeModal(false)}
+                className="text-slate-400 hover:text-white p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-300">
+                  Student Email Address or User ID *
+                </label>
+                <input
+                  type="text"
+                  value={assignStudentInput}
+                  onChange={(e) => setAssignStudentInput(e.target.value)}
+                  placeholder="e.g. student@college.edu or 65f..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:border-indigo-500 focus:outline-none"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && assignStudentInput.trim()) {
+                      assignMenteeMutation.mutate(assignStudentInput.trim());
+                    }
+                  }}
+                />
+                <span className="text-[10px] text-slate-400 block">
+                  Once assigned, only this student will appear under your Super Dream and mentee management.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2 border-t border-slate-800">
+              <button
+                onClick={() => setShowAssignMenteeModal(false)}
+                className="flex-1 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300 hover:bg-slate-700 transition"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={!assignStudentInput.trim() || assignMenteeMutation.isPending}
+                onClick={() => assignMenteeMutation.mutate(assignStudentInput.trim())}
+                className="flex-1 btn-gradient py-2 rounded-xl text-xs font-bold text-white transition disabled:opacity-50"
+              >
+                {assignMenteeMutation.isPending ? "Assigning..." : "Confirm Assignment"}
               </button>
             </div>
           </div>

@@ -242,6 +242,38 @@ export async function deleteMentorTask(taskId: string): Promise<{ message: strin
   return api.delete(`/admin/tasks/${taskId}`);
 }
 
+export interface LiveExamCandidate {
+  submissionId: string;
+  studentId: string;
+  name: string;
+  email: string;
+  avatar: string;
+  registerNumber: string;
+  targetRole: string;
+  status: "in_progress" | "warning" | "blocked" | "submitted";
+  violationsCount: number;
+  violationDetails: string[];
+  proctoringIntegrity: number;
+  totalScore: number;
+  durationSeconds: number;
+  submittedAt?: string;
+  updatedAt?: string;
+}
+
+export interface LiveExamGroup {
+  examId: string;
+  examTitle: string;
+  examType: "mcq" | "coding" | "mixed";
+  category: string;
+  difficulty: string;
+  durationMinutes: number;
+  status?: string;
+  activeCount: number;
+  blockedCount: number;
+  warningCount: number;
+  candidates: LiveExamCandidate[];
+}
+
 export interface LiveProctoringFeedResponse {
   totalBlockedCount: number;
   blockedUsers: Array<{
@@ -264,6 +296,9 @@ export interface LiveProctoringFeedResponse {
     updatedAt: string;
     events: Array<{ violationType: string; detectedAt: string }>;
   }>;
+  activeExamsCount?: number;
+  totalActiveCandidates?: number;
+  examsWithTakers?: LiveExamGroup[];
 }
 
 export async function getLiveProctoringFeed(): Promise<LiveProctoringFeedResponse> {
@@ -515,6 +550,12 @@ export interface ExamItem {
   isResultDisclosed: boolean;
   allowRetakes?: boolean;
   isPublished: boolean;
+  isScheduled?: boolean;
+  scheduledStartTime?: string | null;
+  scheduledEndTime?: string | null;
+  status?: "draft" | "scheduled" | "active" | "completed" | "stopped";
+  stoppedAt?: string | null;
+  stoppedBy?: string | null;
   createdAt: string;
   stats?: {
     totalSubmissions: number;
@@ -600,9 +641,10 @@ export async function createAdminExam(payload: Partial<ExamItem>): Promise<ExamI
   return api.post<ExamItem>("/exams/admin/create", payload);
 }
 
-export async function getAdminExams(type = "all", search = ""): Promise<ExamItem[]> {
+export async function getAdminExams(type = "all", search = "", status = "all"): Promise<ExamItem[]> {
   const params = new URLSearchParams();
   if (type && type !== "all") params.append("examType", type);
+  if (status && status !== "all") params.append("status", status);
   if (search) params.append("search", search);
   const qs = params.toString() ? `?${params.toString()}` : "";
   return api.get<ExamItem[]>(`/exams/admin${qs}`);
@@ -614,6 +656,10 @@ export async function getAdminExamDetail(examId: string): Promise<ExamItem> {
 
 export async function deleteAdminExam(examId: string): Promise<void> {
   return api.delete<void>(`/exams/admin/${examId}`);
+}
+
+export async function stopAdminExam(examId: string): Promise<{ message: string; examId: string; status: string }> {
+  return api.patch<{ message: string; examId: string; status: string }>(`/exams/admin/${examId}/stop`, {});
 }
 
 export async function toggleAdminExamDisclosure(
@@ -671,6 +717,13 @@ export async function unblockStudentExam(
   studentId: string
 ): Promise<{ studentId: string; examId: string; isBlocked: boolean; message?: string }> {
   return api.patch<any>(`/exams/admin/${examId}/students/${studentId}/unblock`, {});
+}
+
+export async function assignSuperDreamMentee(studentIdOrEmail: string): Promise<{ message: string; student: any }> {
+  return api.post<{ message: string; student: any }>("/super-dream/assign-mentee", {
+    studentId: studentIdOrEmail.includes("@") ? undefined : studentIdOrEmail,
+    studentEmail: studentIdOrEmail.includes("@") ? studentIdOrEmail : undefined,
+  });
 }
 
 
