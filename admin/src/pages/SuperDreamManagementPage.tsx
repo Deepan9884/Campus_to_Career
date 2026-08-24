@@ -163,8 +163,30 @@ export function SuperDreamManagementPage() {
     refetchInterval: 5000, // Live poll cohort updates every 5 seconds
   });
 
-  const candidates: SuperDreamCohortStudent[] = cohortData?.cohort || [];
-  const totalRegistered = cohortData?.total ?? candidates.length;
+  const rawCandidates: SuperDreamCohortStudent[] = cohortData?.cohort || [];
+  
+  // Client-side strict filter: Exclude any mentor, admin, or faculty records
+  const candidates: SuperDreamCohortStudent[] = rawCandidates.filter((cand) => {
+    const roleStr = (cand.targetRole || "").toLowerCase();
+    const nameStr = (cand.name || "").toLowerCase();
+    const emailStr = (cand.email || "").toLowerCase();
+    if (
+      roleStr.includes("mentor") ||
+      roleStr.includes("faculty") ||
+      roleStr.includes("admin") ||
+      roleStr.includes("system admin")
+    ) {
+      return false;
+    }
+    if (nameStr.startsWith("dr.") || nameStr.includes("prof.") || nameStr.includes("saranya")) {
+      return false;
+    }
+    if (emailStr.includes("s.saranya")) {
+      return false;
+    }
+    return true;
+  });
+  const totalRegistered = candidates.length;
 
   // 2. Fetch Detailed Super Dream 360 State for Selected Student
   const {
