@@ -86,6 +86,7 @@ ehthumbs.db
 # TanStack Build
 .output/
 .vinxi/
+.vercel/
 
 # Nitro / SSR build
 .nitro/
