@@ -344,6 +344,7 @@ export interface SuperDreamCohortStudent {
     timestamp: string;
   }>;
   hasFullData: boolean;
+  isAssignedToMe?: boolean;
 }
 
 export interface SuperDreamCohortResponse {
@@ -719,6 +720,14 @@ export async function unblockStudentExam(
   studentId: string
 ): Promise<{ studentId: string; examId: string; isBlocked: boolean; message?: string }> {
   return api.patch<any>(`/exams/admin/${examId}/students/${studentId}/unblock`, {});
+}
+
+export async function blockStudentExam(
+  examId: string,
+  studentId: string,
+  reason?: string
+): Promise<{ studentId: string; examId: string; isBlocked: boolean; message?: string }> {
+  return api.patch<any>(`/exams/admin/${examId}/students/${studentId}/block`, { reason });
 }
 
 export async function assignSuperDreamMentee(studentIdOrEmail: string): Promise<{ message: string; student: any }> {

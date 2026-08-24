@@ -165,8 +165,11 @@ export function SuperDreamManagementPage() {
 
   const rawCandidates: SuperDreamCohortStudent[] = cohortData?.cohort || [];
   
-  // Client-side strict filter: Exclude any mentor, admin, or faculty records
+  // Client-side strict filter: Only assigned mentees, excluding any mentor, admin, or faculty records
   const candidates: SuperDreamCohortStudent[] = rawCandidates.filter((cand) => {
+    if (cand.isAssignedToMe === false) {
+      return false;
+    }
     const roleStr = (cand.targetRole || "").toLowerCase();
     const nameStr = (cand.name || "").toLowerCase();
     const emailStr = (cand.email || "").toLowerCase();
@@ -174,14 +177,28 @@ export function SuperDreamManagementPage() {
       roleStr.includes("mentor") ||
       roleStr.includes("faculty") ||
       roleStr.includes("admin") ||
-      roleStr.includes("system admin")
+      roleStr.includes("professor") ||
+      roleStr.includes("hod") ||
+      roleStr.includes("staff")
     ) {
       return false;
     }
-    if (nameStr.startsWith("dr.") || nameStr.includes("prof.") || nameStr.includes("saranya")) {
+    if (
+      nameStr.startsWith("dr.") ||
+      nameStr.startsWith("prof.") ||
+      nameStr.includes("faculty") ||
+      nameStr.includes("mentor") ||
+      nameStr.includes("admin") ||
+      nameStr.includes("saranya")
+    ) {
       return false;
     }
-    if (emailStr.includes("s.saranya")) {
+    if (
+      emailStr.includes("mentor") ||
+      emailStr.includes("faculty") ||
+      emailStr.includes("admin") ||
+      emailStr.includes("s.saranya")
+    ) {
       return false;
     }
     return true;
