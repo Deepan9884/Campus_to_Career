@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   X,
   Plus,
@@ -135,7 +135,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
   // Scheduling Configuration
   const [isScheduled, setIsScheduled] = useState(false);
   const [scheduledStartTime, setScheduledStartTime] = useState("");
-  const [scheduledEndTime, setScheduledEndTime] = useState("");
+  const startDateInputRef = useRef<HTMLInputElement>(null);
 
   // Proctoring Settings
   const [webcamRequired, setWebcamRequired] = useState(false);
@@ -357,10 +357,6 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
           toast.error("Please select a Scheduled Start Date & Time.");
           return false;
         }
-        if (scheduledEndTime && new Date(scheduledEndTime) <= new Date(scheduledStartTime)) {
-          toast.error("Scheduled End Time must be later than the Start Time.");
-          return false;
-        }
       }
       return true;
     }
@@ -570,7 +566,9 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
     isPublished: true,
     isScheduled,
     scheduledStartTime: isScheduled && scheduledStartTime ? scheduledStartTime : null,
-    scheduledEndTime: isScheduled && scheduledEndTime ? scheduledEndTime : null,
+    scheduledEndTime: isScheduled && scheduledStartTime
+      ? new Date(new Date(scheduledStartTime).getTime() + Number(durationMinutes) * 60 * 1000).toISOString()
+      : null,
     status: isScheduled && scheduledStartTime && new Date(scheduledStartTime) > new Date() ? "scheduled" : "active",
     createdAt: new Date().toISOString(),
   };
@@ -583,6 +581,10 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
 
     setIsSubmitting(true);
     try {
+      const computedEndTime = isScheduled && scheduledStartTime
+        ? new Date(new Date(scheduledStartTime).getTime() + Number(durationMinutes) * 60 * 1000).toISOString()
+        : null;
+
       const payload: Partial<ExamItem> = {
         title: title.trim(),
         description: description.trim(),
@@ -606,7 +608,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
         isPublished: true,
         isScheduled: Boolean(isScheduled && scheduledStartTime),
         scheduledStartTime: isScheduled && scheduledStartTime ? scheduledStartTime : null,
-        scheduledEndTime: isScheduled && scheduledEndTime ? scheduledEndTime : null,
+        scheduledEndTime: computedEndTime,
       };
 
       const created = await createAdminExam(payload);
@@ -1349,37 +1351,58 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                       </div>
 
                       {isScheduled && (
-                        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-150">
+                        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 animate-in fade-in duration-150">
                           <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                              <Timer className="h-3.5 w-3.5 text-indigo-400" />
-                              <span>Scheduled Start Date & Time *</span>
-                            </label>
-                            <input
-                              type="datetime-local"
-                              value={scheduledStartTime}
-                              onChange={(e) => setScheduledStartTime(e.target.value)}
-                              className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:border-indigo-500 focus:outline-none"
-                            />
-                            <span className="text-[10px] text-slate-400 block">
-                              Students cannot enter before this timestamp
-                            </span>
-                          </div>
+                            <div className="flex items-center justify-between">
+                              <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                                <Timer className="h-3.5 w-3.5 text-indigo-400" />
+                                <span>Scheduled Start Date & Time *</span>
+                              </label>
+                              <span className="text-[10px] text-indigo-300 font-bold bg-indigo-500/15 px-2.5 py-0.5 rounded-lg border border-indigo-500/30">
+                                Duration: {durationMinutes} mins
+                              </span>
+                            </div>
 
-                          <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                              <Timer className="h-3.5 w-3.5 text-rose-400" />
-                              <span>Scheduled End Date & Time (Optional)</span>
-                            </label>
-                            <input
-                              type="datetime-local"
-                              value={scheduledEndTime}
-                              onChange={(e) => setScheduledEndTime(e.target.value)}
-                              className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:border-indigo-500 focus:outline-none"
-                            />
-                            <span className="text-[10px] text-slate-400 block">
-                              Examination window automatically closes after this timestamp
-                            </span>
+                            <div className="relative flex items-center">
+                              <input
+                                ref={startDateInputRef}
+                                type="datetime-local"
+                                value={scheduledStartTime}
+                                onChange={(e) => setScheduledStartTime(e.target.value)}
+                                style={{ colorScheme: "dark" }}
+                                className="w-full pl-3.5 pr-11 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-indigo-500 focus:outline-none cursor-pointer [color-scheme:dark]"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  try {
+                                    if (startDateInputRef.current && "showPicker" in startDateInputRef.current) {
+                                      (startDateInputRef.current as any).showPicker();
+                                    } else {
+                                      startDateInputRef.current?.focus();
+                                    }
+                                  } catch {
+                                    startDateInputRef.current?.focus();
+                                  }
+                                }}
+                                className="absolute right-2 p-1.5 rounded-lg bg-slate-800 hover:bg-indigo-600 text-indigo-300 hover:text-white transition cursor-pointer"
+                                title="Open Calendar Picker"
+                              >
+                                <Timer className="h-4 w-4" />
+                              </button>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] pt-1 text-slate-400">
+                              <span>Students cannot access the assessment prior to this scheduled timestamp.</span>
+                              {scheduledStartTime && (
+                                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                                  <span>Auto-concludes at:</span>
+                                  <strong className="text-white bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 font-mono">
+                                    {new Date(new Date(scheduledStartTime).getTime() + Number(durationMinutes) * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </strong>
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )}

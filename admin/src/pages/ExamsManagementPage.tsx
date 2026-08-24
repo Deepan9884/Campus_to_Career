@@ -341,8 +341,11 @@ export function ExamsManagementPage() {
                     <div className="p-2 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-[10px] text-indigo-300 flex items-center gap-1.5">
                       <Timer className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
                       <span className="truncate">
-                        Window: {new Date(exam.scheduledStartTime).toLocaleString()}
-                        {exam.scheduledEndTime ? ` - ${new Date(exam.scheduledEndTime).toLocaleTimeString()}` : ""}
+                        Starts: {new Date(exam.scheduledStartTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                        {" → "}
+                        Auto-ends: {exam.scheduledEndTime
+                          ? new Date(exam.scheduledEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                          : new Date(new Date(exam.scheduledStartTime).getTime() + (exam.durationMinutes || 60) * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   )}
