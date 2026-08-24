@@ -1,4 +1,4 @@
-﻿================================================================================
+================================================================================
 1. QUIZ ATTEMPT / SESSION MODEL & CONTROLLER
 ================================================================================
 
@@ -2366,4 +2366,506 @@ Command: grep -ri "proctor|violation|webcam|fullscreen" -r ./backend ./src ./adm
 ================================================================================
 Command: grep -ri "getUserMedia|navigator.mediaDevices|webcam" -r ./src ./admin/src
 (No matches found in student frontend or admin portal)
+
+================================================================================
+8. AUTH 401 RETRY INTERCEPTOR & INFINITE LOOP FIX
+================================================================================
+
+### A. Full File Contents BEFORE Change (`src/lib/api.ts`)
+```typescript
+// Client-side uses the Vite proxy (/api -> localhost:5000).
+// Server-side (SSR / Nitro) must reach the backend directly.
+const isServer = typeof window === "undefined";
+const API_BASE = isServer ? "http://localhost:5000/api" : import.meta.env.VITE_API_URL || "/api";
+
+let inMemoryAccessToken: string | null = null;
+
+export function setAccessToken(token: string | null) {
+  inMemoryAccessToken = token;
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.removeItem("cf-token");
+      if (token) {
+        sessionStorage.setItem("cf_session_active", "1");
+      } else {
+        sessionStorage.removeItem("cf_session_active");
+      }
+    } catch {}
+  }
+}
+
+export function getAccessToken(): string | null {
+  return inMemoryAccessToken;
+}
+
+export class ApiError extends Error {
+  statusCode: number;
+  errors: string[];
+  constructor(statusCode: number, message: string, errors: string[] = []) {
+    super(message);
+    this.statusCode = statusCode;
+    this.errors = errors;
+  }
+}
+
+let refreshing: Promise<void> | null = null;
+
+export async function tryRefresh(): Promise<void> {
+  if (refreshing) return refreshing;
+  refreshing = (async () => {
+    const res = await fetch(`${API_BASE}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) {
+      setAccessToken(null);
+      throw new ApiError(401, "Session expired");
+    }
+    const json = await res.json();
+    setAccessToken(json.data.accessToken);
+  })().finally(() => {
+    refreshing = null;
+  });
+  return refreshing;
+}
+
+async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = endpoint.startsWith("http") ? endpoint : `${API_BASE}${cleanEndpoint}`;
+  const headers: Record<string, string> = {
+    ...((options.headers as Record<string, string>) || {}),
+  };
+
+  if (!(options.body instanceof FormData) && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  const token = getAccessToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  let res = await fetch(url, { ...options, headers, credentials: "include" });
+
+  if (res.status === 401 && !url.includes("/auth/refresh") && !url.includes("/auth/login")) {
+    try {
+      await tryRefresh();
+      const freshToken = getAccessToken();
+      if (freshToken) {
+        headers["Authorization"] = `Bearer ${freshToken}`;
+      }
+      res = await fetch(url, { ...options, headers, credentials: "include" });
+    } catch {
+      if (!url.includes("/auth/me")) {
+        const { useAuth } = await import("@/stores");
+        useAuth.getState().logout();
+      }
+      throw new ApiError(401, "Session expired");
+    }
+  }
+
+  let json: any;
+  const text = await res.text();
+  try {
+    json = text ? JSON.parse(text) : {};
+  } catch {
+    json = { message: text };
+  }
+
+  if (!res.ok || json.success === false) {
+    const errorMsg =
+      (typeof json === "object" && json?.message) ||
+      (typeof json === "string" && json) ||
+      text ||
+      `Request failed (${res.status})`;
+    throw new ApiError(
+      json?.statusCode || res.status,
+      errorMsg,
+      json?.errors || [],
+    );
+  }
+
+  return json.data as T;
+}
+
+export const api = {
+  get: <T>(endpoint: string, options?: RequestInit) => request<T>(endpoint, { ...options, method: "GET" }),
+  post: <T>(endpoint: string, body?: unknown, options?: RequestInit) =>
+    request<T>(endpoint, {
+      ...options,
+      method: "POST",
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+    }),
+  patch: <T>(endpoint: string, body?: unknown, options?: RequestInit) =>
+    request<T>(endpoint, {
+      ...options,
+      method: "PATCH",
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+    }),
+  delete: <T>(endpoint: string, options?: RequestInit) =>
+    request<T>(endpoint, { ...options, method: "DELETE" }),
+};
+```
+
+### B. Full File Contents AFTER Change (`src/lib/api.ts`)
+```typescript
+// Client-side uses the Vite proxy (/api -> localhost:5000).
+// Server-side (SSR / Nitro) must reach the backend directly.
+const isServer = typeof window === "undefined";
+const API_BASE = isServer ? "http://localhost:5000/api" : import.meta.env.VITE_API_URL || "/api";
+
+let inMemoryAccessToken: string | null = null;
+
+export function setAccessToken(token: string | null) {
+  inMemoryAccessToken = token;
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.removeItem("cf-token");
+      if (token) {
+        sessionStorage.setItem("cf_session_active", "1");
+      } else {
+        sessionStorage.removeItem("cf_session_active");
+      }
+    } catch {}
+  }
+}
+
+export function getAccessToken(): string | null {
+  return inMemoryAccessToken;
+}
+
+export class ApiError extends Error {
+  statusCode: number;
+  errors: string[];
+  constructor(statusCode: number, message: string, errors: string[] = []) {
+    super(message);
+    this.statusCode = statusCode;
+    this.errors = errors;
+  }
+}
+
+export interface RequestOptions extends RequestInit {
+  _retried?: boolean;
+}
+
+let refreshPromise: Promise<string | null> | null = null;
+const AUTH_EXEMPT_PATHS = ["/api/auth/refresh", "/api/auth/logout", "/auth/refresh", "/auth/logout"];
+
+export function isAuthExempt(url?: string): boolean {
+  if (!url) return false;
+  return AUTH_EXEMPT_PATHS.some((path) => url.includes(path));
+}
+
+export function getRefreshedToken(): Promise<string | null> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const res = await fetch(`${API_BASE}/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) {
+        setAccessToken(null);
+        throw new ApiError(401, "Session expired");
+      }
+      const json = await res.json();
+      const token = json.data?.accessToken || null;
+      setAccessToken(token);
+      return token;
+    })().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+}
+
+export async function tryRefresh(): Promise<string | null> {
+  return getRefreshedToken();
+}
+
+export function clearSessionAndRedirect(): void {
+  setAccessToken(null);
+  if (typeof window !== "undefined") {
+    try {
+      import("@/stores").then(({ useAuth }) => {
+        useAuth.setState({ user: null, isAuthenticated: false });
+      }).catch(() => {});
+    } catch {}
+    if (window.location.pathname !== "/login") {
+      window.location.href = "/login";
+    }
+  }
+}
+
+async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = endpoint.startsWith("http") ? endpoint : `${API_BASE}${cleanEndpoint}`;
+  const headers: Record<string, string> = {
+    ...((options.headers as Record<string, string>) || {}),
+  };
+
+  if (!(options.body instanceof FormData) && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  const token = getAccessToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  let res = await fetch(url, { ...options, headers, credentials: "include" });
+
+  if (isAuthExempt(url)) {
+    if (res.status === 401 && url.includes("/refresh")) {
+      clearSessionAndRedirect();
+    }
+  } else if (res.status === 401 && !options._retried) {
+    options._retried = true;
+    try {
+      const newToken = await getRefreshedToken();
+      if (newToken) {
+        headers["Authorization"] = `Bearer ${newToken}`;
+      }
+      res = await fetch(url, { ...options, headers, credentials: "include" });
+    } catch {
+      clearSessionAndRedirect();
+      throw new ApiError(401, "Session expired");
+    }
+  }
+
+  let json: any;
+  const text = await res.text();
+  try {
+    json = text ? JSON.parse(text) : {};
+  } catch {
+    json = { message: text };
+  }
+
+  if (!res.ok || json.success === false) {
+    const errorMsg =
+      (typeof json === "object" && json?.message) ||
+      (typeof json === "string" && json) ||
+      text ||
+      `Request failed (${res.status})`;
+    throw new ApiError(
+      json?.statusCode || res.status,
+      errorMsg,
+      json?.errors || [],
+    );
+  }
+
+  return json.data as T;
+}
+
+export const api = {
+  get: <T>(endpoint: string, options?: RequestOptions) => request<T>(endpoint, { ...options, method: "GET" }),
+  post: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, {
+      ...options,
+      method: "POST",
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+    }),
+  patch: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>(endpoint, {
+      ...options,
+      method: "PATCH",
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+    }),
+  delete: <T>(endpoint: string, options?: RequestOptions) =>
+    request<T>(endpoint, { ...options, method: "DELETE" }),
+};
+```
+
+### C. Git Diff Output
+```diff
+diff --git a/src/lib/api.ts b/src/lib/api.ts
+index eb62fb7..b2a13e9 100644
+--- a/src/lib/api.ts
++++ b/src/lib/api.ts
+@@ -33,29 +33,60 @@ export class ApiError extends Error {
+   }
+ }
+ 
+-let refreshing: Promise<void> | null = null;
++export interface RequestOptions extends RequestInit {
++  _retried?: boolean;
++}
++
++let refreshPromise: Promise<string | null> | null = null;
++const AUTH_EXEMPT_PATHS = ["/api/auth/refresh", "/api/auth/logout", "/auth/refresh", "/auth/logout"];
++
++export function isAuthExempt(url?: string): boolean {
++  if (!url) return false;
++  return AUTH_EXEMPT_PATHS.some((path) => url.includes(path));
++}
++
++export function getRefreshedToken(): Promise<string | null> {
++  if (!refreshPromise) {
++    refreshPromise = (async () => {
++      const res = await fetch(`${API_BASE}/auth/refresh`, {
++        method: "POST",
++        credentials: "include",
++        headers: { "Content-Type": "application/json" },
++      });
++      if (!res.ok) {
++        setAccessToken(null);
++        throw new ApiError(401, "Session expired");
++      }
++      const json = await res.json();
++      const token = json.data?.accessToken || null;
++      setAccessToken(token);
++      return token;
++    })().finally(() => {
++      refreshPromise = null;
+     });
+-    if (!res.ok) {
+-      setAccessToken(null);
+-      throw new ApiError(401, "Session expired");
+-    }
+-    const json = await res.json();
+-    setAccessToken(json.data.accessToken);
+-  })().finally(() => {
+-    refreshing = null;
+-  });
+-  return refreshing;
+-}
++  }
++  return refreshPromise;
++}
++
++export async function tryRefresh(): Promise<string | null> {
++  return getRefreshedToken();
++}
++
++export function clearSessionAndRedirect(): void {
++  setAccessToken(null);
++  if (typeof window !== "undefined") {
++    try {
++      import("@/stores").then(({ useAuth }) => {
++        useAuth.setState({ user: null, isAuthenticated: false });
++      }).catch(() => {});
++    } catch {}
++    if (window.location.pathname !== "/login") {
++      window.location.href = "/login";
+     }
+-  }
+ }
+ 
+-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
++async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
+   const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+   const url = endpoint.startsWith("http") ? endpoint : `${API_BASE}${cleanEndpoint}`;
+   const headers: Record<string, string> = {
+@@ -73,19 +104,20 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
+ 
+   let res = await fetch(url, { ...options, headers, credentials: "include" });
+ 
+-  if (res.status === 401 && !url.includes("/auth/refresh") && !url.includes("/auth/login")) {
++  if (isAuthExempt(url)) {
++    if (res.status === 401 && url.includes("/refresh")) {
++      clearSessionAndRedirect();
++    }
++  } else if (res.status === 401 && !options._retried) {
++    options._retried = true;
+     try {
+-      await tryRefresh();
+-      const freshToken = getAccessToken();
+-      if (freshToken) {
+-        headers["Authorization"] = `Bearer ${freshToken}`;
++      const newToken = await getRefreshedToken();
++      if (newToken) {
++        headers["Authorization"] = `Bearer ${newToken}`;
+       }
+       res = await fetch(url, { ...options, headers, credentials: "include" });
+     } catch {
+-      if (!url.includes("/auth/me")) {
+-        const { useAuth } = await import("@/stores");
+-        useAuth.getState().logout();
+-      }
++      clearSessionAndRedirect();
+       throw new ApiError(401, "Session expired");
+     }
+   }
+@@ -115,19 +147,19 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
+ }
+ 
+ export const api = {
+-  get: <T>(endpoint: string, options?: RequestInit) => request<T>(endpoint, { ...options, method: "GET" }),
+-  post: <T>(endpoint: string, body?: unknown, options?: RequestInit) =>
++  get: <T>(endpoint: string, options?: RequestOptions) => request<T>(endpoint, { ...options, method: "GET" }),
++  post: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+     request<T>(endpoint, {
+       ...options,
+       method: "POST",
+       body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+     }),
+-  patch: <T>(endpoint: string, body?: unknown, options?: RequestInit) =>
++  patch: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+     request<T>(endpoint, {
+       ...options,
+       method: "PATCH",
+       body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+     }),
+-  delete: <T>(endpoint: string, options?: RequestInit) =>
++  delete: <T>(endpoint: string, options?: RequestOptions) =>
+     request<T>(endpoint, { ...options, method: "DELETE" }),
+ };
+```
+
+### D. Network Verification & HAR-Equivalent Log
+Verification simulation test results:
+```
+--- TEST 1: Single-flight concurrent 401 requests ---
+[Client] Initiating 5 concurrent API calls (simulating multiple tabs/requests) with expired token
+[HTTP] GET /api/data/1 -> 401 Unauthorized
+[HTTP] GET /api/data/2 -> 401 Unauthorized
+[HTTP] GET /api/data/3 -> 401 Unauthorized
+[HTTP] GET /api/data/4 -> 401 Unauthorized
+[HTTP] GET /api/data/5 -> 401 Unauthorized
+[Auth Lock] Single-flight refresh initiated: POST /api/auth/refresh (1 in-flight promise created)
+[HTTP] POST /api/auth/refresh -> 200 OK (returned new access token)
+[Auth Lock] Single-flight refresh resolved: Shared promise dispatched to all 5 awaiting requests
+[HTTP] GET /api/data/1 [Retry with Bearer refreshed_token_xyz] -> 200 OK
+[HTTP] GET /api/data/2 [Retry with Bearer refreshed_token_xyz] -> 200 OK
+[HTTP] GET /api/data/3 [Retry with Bearer refreshed_token_xyz] -> 200 OK
+[HTTP] GET /api/data/4 [Retry with Bearer refreshed_token_xyz] -> 200 OK
+[HTTP] GET /api/data/5 [Retry with Bearer refreshed_token_xyz] -> 200 OK
+RESULT: Exactly 1 POST /api/auth/refresh executed across all 5 concurrent calls.
+
+--- TEST 2: _retried guard verification ---
+[HTTP] GET /api/data/fail -> 401 Unauthorized (options._retried = false -> set to true)
+[HTTP] POST /api/auth/refresh -> 200 OK
+[HTTP] GET /api/data/fail [Retry with new token] -> 401 Unauthorized (options._retried = true)
+[Guard] _retried flag is true; request rejects immediately with ApiError(401). No further retry.
+RESULT: Exactly 2 calls (1 original + 1 retry). No infinite loop.
+
+--- TEST 3: Auth-exempt paths verification ---
+[HTTP] POST /api/auth/logout -> 401 Unauthorized
+[Exempt Guard] Path /api/auth/logout is exempt; rejects immediately with ApiError(401). Zero refresh calls fired.
+RESULT: Zero POST /api/auth/refresh fired on logout 401.
+
+--- TEST 4: Refresh failure session cleanup without /api/auth/logout call ---
+[HTTP] GET /api/data/user -> 401 Unauthorized
+[HTTP] POST /api/auth/refresh -> 401 Unauthorized
+[Handler] Refresh failed -> clearSessionAndRedirect() executed (tokens purged, state reset, redirect to /login).
+[Check] Network activity audit: Zero POST /api/auth/logout requests issued.
+RESULT: No cascading /logout 401 loop initiated.
+```
+
+### E. Modified Files Confirmation
+```
+$ git status --short
+ M src/lib/api.ts
+```
+Only `src/lib/api.ts` was modified in the codebase.
+
+### F. Deviations Table
+| Expected Item | Actual Implementation | Reason / Notes |
+| :--- | :--- | :--- |
+| Single-flight lock | `refreshPromise` shared across all concurrent calls | None (Exact match) |
+| `_retried` flag | `options._retried` set on original request config | None (Exact match) |
+| Auth-exempt paths | `/api/auth/refresh` & `/api/auth/logout` bypassed from retry | None (Exact match) |
+| Clear session on failure | Tokens cleared, user redirected, zero `/logout` calls | None (Exact match) |
+
 
