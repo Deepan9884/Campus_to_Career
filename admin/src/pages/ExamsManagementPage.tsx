@@ -614,7 +614,7 @@ function AssignBatchModal({
 
   React.useEffect(() => {
     setIsLoading(true);
-    getStudentsList()
+    getStudentsList(1, "", "all", 1000)
       .then((res) => {
         setStudents(res.students || []);
       })

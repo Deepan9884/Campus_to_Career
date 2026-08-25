@@ -154,7 +154,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
   useEffect(() => {
     if (targetAudience === "selected" && studentsRoster.length === 0) {
       setIsLoadingRoster(true);
-      getStudentsList(1, "", "all", 100)
+      getStudentsList(1, "", "all", 1000)
         .then((res) => {
           setStudentsRoster(res.students || []);
         })
