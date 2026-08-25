@@ -665,6 +665,24 @@ export async function stopAdminExam(examId: string): Promise<{ message: string; 
   return api.patch<{ message: string; examId: string; status: string }>(`/exams/admin/${examId}/stop`, {});
 }
 
+export async function rescheduleAdminExam(
+  examId: string,
+  payload: {
+    isScheduled: boolean;
+    scheduledStartTime?: string | null;
+    scheduledEndTime?: string | null;
+    durationMinutes?: number;
+    resetSubmissions?: boolean;
+    notifyStudents?: boolean;
+    reason?: string;
+  }
+): Promise<{ message: string; exam: ExamItem; resetSubmissionsCount?: number }> {
+  return api.patch<{ message: string; exam: ExamItem; resetSubmissionsCount?: number }>(
+    `/exams/admin/${examId}/reschedule`,
+    payload
+  );
+}
+
 export async function toggleAdminExamDisclosure(
   examId: string,
   isResultDisclosed?: boolean

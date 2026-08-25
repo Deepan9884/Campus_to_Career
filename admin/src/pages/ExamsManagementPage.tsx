@@ -43,6 +43,7 @@ import {
 } from "../lib/admin-api";
 import { CreateExamModal } from "../components/exam/CreateExamModal";
 import { QuestionPaperPreviewModal } from "../components/exam/QuestionPaperPreviewModal";
+import { RescheduleExamModal } from "../components/exam/RescheduleExamModal";
 
 export function ExamsManagementPage() {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ export function ExamsManagementPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedExamForPreview, setSelectedExamForPreview] = useState<ExamItem | null>(null);
   const [selectedExamForBatch, setSelectedExamForBatch] = useState<ExamItem | null>(null);
+  const [selectedExamForReschedule, setSelectedExamForReschedule] = useState<ExamItem | null>(null);
 
   // Fetch all exams
   const { data: exams = [], isLoading, refetch } = useQuery({
@@ -490,26 +492,38 @@ export function ExamsManagementPage() {
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2">
-                    {/* Stop Exam Now Button */}
-                    {!isStopped && (
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Reschedule Exam Button */}
                       <button
-                        onClick={() => {
-                          if (
-                            confirm(
-                              `Are you sure you want to stop the exam "${exam.title}" now? All active candidate submissions will be immediately finalized and auto-graded up to this exact moment.`
-                            )
-                          ) {
-                            stopExamMutation.mutate(exam._id);
-                          }
-                        }}
-                        className="px-3 py-1 rounded-xl text-[11px] font-bold bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 flex items-center gap-1.5 transition cursor-pointer"
-                        title="End exam session and finalize in-progress submissions"
+                        onClick={() => setSelectedExamForReschedule(exam)}
+                        className="px-3 py-1 rounded-xl text-[11px] font-bold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 transition cursor-pointer"
+                        title="Reschedule assessment date, time window, or reset candidate submissions"
                       >
-                        <StopCircle className="h-3.5 w-3.5 text-rose-400" />
-                        <span>Stop Exam Now</span>
+                        <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                        <span>Reschedule</span>
                       </button>
-                    )}
+
+                      {/* Stop Exam Now Button */}
+                      {!isStopped && (
+                        <button
+                          onClick={() => {
+                            if (
+                              confirm(
+                                `Are you sure you want to stop the exam "${exam.title}" now? All active candidate submissions will be immediately finalized and auto-graded up to this exact moment.`
+                              )
+                            ) {
+                              stopExamMutation.mutate(exam._id);
+                            }
+                          }}
+                          className="px-3 py-1 rounded-xl text-[11px] font-bold bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 flex items-center gap-1.5 transition cursor-pointer"
+                          title="End exam session and finalize in-progress submissions"
+                        >
+                          <StopCircle className="h-3.5 w-3.5 text-rose-400" />
+                          <span>Stop Exam</span>
+                        </button>
+                      )}
+                    </div>
 
                     <button
                       onClick={() => {
@@ -545,6 +559,19 @@ export function ExamsManagementPage() {
         onClose={() => setSelectedExamForPreview(null)}
         exam={selectedExamForPreview}
       />
+
+      {/* ── RESCHEDULE EXAM MODAL ────────────────────────────────────────── */}
+      {selectedExamForReschedule && (
+        <RescheduleExamModal
+          open={Boolean(selectedExamForReschedule)}
+          exam={selectedExamForReschedule}
+          onClose={() => setSelectedExamForReschedule(null)}
+          onSuccess={() => {
+            setSelectedExamForReschedule(null);
+            queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
+          }}
+        />
+      )}
 
       {/* ── ASSIGN BATCH MODAL ───────────────────────────────────────────── */}
       {selectedExamForBatch && (
