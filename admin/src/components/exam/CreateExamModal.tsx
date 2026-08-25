@@ -632,7 +632,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 select-none overflow-y-auto">
+      <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 select-none overflow-y-auto">
         <div className="max-w-4xl w-full bg-slate-900/95 border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] my-auto text-slate-100 backdrop-blur-2xl">
           {/* Modal Header */}
           <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
@@ -1745,7 +1745,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
 
         {/* ── MANUAL MCQ MODAL ──────────────────────────────────────────────── */}
         {showManualMcqModal && (
-          <div className="fixed inset-0 z-60 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[100000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="max-w-lg w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 space-y-4 shadow-2xl text-white">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 className="text-sm font-bold">Author Custom MCQ</h3>

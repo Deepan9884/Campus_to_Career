@@ -192,7 +192,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
       {/* Left Sidebar Navigation (Expandable & Shrinkable) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col justify-between transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 bottom-0 left-0 z-30 flex flex-col justify-between transition-all duration-300 ease-in-out ${
           sidebarCollapsed ? "w-[72px] p-3" : "w-64 p-5"
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
         style={{
@@ -380,7 +380,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
       </aside>
 
       {/* Mobile Top Bar with Hamburger Toggle */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[image:var(--glass-strong-bg)] backdrop-blur-[40px] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between shadow-md">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-[image:var(--glass-strong-bg)] backdrop-blur-[40px] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-xl btn-gradient flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
             <GraduationCap className="h-4 w-4" />
