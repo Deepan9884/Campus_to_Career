@@ -918,16 +918,16 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                       </div>
 
                       {/* Sections List */}
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {sections.map((sec, idx) => (
                           <div
                             key={sec.sectionId || idx}
-                            className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3"
+                            className="p-4.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-sm"
                           >
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                              <div className="flex items-center gap-2 flex-1">
-                                <span className="w-6 h-6 rounded-md bg-indigo-500/20 text-indigo-300 font-bold text-xs flex items-center justify-center shrink-0">
-                                  {idx + 1}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                              <div className="flex items-center gap-2.5 flex-1">
+                                <span className="w-7 h-7 rounded-xl bg-indigo-500/20 text-indigo-300 font-extrabold text-xs flex items-center justify-center shrink-0 border border-indigo-500/30">
+                                  #{idx + 1}
                                 </span>
                                 <input
                                   type="text"
@@ -937,25 +937,38 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                                     updated[idx].title = e.target.value;
                                     setSections(updated);
                                   }}
-                                  placeholder={`Section ${idx + 1} Title`}
-                                  className="flex-1 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-xs font-bold focus:outline-none"
+                                  placeholder={`Section ${idx + 1} Title (e.g. Core Java & OOPs)`}
+                                  className="flex-1 px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-bold focus:border-indigo-500 focus:outline-none"
                                 />
                               </div>
+                            </div>
 
-                              <div className="flex items-center gap-2">
+                            {/* Section Architecture Controls: Type, Difficulty, Question Count, Section Time */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                              {/* Type */}
+                              <div className="space-y-1">
+                                <label className="text-[10px] uppercase font-extrabold text-slate-400">Section Type</label>
                                 <select
                                   value={sec.type}
                                   onChange={(e) => {
                                     const updated = [...sections];
-                                    updated[idx].type = e.target.value as any;
+                                    const newType = e.target.value as "mcq" | "coding";
+                                    updated[idx].type = newType;
+                                    if (!updated[idx].targetQuestionCount || updated[idx].targetQuestionCount <= 0) {
+                                      updated[idx].targetQuestionCount = newType === "mcq" ? 5 : 2;
+                                    }
                                     setSections(updated);
                                   }}
-                                  className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700 text-xs text-indigo-300 font-bold"
+                                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-indigo-300 font-bold focus:outline-none"
                                 >
-                                  <option value="mcq">MCQ Questions</option>
-                                  <option value="coding">Coding Arena</option>
+                                  <option value="mcq">📝 MCQ Questions</option>
+                                  <option value="coding">💻 Coding Arena</option>
                                 </select>
+                              </div>
 
+                              {/* Difficulty */}
+                              <div className="space-y-1">
+                                <label className="text-[10px] uppercase font-extrabold text-slate-400">Difficulty</label>
                                 <select
                                   value={sec.difficulty}
                                   onChange={(e) => {
@@ -963,18 +976,143 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                                     updated[idx].difficulty = e.target.value as any;
                                     setSections(updated);
                                   }}
-                                  className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700 text-xs text-amber-300 font-bold"
+                                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-amber-300 font-bold focus:outline-none"
                                 >
-                                  <option value="easy">Easy</option>
-                                  <option value="medium">Medium</option>
-                                  <option value="hard">Hard</option>
-                                  <option value="faang">FAANG Tier</option>
+                                  <option value="easy">Easy (Foundation)</option>
+                                  <option value="medium">Medium (Standard)</option>
+                                  <option value="hard">Hard (Advanced)</option>
+                                  <option value="faang">FAANG Tier (Elite)</option>
                                 </select>
+                              </div>
+
+                              {/* Number of Questions (Customizable per section) */}
+                              <div className="space-y-1">
+                                <div className="flex items-center justify-between">
+                                  <label className="text-[10px] uppercase font-extrabold text-indigo-300">
+                                    No. of Questions *
+                                  </label>
+                                  <span className="text-[10px] font-mono text-indigo-400 font-extrabold">
+                                    {sec.targetQuestionCount || (sec.type === "mcq" ? 5 : 2)} {sec.type === "mcq" ? "MCQs" : "Coding"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center bg-slate-950 border border-indigo-500/40 rounded-xl p-1 shadow-inner">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = [...sections];
+                                      const cur = updated[idx].targetQuestionCount || (sec.type === "mcq" ? 5 : 2);
+                                      updated[idx].targetQuestionCount = Math.max(1, cur - 1);
+                                      setSections(updated);
+                                    }}
+                                    className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-indigo-600/30 text-slate-300 hover:text-white font-black text-xs flex items-center justify-center transition cursor-pointer"
+                                  >
+                                    -
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    max={sec.type === "mcq" ? 100 : 20}
+                                    value={sec.targetQuestionCount || (sec.type === "mcq" ? 5 : 2)}
+                                    onChange={(e) => {
+                                      const updated = [...sections];
+                                      const val = Math.max(1, Math.min(sec.type === "mcq" ? 100 : 20, Number(e.target.value) || 1));
+                                      updated[idx].targetQuestionCount = val;
+                                      setSections(updated);
+                                    }}
+                                    className="flex-1 w-12 text-center bg-transparent text-white font-black text-xs focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = [...sections];
+                                      const cur = updated[idx].targetQuestionCount || (sec.type === "mcq" ? 5 : 2);
+                                      updated[idx].targetQuestionCount = Math.min(sec.type === "mcq" ? 100 : 20, cur + 1);
+                                      setSections(updated);
+                                    }}
+                                    className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-indigo-600/30 text-slate-300 hover:text-white font-black text-xs flex items-center justify-center transition cursor-pointer"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Section Time Limit */}
+                              <div className="space-y-1">
+                                <div className="flex items-center justify-between">
+                                  <label className="text-[10px] uppercase font-extrabold text-slate-400">Section Time</label>
+                                  <span className="text-[10px] font-mono text-emerald-400 font-bold">{sec.timeLimitMinutes || 25} mins</span>
+                                </div>
+                                <div className="flex items-center bg-slate-950 border border-slate-700 rounded-xl p-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = [...sections];
+                                      const cur = updated[idx].timeLimitMinutes || 25;
+                                      updated[idx].timeLimitMinutes = Math.max(5, cur - 5);
+                                      setSections(updated);
+                                    }}
+                                    className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center transition cursor-pointer"
+                                  >
+                                    -
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min={5}
+                                    max={300}
+                                    step={5}
+                                    value={sec.timeLimitMinutes || 25}
+                                    onChange={(e) => {
+                                      const updated = [...sections];
+                                      const val = Math.max(5, Math.min(300, Number(e.target.value) || 25));
+                                      updated[idx].timeLimitMinutes = val;
+                                      setSections(updated);
+                                    }}
+                                    className="flex-1 w-12 text-center bg-transparent text-white font-bold text-xs focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = [...sections];
+                                      const cur = updated[idx].timeLimitMinutes || 25;
+                                      updated[idx].timeLimitMinutes = Math.min(300, cur + 5);
+                                      setSections(updated);
+                                    }}
+                                    className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center transition cursor-pointer"
+                                  >
+                                    +
+                                  </button>
+                                </div>
                               </div>
                             </div>
 
+                            {/* Quick Presets for Question Counts */}
+                            <div className="flex items-center flex-wrap gap-1.5 pt-0.5">
+                              <span className="text-[10px] text-slate-400 font-extrabold uppercase">Quick Counts:</span>
+                              {(sec.type === "mcq" ? [3, 5, 10, 15, 20, 25, 30] : [1, 2, 3, 4, 5, 8]).map((p) => {
+                                const isSelected = (sec.targetQuestionCount || (sec.type === "mcq" ? 5 : 2)) === p;
+                                return (
+                                  <button
+                                    key={p}
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = [...sections];
+                                      updated[idx].targetQuestionCount = p;
+                                      setSections(updated);
+                                    }}
+                                    className={`px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold transition cursor-pointer ${
+                                      isSelected
+                                        ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/30 ring-1 ring-indigo-400"
+                                        : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                                    }`}
+                                  >
+                                    {p} {sec.type === "mcq" ? "MCQs" : "Challenges"}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
                             {/* Section Topics Tags */}
-                            <div className="space-y-1.5">
+                            <div className="space-y-1.5 pt-1 border-t border-slate-800/80">
                               <span className="text-[10px] uppercase font-bold text-slate-400">Selected Topics:</span>
                               <div className="flex flex-wrap gap-1.5">
                                 {COMMON_TOPICS.map((topic) => {
@@ -1056,20 +1194,59 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                     {/* Current Section Sourcing Controls */}
                     {!isGeneratingAi && (
                       <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-5">
-                        {/* Requirements Banner */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+                        {/* Requirements Banner with On-the-fly Question Count Customizer */}
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
                           <div>
-                            <h4 className="text-xs font-extrabold text-white">{currentSec.title}</h4>
-                            <p className="text-[11px] text-slate-400 mt-0.5">
-                              Target: <strong className="text-indigo-400">{currentSec.targetQuestionCount || 5} questions</strong> • Hardness: <strong className="text-indigo-400">{currentSec.difficulty}</strong> • Topics: {(currentSec.topics || []).join(", ")}
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-xs font-black text-white">{currentSec.title}</h4>
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                {currentSec.type === "mcq" ? "MCQs" : "Coding Arena"}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-400 mt-1">
+                              Target: <strong className="text-indigo-400">{currentSec.targetQuestionCount || (currentSec.type === "mcq" ? 5 : 2)} questions</strong> • Hardness: <strong className="text-amber-400 capitalize">{currentSec.difficulty}</strong> • Topics: {(currentSec.topics || []).join(", ")}
                             </p>
                           </div>
 
-                          <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 self-start sm:self-auto">
-                            {currentSec.type === "mcq"
-                              ? `${currentSec.mcqQuestions.length} Questions Added`
-                              : `${currentSec.codingQuestions.length} Challenges Added`}
-                          </span>
+                          <div className="flex items-center gap-3 self-start md:self-auto">
+                            {/* On-the-fly target count stepper */}
+                            <div className="flex items-center gap-1.5 bg-slate-950 border border-indigo-500/40 rounded-xl px-2 py-1">
+                              <span className="text-[10px] uppercase font-extrabold text-slate-400 mr-1">Target Qs:</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = [...sections];
+                                  const cur = updated[activeSectionIdx].targetQuestionCount || (currentSec.type === "mcq" ? 5 : 2);
+                                  updated[activeSectionIdx].targetQuestionCount = Math.max(1, cur - 1);
+                                  setSections(updated);
+                                }}
+                                className="w-6 h-6 rounded-lg bg-slate-900 hover:bg-indigo-600/30 text-slate-300 hover:text-white font-black text-xs flex items-center justify-center transition cursor-pointer"
+                              >
+                                -
+                              </button>
+                              <span className="w-6 text-center font-mono font-black text-xs text-white">
+                                {currentSec.targetQuestionCount || (currentSec.type === "mcq" ? 5 : 2)}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = [...sections];
+                                  const cur = updated[activeSectionIdx].targetQuestionCount || (currentSec.type === "mcq" ? 5 : 2);
+                                  updated[activeSectionIdx].targetQuestionCount = Math.min(100, cur + 1);
+                                  setSections(updated);
+                                }}
+                                className="w-6 h-6 rounded-lg bg-slate-900 hover:bg-indigo-600/30 text-slate-300 hover:text-white font-black text-xs flex items-center justify-center transition cursor-pointer"
+                              >
+                                +
+                              </button>
+                            </div>
+
+                            <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-300">
+                              {currentSec.type === "mcq"
+                                ? `${currentSec.mcqQuestions.length} Questions Added`
+                                : `${currentSec.codingQuestions.length} Challenges Added`}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Sourcing Actions for MCQ */}
@@ -1298,6 +1475,16 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                                 );
                               })}
                             </div>
+
+                            {/* Add Another Coding Challenge Slot Button */}
+                            <button
+                              type="button"
+                              onClick={() => handleAddExtraQuestionSlot(activeSectionIdx)}
+                              className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-800 hover:border-indigo-500/50 bg-slate-900/40 hover:bg-slate-900 text-slate-300 hover:text-white text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer group"
+                            >
+                              <Plus className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition" />
+                              <span>Add Coding Challenge Slot #{((currentSec.targetQuestionCount || 2) + 1)}</span>
+                            </button>
                           </div>
                         )}
                       </div>
