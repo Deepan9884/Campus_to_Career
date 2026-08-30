@@ -100,7 +100,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
   };
 
   return (
-    <div className="min-h-screen bg-[rgb(10,13,20)] text-slate-100 flex flex-col justify-center selection:bg-indigo-500 selection:text-white font-sans">
+    <div className="dark min-h-screen bg-[#07090e] text-slate-100 flex flex-col justify-center selection:bg-indigo-500 selection:text-white font-sans">
       <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen">
         
         {/* Left Panel - Branding & Telemetry Overview (Desktop Only) */}
@@ -185,28 +185,35 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
               <img src="/logo-dark.png" alt="Campus to Career AI" className="h-10 w-auto max-w-[200px] object-contain" />
             </div>
 
-            {/* Premium Login Card */}
-            <div className="elite-panel rounded-3xl p-8 space-y-6 relative overflow-hidden">
+            {/* Premium Login Card (Dark Theme Liquid Glass) */}
+            <div className="rounded-3xl p-8 space-y-6 relative overflow-hidden bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-2xl text-white">
               {/* Decorative corner glow */}
-              <div className="absolute top-0 right-0 w-48 h-32 pointer-events-none opacity-25"
+              <div
+                className="absolute top-0 right-0 w-48 h-32 pointer-events-none opacity-25"
                 style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
               />
 
               {/* Section Heading */}
               <div className="space-y-1.5 relative z-10">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="h-8 w-8 rounded-xl btn-gradient flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-                    <Lock className="h-4 w-4" />
-                  </div>
-                  <span className="text-[11px] font-black uppercase tracking-wider text-[var(--primary)] bg-[rgb(var(--primary-rgb)/12%)] border border-[rgb(var(--primary-rgb)/20%)] px-2.5 py-0.5 rounded-full">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-indigo-300 bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full shadow-sm">
                     Mentor Portal Access
                   </span>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black tracking-tight">
-                  <span className="gradient-text-warm">Sign in</span>{" "}
-                  <span className="text-[var(--foreground)]">to workspace</span>
+                <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white">
+                  <span
+                    className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300 bg-clip-text font-black"
+                    style={{
+                      backgroundImage: "linear-gradient(135deg, #A78BFA 0%, #F9A8D4 50%, #FDE68A 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    Sign in
+                  </span>{" "}
+                  <span>to workspace</span>
                 </h2>
-                <p className="text-[var(--muted-foreground)] text-xs">
+                <p className="text-slate-400 text-xs">
                   Enter your credentials to access the mentor portal.
                 </p>
               </div>
@@ -214,49 +221,49 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
               {/* Login Form */}
               <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-[var(--muted-foreground)]">
+                  <label className="block text-xs font-semibold text-slate-300">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="h-4 w-4 absolute left-3.5 top-3.5 text-[var(--muted-foreground)]" />
+                    <Mail className="h-4 w-4 absolute left-3.5 top-3.5 text-slate-400" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="mentor@campustocareer.ai"
                       required
-                      className="w-full glass-input rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none"
+                      className="w-full bg-slate-950/80 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none placeholder:text-slate-500 transition"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-semibold text-[var(--muted-foreground)]">
+                    <label className="block text-xs font-semibold text-slate-300">
                       Password
                     </label>
                     <button
                       type="button"
                       onClick={() => toast.info("Contact your campus system administrator to reset credentials.")}
-                      className="text-xs text-[var(--primary)] hover:opacity-80 font-medium transition"
+                      className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition cursor-pointer"
                     >
                       Forgot password?
                     </button>
                   </div>
                   <div className="relative">
-                    <Lock className="h-4 w-4 absolute left-3.5 top-3.5 text-[var(--muted-foreground)]" />
+                    <Lock className="h-4 w-4 absolute left-3.5 top-3.5 text-slate-400" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
                       required
-                      className="w-full glass-input rounded-xl pl-10 pr-10 py-2.5 text-sm outline-none"
+                      className="w-full bg-slate-950/80 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white rounded-xl pl-10 pr-10 py-2.5 text-sm outline-none placeholder:text-slate-500 transition"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-3 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition"
+                      className="absolute right-3.5 top-3 text-slate-400 hover:text-white transition cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -265,12 +272,12 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
 
                 {/* Remember Me Checkbox */}
                 <div className="flex items-center justify-between pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-[var(--muted-foreground)]">
+                  <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-400 hover:text-slate-300">
                     <input
                       type="checkbox"
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
-                      className="h-4 w-4 rounded border-[var(--border)] bg-[var(--glass-input-bg)] text-[var(--primary)] focus:ring-[var(--primary)] focus:ring-offset-0 cursor-pointer"
+                      className="h-4 w-4 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                     />
                     <span>Keep me signed in for 30 days</span>
                   </label>
@@ -299,10 +306,10 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
               {/* Divider */}
               <div className="relative my-1 z-10">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[var(--border)]" />
+                  <div className="w-full border-t border-slate-800" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-transparent px-3 text-[var(--muted-foreground)]">
+                  <span className="bg-slate-900 px-3 text-slate-400">
                     Or continue with
                   </span>
                 </div>
@@ -314,7 +321,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={loading}
-                  className="w-full bg-[var(--glass-input-bg)] hover:bg-[rgba(255,255,255,0.10)] border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] text-[var(--foreground)] font-medium text-xs sm:text-sm py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full bg-slate-950/70 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 text-slate-200 font-medium text-xs sm:text-sm py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -329,7 +336,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                   type="button"
                   onClick={handleGithubLogin}
                   disabled={loading}
-                  className="w-full bg-[var(--glass-input-bg)] hover:bg-[rgba(255,255,255,0.10)] border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] text-[var(--foreground)] font-medium text-xs sm:text-sm py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full bg-slate-950/70 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 text-slate-200 font-medium text-xs sm:text-sm py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <svg className="w-4 h-4 shrink-0 fill-current text-white" viewBox="0 0 24 24">
                     <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
@@ -338,16 +345,11 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                 </button>
               </div>
 
-              {/* Security Footer */}
-              <p className="text-center text-xs text-[var(--muted-foreground)] relative z-10 pt-1">
-                Protected by 256-bit SSL encryption & role-based access control.
-              </p>
-
               {/* Cross-Link to Student Portal */}
-              <div className="pt-2 text-center relative z-10 border-t border-[var(--border)]">
+              <div className="pt-2 text-center relative z-10 border-t border-slate-800">
                 <a
                   href={import.meta.env.VITE_STUDENT_APP_URL || "http://localhost:5173"}
-                  className="text-xs text-[var(--primary)] hover:underline inline-flex items-center gap-1.5 font-semibold transition"
+                  className="text-xs text-indigo-400 hover:text-indigo-300 inline-flex items-center gap-1.5 font-semibold transition"
                 >
                   <ArrowRight className="h-3.5 w-3.5 rotate-180" />
                   <span>Go to Student Portal</span>

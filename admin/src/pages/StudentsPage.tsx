@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { GlassCard } from "../components/GlassCard";
@@ -242,7 +243,7 @@ export function StudentsPage() {
             {/* Company Matcher Launcher */}
             <button
               onClick={() => setShowCompanyMatcher(true)}
-              className="px-3.5 py-2 rounded-xl bg-[rgb(var(--primary-rgb)/12%)] hover:bg-[rgb(var(--primary-rgb)/22%)] border border-[rgb(var(--primary-rgb)/25%)] text-[var(--primary)] text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
+              className="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 dark:bg-[rgb(var(--primary-rgb)/12%)] dark:hover:bg-[rgb(var(--primary-rgb)/22%)] dark:border-[rgb(var(--primary-rgb)/25%)] dark:text-[var(--primary)] text-xs font-bold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
             >
               <Building2 className="h-4 w-4" /> Company Matcher
             </button>
@@ -250,22 +251,22 @@ export function StudentsPage() {
             {/* Export CSV */}
             <button
               onClick={handleExportCsv}
-              className="px-3.5 py-2 rounded-xl bg-[var(--glass-input-bg)] hover:bg-[rgba(255,255,255,0.10)] border border-[var(--border)] text-[var(--foreground)] text-xs font-bold flex items-center gap-1.5 transition"
+              className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 dark:bg-[var(--glass-input-bg)] dark:hover:bg-[rgba(255,255,255,0.10)] dark:border-[var(--border)] text-slate-700 dark:text-[var(--foreground)] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-xs"
             >
-              <Download className="h-4 w-4 text-[var(--muted-foreground)]" /> Export CSV
+              <Download className="h-4 w-4 text-slate-400 dark:text-[var(--muted-foreground)]" /> Export CSV
             </button>
 
             {/* Add Mentee Button */}
             <button
               onClick={() => setShowAddModal(true)}
-              className="btn-gradient px-4 py-2 rounded-xl text-xs font-extrabold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/30 transition hover:scale-105 shrink-0 whitespace-nowrap"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm shadow-indigo-500/20 transition hover:scale-102 shrink-0 whitespace-nowrap cursor-pointer"
             >
               <UserPlus className="h-4 w-4" /> Add Mentee
             </button>
 
             {/* Search Box */}
             <div className="relative flex-1 sm:w-64 min-w-[200px]">
-              <Search className="h-4 w-4 absolute left-3 top-2.5 text-[var(--muted-foreground)]" />
+              <Search className="h-4 w-4 absolute left-3 top-2.5 text-slate-400 dark:text-[var(--muted-foreground)]" />
               <input
                 type="text"
                 value={search}
@@ -274,7 +275,7 @@ export function StudentsPage() {
                   setPage(1);
                 }}
                 placeholder="Search student by name, email, or role..."
-                className="w-full pl-9 pr-8 py-2 rounded-xl glass-input text-xs outline-none"
+                className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-xs"
               />
               {search && (
                 <button
@@ -282,15 +283,15 @@ export function StudentsPage() {
                     setSearch("");
                     setPage(1);
                   }}
-                  className="absolute right-2.5 top-2.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-700 dark:text-[var(--muted-foreground)] dark:hover:text-[var(--foreground)] cursor-pointer"
                 >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
 
             {/* Filter Bar */}
-            <div className="flex bg-[rgba(0,0,0,0.25)] border border-[var(--border)] p-1 rounded-xl flex-wrap gap-0.5">
+            <div className="flex bg-slate-100 dark:bg-black/25 border border-slate-200 dark:border-[var(--border)] p-1 rounded-xl flex-wrap gap-0.5">
               {[
                 { key: "my-mentees", label: "My Mentees" },
                 { key: "all", label: "All Directory" },
@@ -304,10 +305,10 @@ export function StudentsPage() {
                     setFilter(f.key);
                     setPage(1);
                   }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                     filter === f.key
-                      ? "btn-gradient text-white shadow-md shadow-indigo-500/25"
-                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.06)]"
+                      ? "bg-white dark:btn-gradient text-indigo-700 dark:text-white shadow-xs font-extrabold"
+                      : "text-slate-600 dark:text-[var(--muted-foreground)] hover:text-slate-900 dark:hover:text-[var(--foreground)] hover:bg-slate-200/60 dark:hover:bg-[rgba(255,255,255,0.06)]"
                   }`}
                 >
                   {f.label}
@@ -627,13 +628,13 @@ export function StudentsPage() {
       </GlassCard>
 
       {/* Add Mentee Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-          <GlassCard variant="strong" className="w-full max-w-md p-6 space-y-5 border-indigo-500/30 shadow-2xl relative">
+      {showAddModal && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/60 dark:bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200 select-none">
+          <GlassCard variant="strong" className="w-full max-w-md p-6 space-y-5 border-indigo-500/30 shadow-2xl relative bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 border border-indigo-500/30">
+                <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/30">
                   <UserPlus className="h-5 w-5" />
                 </div>
                 <div>
@@ -647,14 +648,14 @@ export function StudentsPage() {
                   setMenteeEmailInput("");
                   setSearchResults([]);
                 }}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Warning Note on Strict Account Logic */}
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-300 text-xs flex items-start gap-2">
+            <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-700 dark:text-amber-300 text-xs flex items-start gap-2">
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-500" />
               <span>
                 <strong className="text-slate-900 dark:text-white">Account Validation Rule:</strong> You can only add students who have an existing registered account on the platform.
@@ -662,7 +663,7 @@ export function StudentsPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleAddSubmit} className="space-y-4">
+            <form onSubmit={handleAddSubmit} className="space-y-4 select-text">
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                   Student Account Email or Name
@@ -674,17 +675,17 @@ export function StudentsPage() {
                     value={menteeEmailInput}
                     onChange={(e) => handleLiveSearch(e.target.value)}
                     placeholder="Enter registered student email (e.g. student@example.com)..."
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl glass-input text-xs outline-none focus:ring-2 focus:ring-indigo-500/50"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-indigo-500"
                   />
                   {isSearching && (
-                    <Loader2 className="h-4 w-4 absolute right-3 top-3 animate-spin text-indigo-500" />
+                    <Loader2 className="h-4 w-4 absolute right-3 top-3 animate-spin text-indigo-600" />
                   )}
                 </div>
               </div>
 
               {/* Live Search Suggestions */}
               {searchResults.length > 0 && (
-                <div className="space-y-1.5 max-h-40 overflow-y-auto p-2 bg-slate-100 dark:bg-slate-900/90 rounded-xl border border-slate-200 dark:border-white/10 text-xs">
+                <div className="space-y-1.5 max-h-40 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs">
                   <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold px-2 py-1 uppercase">
                     Matching Student Accounts ({searchResults.length})
                   </p>
@@ -697,11 +698,11 @@ export function StudentsPage() {
                         }
                       }}
                       className={`p-2 rounded-lg flex items-center justify-between cursor-pointer transition ${
-                        s.isMyMentee ? "bg-amber-500/10 border border-amber-500/20" : "hover:bg-slate-200/60 dark:hover:bg-white/10"
+                        s.isMyMentee ? "bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20" : "hover:bg-slate-100 dark:hover:bg-slate-900"
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="h-7 w-7 rounded-lg bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 grid place-items-center font-bold shrink-0">
+                        <div className="h-7 w-7 rounded-lg bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 grid place-items-center font-bold shrink-0">
                           {s.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
@@ -730,14 +731,14 @@ export function StudentsPage() {
                     setMenteeEmailInput("");
                     setSearchResults([]);
                   }}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={addMenteeMutation.isPending}
-                  className="btn-gradient px-5 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 disabled:opacity-50"
+                  className="bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 disabled:opacity-50 transition cursor-pointer"
                 >
                   {addMenteeMutation.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -749,7 +750,8 @@ export function StudentsPage() {
               </div>
             </form>
           </GlassCard>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Floating Batch Operations Dock */}

@@ -744,6 +744,41 @@ export async function generateAiCoding(
   });
 }
 
+export interface ExtractedDocQuestionsResult {
+  totalExtracted: number;
+  fileName?: string;
+  questions: McqQuestionData[];
+}
+
+export async function extractQuestionsFromFile(
+  file: File,
+  sectionType = "mcq",
+  topic = "General Aptitude",
+  difficulty = "medium"
+): Promise<ExtractedDocQuestionsResult> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("sectionType", sectionType);
+  formData.append("topic", topic);
+  formData.append("difficulty", difficulty);
+
+  return api.post<ExtractedDocQuestionsResult>("/exams/admin/extract-questions-from-file", formData);
+}
+
+export async function extractQuestionsFromText(
+  text: string,
+  sectionType = "mcq",
+  topic = "General Aptitude",
+  difficulty = "medium"
+): Promise<ExtractedDocQuestionsResult> {
+  return api.post<ExtractedDocQuestionsResult>("/exams/admin/extract-questions-from-text", {
+    text,
+    sectionType,
+    topic,
+    difficulty,
+  });
+}
+
 export async function unblockStudentExam(
   examId: string,
   studentId: string

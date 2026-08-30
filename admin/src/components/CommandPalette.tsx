@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -101,8 +102,7 @@ export function CommandPalette({
         "Mock Interview Score (%)",
         "Coding Solved Count",
         "Verified Hackathon Proofs",
-        "Mentee Status",
-        "Proctoring Status",
+        "Status",
         "Last Active",
       ];
 
@@ -118,8 +118,7 @@ export function CommandPalette({
             s.avgInterviewScore,
             s.totalProblemsSolved,
             s.verifiedEventsCount,
-            s.isMyMentee ? "Assigned Mentee" : "Directory",
-            s.isProctoringBlocked ? "BLOCKED" : "Active",
+            s.status,
             `"${s.lastActive || ""}"`,
           ].join(",")
         ),
@@ -143,39 +142,39 @@ export function CommandPalette({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       onClick={onClose}
-      className="fixed inset-0 z-[99999] bg-black/75 backdrop-blur-md flex items-start justify-center p-4 pt-12 sm:pt-20 animate-in fade-in duration-150"
+      className="fixed inset-0 z-[99999] bg-slate-950/60 dark:bg-black/75 backdrop-blur-md flex items-start justify-center p-4 pt-12 sm:pt-20 animate-in fade-in duration-150 select-none"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl lg:max-w-4xl bg-[image:var(--glass-strong-bg)] text-[var(--foreground)] border border-[var(--glass-strong-border)] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] backdrop-blur-[40px] saturate-[180%]"
+        className="w-full max-w-3xl lg:max-w-4xl bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] backdrop-blur-[40px] saturate-[180%]"
       >
         {/* Search Header */}
-        <div className="flex items-center px-6 py-4.5 border-b border-[var(--border)] gap-3.5 bg-[var(--glass-input-bg)]">
-          <Search className="h-6 w-6 text-[var(--primary)] shrink-0" />
+        <div className="flex items-center px-6 py-4.5 border-b border-slate-200 dark:border-slate-800 gap-3.5 bg-slate-50 dark:bg-slate-950">
+          <Search className="h-6 w-6 text-indigo-600 dark:text-indigo-400 shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a student name, email, or command (e.g. 'export', 'matcher', 'proctor')..."
-            className="flex-1 bg-transparent text-base sm:text-lg text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] outline-none font-medium"
+            className="flex-1 bg-transparent text-base sm:text-lg text-slate-900 dark:text-white placeholder:text-slate-400 outline-none font-medium"
           />
-          <div className="flex items-center gap-1 text-xs bg-[var(--glass-input-bg)] px-2.5 py-1 rounded-lg text-[var(--muted-foreground)] font-mono border border-[var(--border)] shadow-sm">
+          <div className="flex items-center gap-1 text-xs bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg text-slate-500 dark:text-slate-400 font-mono border border-slate-200 dark:border-slate-800 shadow-xs">
             <span>ESC</span>
           </div>
-          <button onClick={onClose} className="p-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)] rounded-lg transition">
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer">
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Command Body */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-5 text-sm">
+        <div className="flex-1 overflow-y-auto p-5 space-y-5 text-sm select-text">
           {/* Quick Actions Group */}
           <div>
-            <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
+            <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Quick Operations & Tools
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
@@ -184,18 +183,18 @@ export function CommandPalette({
                   onClose();
                   onOpenCompanyMatcher?.();
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[rgb(var(--primary-rgb)/20%)] text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-indigo-50/70 text-slate-900 border border-slate-200 hover:border-indigo-300 dark:bg-slate-950 dark:hover:bg-indigo-950/40 dark:text-white dark:border-slate-800 dark:hover:border-indigo-500/40 transition text-left group shadow-xs cursor-pointer"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-400 dark:border-indigo-500/30 group-hover:scale-105 transition-transform">
                     <Building2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-[var(--foreground)]">Company Placement Matcher</p>
-                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Filter students by hiring partner criteria</p>
+                    <p className="font-bold text-sm text-slate-900 dark:text-white">Company Placement Matcher</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Filter students by hiring partner criteria</p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--primary)] group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
               </button>
 
               <button
@@ -203,128 +202,107 @@ export function CommandPalette({
                   onClose();
                   onOpenLiveProctoring?.();
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[rgb(var(--destructive-rgb)/20%)] text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--destructive-rgb)/30%)] transition text-left group shadow-sm"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-rose-50/70 text-slate-900 border border-slate-200 hover:border-rose-300 dark:bg-slate-950 dark:hover:bg-rose-950/40 dark:text-white dark:border-slate-800 dark:hover:border-rose-500/40 transition text-left group shadow-xs cursor-pointer"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[rgb(var(--destructive-rgb)/15%)] text-[var(--destructive)] group-hover:scale-105 transition-transform">
+                  <div className="p-2.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/30 group-hover:scale-105 transition-transform">
                     <ShieldAlert className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-[var(--foreground)]">Live Proctoring Operations</p>
-                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                    <p className="font-bold text-sm text-slate-900 dark:text-white">Live Proctoring Operations</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {blockedUsers.length > 0 ? `${blockedUsers.length} blocked candidate(s)` : "Real-time violation stream"}
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--destructive)] group-hover:translate-x-0.5 transition-all" />
-              </button>
-
-              <button
-                onClick={handleExportCsv}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[rgb(var(--success-rgb)/20%)] text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--success-rgb)/30%)] transition text-left group shadow-sm"
-              >
-                <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[rgb(var(--success-rgb)/15%)] text-[var(--success)] group-hover:scale-105 transition-transform">
-                    <Download className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm text-[var(--foreground)]">Export Cohort Master CSV</p>
-                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Download placement readiness sheet</p>
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--success)] group-hover:translate-x-0.5 transition-all" />
-              </button>
-
-              <button
-                onClick={() => {
-                  setTheme(resolvedTheme === "dark" ? "light" : "dark");
-                  toast.success(`Switched to ${resolvedTheme === "dark" ? "Light" : "Dark"} Mode`);
-                }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[rgb(var(--warning-rgb)/20%)] text-[var(--foreground)] hover:text-[var(--foreground)] border border-[var(--border)] hover:border-[rgb(var(--warning-rgb)/30%)] transition text-left group shadow-sm"
-              >
-                <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-[rgb(var(--warning-rgb)/15%)] text-[var(--warning)] group-hover:scale-105 transition-transform">
-                    {resolvedTheme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm text-[var(--foreground)]">Toggle Theme</p>
-                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">Current: {resolvedTheme === "dark" ? "Dark Mode" : "Light Mode"}</p>
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--warning)] group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all" />
               </button>
             </div>
           </div>
 
-          {/* Blocked Candidates Quick Unblock Action */}
-          {blockedUsers.length > 0 && (
-            <div className="p-4 rounded-2xl bg-[rgb(var(--destructive-rgb)/15%)] border border-[rgb(var(--destructive-rgb)/30%)] space-y-3 shadow-sm">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-[var(--destructive)] flex items-center gap-2 text-sm">
-                  <ShieldAlert className="h-5 w-5 text-[var(--destructive)]" />
-                  {blockedUsers.length} Exam Block(s) Active
-                </span>
-                <button
-                  onClick={() => batchUnblockMutation.mutate(blockedUsers.map((u) => u._id))}
-                  disabled={batchUnblockMutation.isPending}
-                  className="px-3.5 py-1.5 rounded-xl bg-[var(--destructive)] hover:brightness-110 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-md"
-                >
-                  <ShieldCheck className="h-4 w-4" /> Restore All Access
-                </button>
+          {/* Export & System Quick Actions */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button
+              onClick={() => {
+                handleExportCsv();
+              }}
+              className="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-800 hover:text-slate-950 border border-slate-200 dark:bg-slate-950 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 flex items-center gap-3 transition cursor-pointer shadow-xs"
+            >
+              <Download className="h-4 w-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <div className="text-left">
+                <p className="font-bold text-xs">Export Master CSV</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">All student records</p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {blockedUsers.slice(0, 8).map((u) => (
-                  <button
-                    key={u._id}
-                    onClick={() => {
-                      onClose();
-                      navigate(`/students/${u._id}`);
-                    }}
-                    className="px-2.5 py-1 rounded-lg bg-[rgb(var(--destructive-rgb)/15%)] text-[var(--destructive)] hover:bg-[rgb(var(--destructive-rgb)/25%)] text-xs font-medium border border-[rgb(var(--destructive-rgb)/30%)] transition"
-                  >
-                    {u.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+            </button>
 
-          {/* Student Search Results */}
-          {query.trim() && (
+            <button
+              onClick={() => {
+                onClose();
+                navigate("/students");
+              }}
+              className="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-800 hover:text-slate-950 border border-slate-200 dark:bg-slate-950 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 flex items-center gap-3 transition cursor-pointer shadow-xs"
+            >
+              <Users className="h-4 w-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <div className="text-left">
+                <p className="font-bold text-xs">Student Directory</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">View roster table</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setTheme(resolvedTheme === "dark" ? "light" : "dark");
+              }}
+              className="p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-800 hover:text-slate-950 border border-slate-200 dark:bg-slate-950 dark:hover:bg-slate-800 dark:text-slate-300 dark:hover:text-white dark:border-slate-800 flex items-center gap-3 transition cursor-pointer shadow-xs"
+            >
+              {resolvedTheme === "dark" ? (
+                <Sun className="h-4 w-4 text-amber-500 shrink-0" />
+              ) : (
+                <Moon className="h-4 w-4 text-indigo-600 shrink-0" />
+              )}
+              <div className="text-left">
+                <p className="font-bold text-xs">Toggle Theme</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Switch to {resolvedTheme === "dark" ? "Light" : "Dark"} Mode</p>
+              </div>
+            </button>
+          </div>
+
+          {/* Real-time Student Search Results */}
+          {query.trim().length > 0 && (
             <div>
-              <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
-                Matching Student Records ({students.length})
+              <p className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Matching Student Profiles ({students.length})
               </p>
               {searching ? (
-                <div className="py-10 text-center text-[var(--muted-foreground)] text-sm">Searching students...</div>
+                <div className="py-8 text-center text-slate-400 text-sm">Searching directory...</div>
               ) : students.length > 0 ? (
-                <div className="space-y-1.5 mt-2">
-                  {students.map((s) => (
+                <div className="space-y-2 mt-2 max-h-60 overflow-y-auto pr-1">
+                  {students.map((st: any) => (
                     <button
-                      key={s._id}
+                      key={st._id}
                       onClick={() => {
                         onClose();
-                        navigate(`/students/${s._id}`);
+                        navigate(`/students/${st._id}`);
                       }}
-                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-[var(--glass-input-bg)] hover:bg-[var(--glass-input-bg-hover)] text-left transition border border-[var(--border)] hover:border-[rgb(var(--primary-rgb)/30%)] shadow-sm"
+                      className="w-full p-3 rounded-2xl bg-white hover:bg-indigo-50/60 dark:bg-slate-950 dark:hover:bg-indigo-950/30 border border-slate-200 hover:border-indigo-300 dark:border-slate-800 dark:hover:border-indigo-500/40 flex items-center justify-between gap-3 text-left transition shadow-xs cursor-pointer"
                     >
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] font-bold flex items-center justify-center text-sm shrink-0">
-                          {s.name.charAt(0).toUpperCase()}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 font-bold text-xs flex items-center justify-center shrink-0 border border-indigo-200 dark:border-indigo-500/30">
+                          {st.name?.charAt(0)}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-bold text-[var(--foreground)] text-sm truncate">{s.name}</p>
-                          <p className="text-xs text-[var(--muted-foreground)] truncate mt-0.5">{s.email} • {s.targetRole}</p>
+                          <p className="font-bold text-slate-900 dark:text-white text-xs truncate">{st.name}</p>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{st.email}</p>
                         </div>
                       </div>
-                      <span className="text-xs text-[var(--primary)] font-bold px-3 py-1.5 bg-[rgb(var(--primary-rgb)/15%)] rounded-lg shrink-0 border border-[rgb(var(--primary-rgb)/30%)]">
+                      <span className="text-xs text-indigo-700 dark:text-indigo-300 font-bold px-3 py-1.5 bg-indigo-50 dark:bg-indigo-500/15 rounded-lg shrink-0 border border-indigo-200 dark:border-indigo-500/30">
                         Inspect 360° →
                       </span>
                     </button>
                   ))}
                 </div>
               ) : (
-                <div className="py-8 text-center text-[var(--muted-foreground)] text-sm">
+                <div className="py-8 text-center text-slate-400 text-sm">
                   No matching student records found for "{query}".
                 </div>
               )}
@@ -333,16 +311,17 @@ export function CommandPalette({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3.5 bg-[var(--glass-input-bg)] border-t border-[var(--border)] text-xs text-[var(--muted-foreground)] flex items-center justify-between">
+        <div className="px-6 py-3.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <span>Press <kbd className="px-2 py-0.5 bg-[var(--glass-input-bg)] rounded-md text-[var(--muted-foreground)] font-mono text-[11px] border border-[var(--border)]">ESC</kbd> to exit</span>
-            <span>Use <kbd className="px-2 py-0.5 bg-[var(--glass-input-bg)] rounded-md text-[var(--muted-foreground)] font-mono text-[11px] border border-[var(--border)]">↑</kbd> <kbd className="px-2 py-0.5 bg-[var(--glass-input-bg)] rounded-md text-[var(--muted-foreground)] font-mono text-[11px] border border-[var(--border)]">↓</kbd> to navigate</span>
+            <span>Press <kbd className="px-2 py-0.5 bg-white dark:bg-slate-900 rounded-md text-slate-700 dark:text-slate-300 font-mono text-[11px] border border-slate-200 dark:border-slate-800">ESC</kbd> to exit</span>
+            <span>Use <kbd className="px-2 py-0.5 bg-white dark:bg-slate-900 rounded-md text-slate-700 dark:text-slate-300 font-mono text-[11px] border border-slate-200 dark:border-slate-800">↑</kbd> <kbd className="px-2 py-0.5 bg-white dark:bg-slate-900 rounded-md text-slate-700 dark:text-slate-300 font-mono text-[11px] border border-slate-200 dark:border-slate-800">↓</kbd> to navigate</span>
           </div>
-          <span className="text-[var(--primary)] font-bold flex items-center gap-1.5">
+          <span className="text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-1.5">
             <Command className="h-3.5 w-3.5" /> Career Intelligence Command Hub
           </span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

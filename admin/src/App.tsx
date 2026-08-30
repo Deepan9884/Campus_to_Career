@@ -61,52 +61,52 @@ function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
     return (
       <button
         onClick={handleCycleTheme}
-        className="w-full p-2.5 rounded-xl glass hover:bg-[var(--glass-input-bg)] flex items-center justify-center text-[var(--muted-foreground)] transition"
+        className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition cursor-pointer"
         title={`Theme Mode: ${theme} (Click to switch)`}
       >
-        {theme === "light" && <Sun className="h-4 w-4 text-[var(--warning)]" />}
-        {theme === "dark" && <Moon className="h-4 w-4 text-[var(--primary)]" />}
-        {theme === "system" && <Laptop className="h-4 w-4 text-[var(--muted-foreground)]" />}
+        {theme === "light" && <Sun className="h-4 w-4 text-amber-500" />}
+        {theme === "dark" && <Moon className="h-4 w-4 text-indigo-400" />}
+        {theme === "system" && <Laptop className="h-4 w-4 text-slate-500" />}
       </button>
     );
   }
 
   return (
-    <div className="flex items-center justify-between p-1 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-xs">
+    <div className="flex items-center justify-between p-1 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-xs">
       <button
         onClick={() => setTheme("light")}
-        className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 ${
+        className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 cursor-pointer ${
           theme === "light"
-            ? "bg-white dark:bg-[var(--glass-input-bg)] text-[var(--primary)] shadow-md"
-            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+            ? "bg-white text-indigo-600 shadow-xs"
+            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
         }`}
         title="Light Mode"
       >
-        <Sun className="h-3.5 w-3.5 text-[var(--warning)]" />
+        <Sun className="h-3.5 w-3.5 text-amber-500" />
         <span>Light</span>
       </button>
       <button
         onClick={() => setTheme("dark")}
-        className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 ${
+        className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 cursor-pointer ${
           theme === "dark"
-            ? "bg-[var(--glass-input-bg)] text-[var(--primary)] shadow-md"
-            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+            ? "bg-slate-800 text-indigo-400 shadow-xs"
+            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
         }`}
         title="Dark Mode"
       >
-        <Moon className="h-3.5 w-3.5 text-[var(--primary)]" />
+        <Moon className="h-3.5 w-3.5 text-indigo-400" />
         <span>Dark</span>
       </button>
       <button
         onClick={() => setTheme("system")}
-        className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 ${
+        className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 font-bold text-[11px] transition-all duration-200 cursor-pointer ${
           theme === "system"
-            ? "bg-white dark:bg-[var(--glass-input-bg)] text-[var(--primary)] shadow-md"
-            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+            ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-xs"
+            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
         }`}
         title="System Preference"
       >
-        <Laptop className="h-3.5 w-3.5 text-[var(--muted-foreground)]" />
+        <Laptop className="h-3.5 w-3.5 text-slate-500" />
         <span>Auto</span>
       </button>
     </div>
@@ -192,25 +192,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
       {/* Left Sidebar Navigation (Expandable & Shrinkable) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-30 flex flex-col justify-between transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 bottom-0 left-0 z-30 flex flex-col justify-between transition-all duration-300 ease-in-out border-r ${
           sidebarCollapsed ? "w-[72px] p-3" : "w-64 p-5"
-        } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
-        style={{
-          background: "linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(14,11,30,0.80) 60%, rgba(14,11,30,0.92) 100%)",
-          backdropFilter: "blur(52px) saturate(200%)",
-          WebkitBackdropFilter: "blur(52px) saturate(200%)",
-          borderRight: "1px solid rgba(167,139,250,0.18)",
-          boxShadow: "4px 0 48px rgba(0,0,0,0.4), inset -1px 0 0 rgba(167,139,250,0.10)",
-        }}
+        } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} bg-white/95 dark:bg-[#0B0F19]/90 border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-[4px_0_48px_rgba(0,0,0,0.4)] backdrop-blur-xl`}
       >
-        {/* Top gradient shimmer line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-none"
-          style={{ background: "linear-gradient(90deg, transparent 0%, rgba(167,139,250,0.7) 40%, rgba(249,168,212,0.6) 70%, transparent 100%)" }}
-        />
-
         <div className="space-y-4">
           {/* Brand Logo Header & Shrink / Expand Toggle */}
-          <div className="flex items-center justify-between border-b border-[var(--border)] pb-4 pt-1">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 pt-1">
             {!sidebarCollapsed ? (
               <>
                 <div className="flex items-center gap-2">
@@ -227,7 +215,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                 </div>
                 <button
                   onClick={toggleSidebar}
-                  className="p-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)] transition"
+                  className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Collapse sidebar"
                 >
                   <PanelLeftClose className="h-4 w-4" />
@@ -235,12 +223,12 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
               </>
             ) : (
               <div className="flex flex-col items-center w-full gap-3">
-                <div className="h-9 w-9 rounded-xl btn-gradient flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                <div className="h-9 w-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
                   <GraduationCap className="h-5 w-5" />
                 </div>
                 <button
                   onClick={toggleSidebar}
-                  className="p-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-input-bg)] transition"
+                  className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                   title="Expand sidebar"
                 >
                   <PanelLeftOpen className="h-4 w-4" />
@@ -253,13 +241,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           {!sidebarCollapsed ? (
             <button
               onClick={() => setCommandPaletteOpen(true)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[rgb(var(--primary-rgb)/40%)] hover:bg-[rgb(var(--primary-rgb)/8%)] transition text-xs shadow-sm"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-100/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-indigo-300 dark:hover:border-indigo-500/40 hover:bg-white dark:hover:bg-slate-900 transition text-xs shadow-xs cursor-pointer"
             >
-              <span className="flex items-center gap-2 font-medium">
-                <Command className="h-3.5 w-3.5 text-[var(--primary)]" />
+              <span className="flex items-center gap-2 font-semibold">
+                <Command className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                 Command Hub
               </span>
-              <kbd className="px-1.5 py-0.5 rounded bg-[var(--glass-input-bg)] text-[10px] font-mono text-[var(--muted-foreground)] font-bold border border-[var(--border)]">
+              <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 text-[10px] font-mono text-slate-500 dark:text-slate-400 font-bold border border-slate-200 dark:border-slate-700 shadow-xs">
                 ⌘K
               </kbd>
             </button>
@@ -267,7 +255,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
             <button
               onClick={() => setCommandPaletteOpen(true)}
               title="Command Hub (Cmd+K)"
-              className="w-full p-2.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--primary)] flex items-center justify-center hover:scale-105 hover:border-[rgb(var(--primary-rgb)/40%)] transition"
+              className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400 flex items-center justify-center hover:scale-105 hover:border-indigo-400 transition cursor-pointer shadow-xs"
             >
               <Command className="h-4 w-4" />
             </button>
@@ -290,13 +278,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                     sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2.5 gap-3"
                   } ${
                     isActive
-                      ? "btn-gradient text-white shadow-[0_4px_20px_rgba(139,92,246,0.45),0_0_0_1px_rgba(167,139,250,0.3)]"
-                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.06)]"
+                      ? "bg-indigo-600 dark:bg-gradient-to-r dark:from-indigo-600 dark:to-pink-600 text-white shadow-sm shadow-indigo-500/25"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
                   }`}
                 >
                   <Icon
                     className={`h-4 w-4 shrink-0 transition-transform group-hover:scale-110 ${
-                      isActive ? "text-white drop-shadow-sm" : "text-[var(--primary)]"
+                      isActive ? "text-white" : "text-slate-400 group-hover:text-indigo-600 dark:text-indigo-400"
                     }`}
                   />
                   {!sidebarCollapsed && <span>{item.label}</span>}
@@ -306,25 +294,25 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
             {/* Quick Operations Sub-Group in Sidebar */}
             {!sidebarCollapsed && (
-              <div className="pt-3 border-t border-[var(--border)] space-y-0.5">
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-0.5">
                 <div className="flex items-center gap-2 px-3 pb-1.5 pt-0.5">
                   <span className="section-accent-line" style={{ height: "0.7em" }} />
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[var(--muted-foreground)]">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Placement Tools
                   </p>
                 </div>
                 <button
                   onClick={() => setCompanyMatcherOpen(true)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] hover:bg-[rgb(var(--primary-rgb)/12%)] flex items-center gap-2.5 transition text-left"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 flex items-center gap-2.5 transition text-left cursor-pointer"
                 >
-                  <Building2 className="h-4 w-4 text-[var(--primary)] shrink-0" />
+                  <Building2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
                   <span>Company Matcher</span>
                 </button>
                 <button
                   onClick={() => setLiveProctoringOpen(true)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--destructive)] hover:bg-[rgb(var(--destructive-rgb)/12%)] flex items-center gap-2.5 transition text-left"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2.5 transition text-left cursor-pointer"
                 >
-                  <ShieldAlert className="h-4 w-4 text-[var(--destructive)] shrink-0" />
+                  <ShieldAlert className="h-4 w-4 text-rose-500 shrink-0" />
                   <span>Live Proctoring Radar</span>
                 </button>
               </div>
@@ -333,11 +321,11 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
         </div>
 
         {/* Sidebar Footer Actions */}
-        <div className="space-y-2.5 pt-4 border-t border-[var(--border)]">
+        <div className="space-y-2.5 pt-4 border-t border-slate-200 dark:border-slate-800">
           {/* Theme Switcher */}
           {!sidebarCollapsed ? (
             <div>
-              <p className="text-[10px] uppercase tracking-wider font-extrabold text-[var(--muted-foreground)] mb-1.5 px-1">
+              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 dark:text-slate-500 mb-1.5 px-1">
                 Theme Mode
               </p>
               <ThemeSwitcher compact={false} />
@@ -350,16 +338,16 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           <button
             onClick={() => setShowMentorTour(true)}
             title="Mentor Guide & Product Tour"
-            className={`w-full rounded-xl border border-[rgb(var(--primary-rgb)/30%)] bg-[rgb(var(--primary-rgb)/10%)] hover:bg-[rgb(var(--primary-rgb)/18%)] text-xs font-bold text-[var(--primary)] flex items-center transition-all duration-200 group ${
+            className={`w-full rounded-xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-xs font-bold text-indigo-700 dark:text-indigo-300 flex items-center transition-all duration-200 group cursor-pointer ${
               sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2 justify-between"
             }`}
           >
             <span className="flex items-center gap-2">
-              <HelpCircle className="h-4 w-4 text-[var(--primary)] shrink-0 group-hover:scale-110 transition-transform" />
+              <HelpCircle className="h-4 w-4 text-indigo-600 dark:text-indigo-400 shrink-0 group-hover:scale-110 transition-transform" />
               {!sidebarCollapsed && <span>Mentor Guide</span>}
             </span>
             {!sidebarCollapsed && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[rgb(var(--primary-rgb)/20%)] text-[var(--primary)] font-black border border-[rgb(var(--primary-rgb)/20%)]">
+              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-indigo-200/70 dark:bg-indigo-500/25 text-indigo-800 dark:text-indigo-200 font-extrabold border border-indigo-300/60 dark:border-indigo-500/30">
                 Tour
               </span>
             )}
@@ -369,11 +357,11 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           <button
             onClick={onLogout}
             title="Sign Out"
-            className={`w-full rounded-xl border border-[var(--border)] bg-[rgba(255,255,255,0.03)] hover:bg-[rgb(var(--destructive-rgb)/10%)] hover:border-[rgb(var(--destructive-rgb)/30%)] text-xs font-semibold text-[var(--muted-foreground)] flex items-center transition-all duration-200 hover:text-[var(--destructive)] group ${
+            className={`w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-white/[0.02] hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center transition-all duration-200 group cursor-pointer ${
               sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2 gap-2"
             }`}
           >
-            <LogOut className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--destructive)] shrink-0 transition-colors" />
+            <LogOut className="h-4 w-4 text-slate-400 group-hover:text-rose-600 shrink-0 transition-colors" />
             {!sidebarCollapsed && <span>Sign Out</span>}
           </button>
         </div>
@@ -406,7 +394,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
 
       {/* Main Content Area (Generous breathing gap between sidebar navbar and main section) */}
       <main
-        className={`flex-1 transition-all duration-300 ease-in-out min-w-0 py-8 px-6 sm:px-10 mt-14 lg:mt-0 relative z-10 ${
+        className={`flex-1 transition-all duration-300 ease-in-out min-w-0 py-8 px-6 sm:px-10 mt-14 lg:mt-0 relative ${
           sidebarCollapsed ? "lg:pl-[108px]" : "lg:pl-[296px]"
         }`}
       >

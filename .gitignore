@@ -122,4 +122,4 @@ uploads/
 backend/uploads/
 *.csv
 mentees-telemetry-*.csv
-
+temp_stitch_layout/

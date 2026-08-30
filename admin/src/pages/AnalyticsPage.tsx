@@ -157,14 +157,14 @@ export function AnalyticsPage() {
           <div className="flex items-center gap-3 self-start md:self-auto relative z-10">
             <button
               onClick={handleExportAnalyticsCsv}
-              className="btn-gradient px-4 py-2.5 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/30 transition hover:scale-105"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm shadow-indigo-500/20 transition hover:scale-102 cursor-pointer"
             >
               <Download className="h-4 w-4" /> Export Analytics CSV
             </button>
 
-            <div className="flex items-center gap-2 bg-[rgba(0,0,0,0.25)] p-2 rounded-2xl border border-[var(--border)] text-xs">
-              <span className="text-[var(--muted-foreground)] font-bold px-2">Cohort:</span>
-              <span className="px-3 py-1 rounded-xl btn-gradient text-white font-black shadow-md">
+            <div className="flex items-center gap-2 bg-slate-100 dark:bg-[rgba(0,0,0,0.25)] p-1.5 px-3 rounded-xl border border-slate-200 dark:border-[var(--border)] text-xs">
+              <span className="text-slate-500 dark:text-[var(--muted-foreground)] font-bold">Cohort:</span>
+              <span className="px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 dark:btn-gradient dark:text-white font-extrabold border border-indigo-200 dark:border-transparent shadow-xs">
                 {summary.totalStudents} Mentees
               </span>
             </div>
@@ -175,39 +175,39 @@ export function AnalyticsPage() {
       {/* Summary KPI Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="kpi-card kpi-card-violet space-y-2 text-center">
-          <div className="p-2.5 rounded-2xl bg-violet-500/25 border border-violet-500/30 shadow-[0_0_10px_rgba(139,92,246,0.3)] w-fit mx-auto">
-            <Users className="h-5 w-5 text-violet-300" />
+          <div className="p-2.5 rounded-2xl bg-indigo-50 dark:bg-violet-500/25 border border-indigo-100 dark:border-violet-500/30 w-fit mx-auto">
+            <Users className="h-5 w-5 text-indigo-600 dark:text-violet-300" />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] font-medium">Assigned Mentees</p>
-          <p className="text-3xl font-black text-violet-300">{summary.totalStudents}</p>
-          <p className="text-[10px] text-violet-400/70 font-semibold">Active Cohort Roster</p>
+          <p className="text-xs text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Assigned Mentees</p>
+          <p className="text-3xl font-black text-slate-900 dark:text-violet-300">{summary.totalStudents}</p>
+          <p className="text-[10px] text-indigo-600 dark:text-violet-400/70 font-semibold">Active Cohort Roster</p>
         </div>
 
         <div className="kpi-card kpi-card-blue space-y-2 text-center">
-          <div className="p-2.5 rounded-2xl bg-blue-500/25 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.3)] w-fit mx-auto">
-            <FileText className="h-5 w-5 text-blue-300" />
+          <div className="p-2.5 rounded-2xl bg-blue-50 dark:bg-blue-500/25 border border-blue-100 dark:border-blue-500/30 w-fit mx-auto">
+            <FileText className="h-5 w-5 text-blue-600 dark:text-blue-300" />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] font-medium">Avg ATS Resume Match</p>
-          <p className="text-3xl font-black text-blue-300">{summary.avgResumeScore}%</p>
-          <p className="text-[10px] text-blue-400/70 font-semibold">{summary.analyzedResumesCount || 0} evaluated</p>
+          <p className="text-xs text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Avg ATS Resume Match</p>
+          <p className="text-3xl font-black text-slate-900 dark:text-blue-300">{summary.avgResumeScore}%</p>
+          <p className="text-[10px] text-blue-600 dark:text-blue-400/70 font-semibold">{summary.analyzedResumesCount || 0} evaluated</p>
         </div>
 
         <div className="kpi-card kpi-card-purple space-y-2 text-center">
-          <div className="p-2.5 rounded-2xl bg-purple-500/25 border border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.3)] w-fit mx-auto">
-            <Mic className="h-5 w-5 text-purple-300" />
+          <div className="p-2.5 rounded-2xl bg-purple-50 dark:bg-purple-500/25 border border-purple-100 dark:border-purple-500/30 w-fit mx-auto">
+            <Mic className="h-5 w-5 text-purple-600 dark:text-purple-300" />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] font-medium">Avg Mock Interview Score</p>
-          <p className="text-3xl font-black text-purple-300">{summary.avgInterviewScore}%</p>
-          <p className="text-[10px] text-purple-400/70 font-semibold">{summary.completedInterviewsCount || 0} completed</p>
+          <p className="text-xs text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Avg Mock Interview Score</p>
+          <p className="text-3xl font-black text-slate-900 dark:text-purple-300">{summary.avgInterviewScore}%</p>
+          <p className="text-[10px] text-purple-600 dark:text-purple-400/70 font-semibold">{summary.completedInterviewsCount || 0} completed</p>
         </div>
 
         <div className="kpi-card kpi-card-emerald space-y-2 text-center">
-          <div className="p-2.5 rounded-2xl bg-emerald-500/25 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.3)] w-fit mx-auto">
-            <Code2 className="h-5 w-5 text-emerald-300" />
+          <div className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-500/25 border border-emerald-100 dark:border-emerald-500/30 w-fit mx-auto">
+            <Code2 className="h-5 w-5 text-emerald-600 dark:text-emerald-300" />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] font-medium">Total Solved Problems</p>
-          <p className="text-3xl font-black text-emerald-300">{summary.totalCodingProblems}</p>
-          <p className="text-[10px] text-emerald-400/70 font-semibold">Multi-platform telemetry</p>
+          <p className="text-xs text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Total Solved Problems</p>
+          <p className="text-3xl font-black text-slate-900 dark:text-emerald-300">{summary.totalCodingProblems}</p>
+          <p className="text-[10px] text-emerald-600 dark:text-emerald-400/70 font-semibold">Multi-platform telemetry</p>
         </div>
       </div>
 

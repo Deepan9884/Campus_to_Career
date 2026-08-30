@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
@@ -27,6 +28,7 @@ import {
   Timer,
   ShieldAlert,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { GlassCard } from "../components/GlassCard";
@@ -121,13 +123,34 @@ export function ExamsManagementPage() {
     },
   });
 
+  // Helper to determine accurate status
+  const getExamStatusInfo = (exam: ExamItem) => {
+    const effectiveEndTime = exam.scheduledEndTime
+      ? new Date(exam.scheduledEndTime)
+      : exam.scheduledStartTime
+      ? new Date(new Date(exam.scheduledStartTime).getTime() + (Number(exam.durationMinutes) || 60) * 60 * 1000)
+      : null;
+
+    const isStopped = exam.status === "stopped";
+    const isEnded =
+      exam.status === "completed" ||
+      Boolean(exam.isScheduled && effectiveEndTime && effectiveEndTime < new Date());
+    const isScheduledFuture =
+      Boolean(exam.isScheduled) &&
+      Boolean(exam.scheduledStartTime) &&
+      new Date(exam.scheduledStartTime!) > new Date();
+    const isActive = !isStopped && !isEnded && !isScheduledFuture && (exam.status === "active" || !exam.status);
+
+    return { isStopped, isEnded, isScheduledFuture, isActive, effectiveEndTime };
+  };
+
   // Summary Metrics
   const totalExams = exams.length;
   const mcqCount = exams.filter((e) => e.examType === "mcq").length;
   const codingCount = exams.filter((e) => e.examType === "coding").length;
   const mixedCount = exams.filter((e) => e.examType === "mixed").length;
   const totalSubmissions = exams.reduce((acc, e) => acc + (e.stats?.totalSubmissions || 0), 0);
-  const activeExamsCount = exams.filter((e) => e.status === "active" || (!e.status && e.isPublished)).length;
+  const activeExamsCount = exams.filter((e) => getExamStatusInfo(e).isActive).length;
 
   return (
     <div className="space-y-7">
@@ -286,11 +309,7 @@ export function ExamsManagementPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {exams.map((exam) => {
             const isDisclosed = Boolean(exam.isResultDisclosed);
-            const isStopped = exam.status === "stopped";
-            const isScheduledFuture =
-              exam.isScheduled &&
-              exam.scheduledStartTime &&
-              new Date(exam.scheduledStartTime) > new Date();
+            const { isStopped, isEnded, isScheduledFuture, isActive } = getExamStatusInfo(exam);
 
             return (
               <GlassCard
@@ -303,10 +322,10 @@ export function ExamsManagementPage() {
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${
                         exam.examType === "mcq"
-                          ? "bg-indigo-500/15 text-indigo-300 border-indigo-500/30"
+                          ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/30"
                           : exam.examType === "coding"
-                          ? "bg-cyan-500/15 text-cyan-300 border-cyan-500/30"
-                          : "bg-purple-500/15 text-purple-300 border-purple-500/30"
+                          ? "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-500/15 dark:text-cyan-300 dark:border-cyan-500/30"
+                          : "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-500/15 dark:text-purple-300 dark:border-purple-500/30"
                       }`}
                     >
                       {exam.examType.toUpperCase()}
@@ -314,15 +333,19 @@ export function ExamsManagementPage() {
 
                     {/* Status Badge */}
                     {isStopped ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/30 flex items-center gap-1">
                         <StopCircle className="h-3 w-3" /> Stopped
                       </span>
+                    ) : isEnded ? (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30 flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3 text-slate-500" /> Concluded
+                      </span>
                     ) : isScheduledFuture ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30 flex items-center gap-1">
                         <Calendar className="h-3 w-3" /> Scheduled
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30 flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" /> Active
                       </span>
                     )}
@@ -330,18 +353,18 @@ export function ExamsManagementPage() {
 
                   {/* Title & Description */}
                   <div>
-                    <h3 className="text-base font-extrabold text-[var(--foreground)] line-clamp-1 group-hover:text-indigo-400 transition">
+                    <h3 className="text-base font-extrabold text-slate-900 dark:text-[var(--foreground)] line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
                       {exam.title}
                     </h3>
-                    <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-500 dark:text-[var(--muted-foreground)] line-clamp-2 mt-1 leading-relaxed">
                       {exam.description || "Comprehensive proctored assessment"}
                     </p>
                   </div>
 
                   {/* Schedule Timestamps Banner */}
                   {exam.isScheduled && exam.scheduledStartTime && (
-                    <div className="p-2 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-[10px] text-indigo-300 flex items-center gap-1.5">
-                      <Timer className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                    <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-500/20 text-[10px] dark:text-indigo-300 flex items-center gap-1.5 font-medium">
+                      <Timer className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
                       <span className="truncate">
                         Starts: {new Date(exam.scheduledStartTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                         {" → "}
@@ -354,35 +377,35 @@ export function ExamsManagementPage() {
 
                   {/* Meta Tiles */}
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="p-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                      <span className="text-[10px] text-[var(--muted-foreground)] block">Duration</span>
-                      <strong className="text-[var(--foreground)]">{exam.durationMinutes}m</strong>
+                    <div className="p-2 rounded-xl bg-slate-50 dark:bg-[var(--glass-input-bg)] border border-slate-200 dark:border-[var(--border)]">
+                      <span className="text-[10px] text-slate-500 dark:text-[var(--muted-foreground)] block font-semibold">Duration</span>
+                      <strong className="text-slate-900 dark:text-[var(--foreground)]">{exam.durationMinutes}m</strong>
                     </div>
-                    <div className="p-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                      <span className="text-[10px] text-[var(--muted-foreground)] block">Max Marks</span>
-                      <strong className="text-emerald-400">{exam.totalMarks}</strong>
+                    <div className="p-2 rounded-xl bg-slate-50 dark:bg-[var(--glass-input-bg)] border border-slate-200 dark:border-[var(--border)]">
+                      <span className="text-[10px] text-slate-500 dark:text-[var(--muted-foreground)] block font-semibold">Max Marks</span>
+                      <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{exam.totalMarks}</strong>
                     </div>
-                    <div className="p-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                      <span className="text-[10px] text-[var(--muted-foreground)] block">Attempts</span>
-                      <strong className="text-indigo-400 font-black">
+                    <div className="p-2 rounded-xl bg-slate-50 dark:bg-[var(--glass-input-bg)] border border-slate-200 dark:border-[var(--border)]">
+                      <span className="text-[10px] text-slate-500 dark:text-[var(--muted-foreground)] block font-semibold">Attempts</span>
+                      <strong className="text-indigo-600 dark:text-indigo-400 font-black">
                         {exam.stats?.totalSubmissions || 0}
                       </strong>
                     </div>
                   </div>
 
                   {/* Result Disclosure Toggle Row */}
-                  <div className="p-2.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {isDisclosed ? (
-                        <Unlock className="h-3.5 w-3.5 text-emerald-400" />
+                        <Unlock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                       ) : (
-                        <Lock className="h-3.5 w-3.5 text-amber-400" />
+                        <Lock className="h-3.5 w-3.5 text-amber-500" />
                       )}
                       <div>
-                        <span className="text-[11px] font-bold block text-[var(--foreground)]">
+                        <span className="text-[11px] font-bold block text-slate-900 dark:text-white">
                           {isDisclosed ? "Results Disclosed" : "Results Hidden"}
                         </span>
-                        <span className="text-[9px] text-[var(--muted-foreground)]">
+                        <span className="text-[9px] text-slate-500 dark:text-slate-400">
                           {isDisclosed ? "Students can see marks" : "Marks concealed from students"}
                         </span>
                       </div>
@@ -390,31 +413,41 @@ export function ExamsManagementPage() {
 
                     <button
                       type="button"
+                      disabled={toggleDisclosureMutation.isPending && toggleDisclosureMutation.variables?.examId === exam._id}
                       onClick={() =>
                         toggleDisclosureMutation.mutate({
                           examId: exam._id,
                           currentState: isDisclosed,
                         })
                       }
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-60 ${
                         isDisclosed
-                          ? "bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30"
-                          : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
+                          ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30 dark:hover:bg-emerald-500/30 shadow-xs"
+                          : "bg-amber-100 text-amber-850 hover:bg-amber-200 border border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30 dark:hover:bg-amber-500/30 shadow-xs"
                       }`}
                     >
-                      {isDisclosed ? "Hide Marks" : "Disclose Marks"}
+                      {toggleDisclosureMutation.isPending && toggleDisclosureMutation.variables?.examId === exam._id ? (
+                        <>
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          <span>Updating...</span>
+                        </>
+                      ) : isDisclosed ? (
+                        "Hide Marks"
+                      ) : (
+                        "Disclose Marks"
+                      )}
                     </button>
                   </div>
 
                   {/* Retakes Permission Toggle Row */}
-                  <div className="p-2.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Clock className={`h-3.5 w-3.5 ${exam.allowRetakes ? "text-cyan-400" : "text-slate-400"}`} />
+                      <Clock className={`h-3.5 w-3.5 ${exam.allowRetakes ? "text-cyan-600 dark:text-cyan-400" : "text-slate-400 dark:text-slate-500"}`} />
                       <div>
-                        <span className="text-[11px] font-bold block text-[var(--foreground)]">
+                        <span className="text-[11px] font-bold block text-slate-900 dark:text-white">
                           {exam.allowRetakes ? "Retakes Allowed" : "Retakes Blocked"}
                         </span>
-                        <span className="text-[9px] text-[var(--muted-foreground)]">
+                        <span className="text-[9px] text-slate-500 dark:text-slate-400">
                           {exam.allowRetakes ? "Multiple attempts allowed" : "Single attempt only"}
                         </span>
                       </div>
@@ -422,35 +455,45 @@ export function ExamsManagementPage() {
 
                     <button
                       type="button"
+                      disabled={toggleRetakesMutation.isPending && toggleRetakesMutation.variables?.examId === exam._id}
                       onClick={() =>
                         toggleRetakesMutation.mutate({
                           examId: exam._id,
                           currentState: Boolean(exam.allowRetakes),
                         })
                       }
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-60 ${
                         exam.allowRetakes
-                          ? "bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
-                          : "bg-slate-500/20 text-slate-400 hover:bg-slate-500/30"
+                          ? "bg-cyan-100 text-cyan-800 hover:bg-cyan-200 border border-cyan-300 dark:bg-cyan-500/20 dark:text-cyan-300 dark:border-cyan-500/30 dark:hover:bg-cyan-500/30 shadow-xs"
+                          : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700 shadow-xs"
                       }`}
                     >
-                      {exam.allowRetakes ? "Disable" : "Allow"}
+                      {toggleRetakesMutation.isPending && toggleRetakesMutation.variables?.examId === exam._id ? (
+                        <>
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          <span>Updating...</span>
+                        </>
+                      ) : exam.allowRetakes ? (
+                        "Disable"
+                      ) : (
+                        "Allow"
+                      )}
                     </button>
                   </div>
 
                   {/* Candidate Cohort Batch Row */}
-                  <div className="p-2.5 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Users className="h-3.5 w-3.5 text-indigo-400" />
+                      <Users className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                       <div>
-                        <span className="text-[11px] font-bold block text-[var(--foreground)]">
+                        <span className="text-[11px] font-bold block text-slate-900 dark:text-white">
                           {exam.targetAudience === "selected" || (exam.assignedStudents && exam.assignedStudents.length > 0)
                             ? `Selected Batch (${exam.assignedStudents?.length || 0} Students)`
                             : exam.targetAudience === "mentees"
                             ? "My Mentees Only"
                             : "All Registered Students"}
                         </span>
-                        <span className="text-[9px] text-[var(--muted-foreground)]">
+                        <span className="text-[9px] text-slate-500 dark:text-slate-400">
                           {exam.targetAudience === "selected" || (exam.assignedStudents && exam.assignedStudents.length > 0)
                             ? "Strictly restricted to selected batch"
                             : exam.targetAudience === "mentees"
@@ -463,7 +506,7 @@ export function ExamsManagementPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedExamForBatch(exam)}
-                      className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 transition cursor-pointer flex items-center gap-1"
+                      className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 dark:hover:bg-indigo-500/30 transition cursor-pointer flex items-center gap-1 shadow-xs"
                     >
                       <Users className="h-3 w-3" />
                       <span>Assign Batch</span>
@@ -472,20 +515,20 @@ export function ExamsManagementPage() {
                 </div>
 
                 {/* Card Action Buttons */}
-                <div className="pt-3 border-t border-[var(--border)] space-y-2">
+                <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setSelectedExamForPreview(exam)}
-                      className="flex-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white flex items-center justify-center gap-1.5 transition border border-slate-700 cursor-pointer"
+                      className="flex-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition border border-slate-200 dark:border-slate-700 cursor-pointer shadow-xs"
                       title="View Complete Question Paper"
                     >
-                      <BookOpen className="h-3.5 w-3.5 text-indigo-400" />
+                      <BookOpen className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                       <span>View Paper</span>
                     </button>
 
                     <button
                       onClick={() => navigate(`/results?examId=${exam._id}`)}
-                      className="flex-1 px-3 py-1.5 rounded-xl text-xs font-bold btn-gradient text-white flex items-center justify-center gap-1.5 shadow-md shadow-indigo-500/20 hover:scale-102 transition cursor-pointer"
+                      className="flex-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center gap-1.5 shadow-md shadow-indigo-500/20 hover:scale-102 transition cursor-pointer"
                     >
                       <BarChart3 className="h-3.5 w-3.5" />
                       <span>Results Panel</span>
@@ -497,15 +540,15 @@ export function ExamsManagementPage() {
                       {/* Reschedule Exam Button */}
                       <button
                         onClick={() => setSelectedExamForReschedule(exam)}
-                        className="px-3 py-1 rounded-xl text-[11px] font-bold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 transition cursor-pointer"
+                        className="px-3 py-1 rounded-xl text-[11px] font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/15 dark:hover:bg-indigo-500/25 dark:text-indigo-300 dark:border-indigo-500/30 flex items-center gap-1.5 transition cursor-pointer shadow-xs"
                         title="Reschedule assessment date, time window, or reset candidate submissions"
                       >
-                        <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                        <Calendar className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                         <span>Reschedule</span>
                       </button>
 
                       {/* Stop Exam Now Button */}
-                      {!isStopped && (
+                      {isActive && (
                         <button
                           onClick={() => {
                             if (
@@ -516,10 +559,10 @@ export function ExamsManagementPage() {
                               stopExamMutation.mutate(exam._id);
                             }
                           }}
-                          className="px-3 py-1 rounded-xl text-[11px] font-bold bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 flex items-center gap-1.5 transition cursor-pointer"
+                          className="px-3 py-1 rounded-xl text-[11px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-500/15 dark:hover:bg-rose-500/25 dark:text-rose-300 dark:border-rose-500/30 flex items-center gap-1.5 transition cursor-pointer shadow-xs"
                           title="End exam session and finalize in-progress submissions"
                         >
-                          <StopCircle className="h-3.5 w-3.5 text-rose-400" />
+                          <StopCircle className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
                           <span>Stop Exam</span>
                         </button>
                       )}
@@ -531,7 +574,7 @@ export function ExamsManagementPage() {
                           deleteMutation.mutate(exam._id);
                         }
                       }}
-                      className="p-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-rose-400 hover:bg-rose-500/10 transition ml-auto cursor-pointer"
+                      className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/15 dark:hover:text-rose-400 transition ml-auto cursor-pointer"
                       title="Delete Exam"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -659,28 +702,28 @@ function AssignBatchModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-slate-950 border border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150 p-6">
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] bg-slate-950/60 dark:bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150 p-6 text-slate-900 dark:text-white">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+            <div className="p-2.5 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/30">
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-white">
+              <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
                 Assign Test Batch & Target Candidates
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5 truncate max-w-md">
-                Exam: <strong className="text-indigo-300">{exam.title}</strong>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-md">
+                Exam: <strong className="text-indigo-600 dark:text-indigo-300">{exam.title}</strong>
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition"
+            className="text-slate-400 hover:text-slate-900 dark:hover:text-white p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
           >
             ✕
           </button>
@@ -688,7 +731,7 @@ function AssignBatchModal({
 
         {/* Audience Selector Tabs */}
         <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+          <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
             Target Audience Policy
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -702,12 +745,12 @@ function AssignBatchModal({
                 onClick={() => setTargetAudience(aud.id as any)}
                 className={`p-3.5 rounded-2xl border transition cursor-pointer space-y-1 ${
                   targetAudience === aud.id
-                    ? "bg-indigo-950/50 border-indigo-500 ring-1 ring-indigo-500 text-white font-bold"
-                    : "bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700"
+                    ? "bg-indigo-50 border-indigo-500 ring-1 ring-indigo-500 text-slate-900 dark:bg-indigo-950/50 dark:text-white font-bold"
+                    : "bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:border-slate-700"
                 }`}
               >
-                <span className="text-xs font-bold block text-white">{aud.label}</span>
-                <p className="text-[10px] text-slate-400 leading-tight">{aud.desc}</p>
+                <span className="text-xs font-bold block text-slate-900 dark:text-white">{aud.label}</span>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">{aud.desc}</p>
               </div>
             ))}
           </div>
@@ -717,7 +760,7 @@ function AssignBatchModal({
         {targetAudience === "selected" && (
           <div className="space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <span className="text-xs font-extrabold text-indigo-300 px-3 py-1 rounded-xl bg-indigo-500/20 border border-indigo-500/30">
+              <span className="text-xs font-extrabold text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 border border-indigo-200 dark:border-indigo-500/30">
                 {selectedIds.length} Candidate(s) Selected
               </span>
 
@@ -729,7 +772,7 @@ function AssignBatchModal({
                     setSelectedIds(allIds);
                     toast.success(`Selected ${filteredStudents.length} candidates`);
                   }}
-                  className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer shadow-xs"
                 >
                   Select All Filtered ({filteredStudents.length})
                 </button>
@@ -738,7 +781,7 @@ function AssignBatchModal({
                   <button
                     type="button"
                     onClick={() => setSelectedIds([])}
-                    className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 hover:text-rose-300 text-slate-400 font-bold text-xs transition cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 dark:bg-slate-900 dark:hover:bg-rose-500/20 dark:hover:text-rose-300 dark:text-slate-400 font-bold text-xs transition cursor-pointer"
                   >
                     Clear Selection
                   </button>
@@ -753,15 +796,15 @@ function AssignBatchModal({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search candidates by name, email, register number..."
-                className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none"
+                className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none"
               />
             </div>
 
-            <div className="max-h-60 overflow-y-auto space-y-1.5 border border-slate-800 rounded-2xl p-2.5 bg-slate-900/80">
+            <div className="max-h-60 overflow-y-auto space-y-1.5 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 bg-slate-50 dark:bg-slate-900/80">
               {isLoading ? (
-                <div className="p-8 text-center text-xs text-slate-400">Loading student directory...</div>
+                <div className="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Loading student directory...</div>
               ) : filteredStudents.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-500">No candidates match search query.</div>
+                <div className="p-8 text-center text-xs text-slate-400 dark:text-slate-500">No candidates match search query.</div>
               ) : (
                 filteredStudents.map((st) => {
                   const isSelected = selectedIds.includes(st._id);
@@ -777,28 +820,28 @@ function AssignBatchModal({
                       }}
                       className={`p-2.5 rounded-xl flex items-center justify-between cursor-pointer text-xs transition border ${
                         isSelected
-                          ? "bg-indigo-600/20 border-indigo-500/50 text-white font-bold"
-                          : "bg-slate-950/60 border-slate-800/80 hover:border-slate-700 text-slate-300"
+                          ? "bg-indigo-50 border-indigo-300 text-indigo-900 font-bold dark:bg-indigo-600/20 dark:border-indigo-500/50 dark:text-white"
+                          : "bg-white border-slate-200/80 hover:border-slate-300 text-slate-700 dark:bg-slate-950/60 dark:border-slate-800/80 dark:hover:border-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
                         <div
                           className={`w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs ${
-                            isSelected ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-400"
+                            isSelected ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400"
                           }`}
                         >
                           {st.name.charAt(0)}
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-white">{st.name}</span>
+                            <span className="font-bold text-slate-900 dark:text-white">{st.name}</span>
                             {(st as any).registerNumber && (
-                              <span className="text-[10px] font-mono text-indigo-300 font-semibold">
+                              <span className="text-[10px] font-mono text-indigo-600 dark:text-indigo-300 font-semibold">
                                 ({(st as any).registerNumber})
                               </span>
                             )}
                           </div>
-                          <span className="text-[10px] text-slate-400 block">{st.email}</span>
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 block">{st.email}</span>
                         </div>
                       </div>
 
@@ -806,7 +849,7 @@ function AssignBatchModal({
                         className={`w-5 h-5 rounded-md flex items-center justify-center border transition ${
                           isSelected
                             ? "bg-indigo-600 border-indigo-500 text-white"
-                            : "border-slate-700 bg-slate-800/50 text-transparent"
+                            : "border-slate-300 bg-white text-transparent dark:border-slate-700 dark:bg-slate-800/50"
                         }`}
                       >
                         ✓
@@ -820,11 +863,11 @@ function AssignBatchModal({
         )}
 
         {/* Actions Footer */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition cursor-pointer"
+            className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-white hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition cursor-pointer shadow-xs"
           >
             Cancel
           </button>
@@ -833,12 +876,13 @@ function AssignBatchModal({
             type="button"
             disabled={isSaving || (targetAudience === "selected" && selectedIds.length === 0)}
             onClick={handleSave}
-            className="btn-gradient px-5 py-2.5 rounded-xl text-xs font-black text-white shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition cursor-pointer disabled:opacity-50"
+            className="bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 rounded-xl text-xs font-black text-white shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition cursor-pointer disabled:opacity-50"
           >
             {isSaving ? "Saving Batch..." : "Save Batch Assignment"}
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

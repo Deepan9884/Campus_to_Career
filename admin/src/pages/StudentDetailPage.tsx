@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { GlassCard } from "../components/GlassCard";
@@ -526,14 +527,14 @@ export function StudentDetailPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 bg-[rgba(0,0,0,0.25)] p-5 rounded-2xl border border-[var(--border)] shadow-md">
+            <div className="flex items-center gap-4 bg-slate-50 dark:bg-black/25 p-5 rounded-2xl border border-slate-200 dark:border-[var(--border)] shadow-xs">
               <ScoreRing score={student?.isMyMentee ? (metrics?.overallReadinessPct || 0) : 0} size={70} stroke={6} label="Readiness" />
               <div>
-                <p className="text-xs font-semibold text-[var(--muted-foreground)]">Composite Readiness</p>
-                <p className="text-lg font-black text-emerald-400">
+                <p className="text-xs font-semibold text-slate-500 dark:text-[var(--muted-foreground)]">Composite Readiness</p>
+                <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">
                   {student?.isMyMentee ? `${metrics?.overallReadinessPct || 0}% Index` : "Restricted"}
                 </p>
-                <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">
+                <p className="text-[10px] text-slate-400 dark:text-[var(--muted-foreground)] mt-0.5">
                   {student?.isMyMentee ? "Calculated across 5 telemetry streams" : "Assign mentee to unlock"}
                 </p>
               </div>
@@ -1429,9 +1430,9 @@ export function StudentDetailPage() {
       )}
 
       {/* Resume Inspection Detail Modal */}
-      {selectedResumeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      {selectedResumeModal && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-950/60 dark:bg-black/75 backdrop-blur-md p-4 overflow-y-auto select-none">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-slate-900 dark:text-white">
             {/* Modal Header */}
             <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/60">
               <div className="flex items-center gap-3">
@@ -1456,7 +1457,7 @@ export function StudentDetailPage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs text-slate-700 dark:text-slate-300">
+            <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs text-slate-700 dark:text-slate-300 select-text">
               {/* Score & Key Metrics */}
               <div className="grid grid-cols-3 gap-3 p-4 rounded-xl bg-slate-100 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-center">
                 <div>
@@ -1479,9 +1480,11 @@ export function StudentDetailPage() {
 
               {/* Summary */}
               {selectedResumeModal.summary && (
-                <div className="space-y-2">
-                  <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider">Executive Summary</h4>
-                  <p className="p-3.5 rounded-xl bg-slate-100/70 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 leading-relaxed">
+                <div>
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-1.5 uppercase text-[10px] tracking-wider">
+                    Executive Profile Summary
+                  </h4>
+                  <p className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 leading-relaxed text-slate-700 dark:text-slate-300">
                     {selectedResumeModal.summary}
                   </p>
                 </div>
@@ -1542,7 +1545,8 @@ export function StudentDetailPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* AI Co-Pilot Intervention Modal */}

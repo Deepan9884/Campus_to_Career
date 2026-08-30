@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -24,6 +25,7 @@ import {
   Code2,
   HelpCircle,
   X,
+  ShieldAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { GlassCard } from "../components/GlassCard";
@@ -161,15 +163,15 @@ export function AdminResultsPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30">
                 Evaluation & Marksheet Console
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
               <span className="gradient-text-warm">Assessment Results</span>{" "}
-              <span className="text-[var(--foreground)]">& Evaluation</span>
+              <span className="text-slate-900 dark:text-white">& Evaluation</span>
             </h1>
-            <p className="text-xs text-[var(--muted-foreground)] mt-0.5 max-w-xl">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 max-w-xl">
               Student submissions, marksheets, and score disclosures.
             </p>
           </div>
@@ -180,10 +182,10 @@ export function AdminResultsPage() {
               <select
                 value={selectedExamId}
                 onChange={(e) => handleSelectExam(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-2xl bg-slate-900/90 dark:bg-slate-900 border border-slate-700/80 text-xs font-bold text-slate-100 focus:border-indigo-500 focus:outline-none cursor-pointer appearance-none pr-9 shadow-sm"
+                className="w-full px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:outline-none cursor-pointer appearance-none pr-9 shadow-xs"
               >
                 {exams.length === 0 ? (
-                  <option value="" disabled className="bg-[#0f172a] text-slate-400">
+                  <option value="" disabled className="bg-white dark:bg-[#0f172a] text-slate-400">
                     {isLoadingExams ? "Loading assessments..." : "No assessments available"}
                   </option>
                 ) : (
@@ -191,7 +193,7 @@ export function AdminResultsPage() {
                     <option
                       key={exam._id}
                       value={exam._id}
-                      className="bg-[#0f172a] text-slate-100 py-2.5 font-medium"
+                      className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-2.5 font-medium"
                     >
                       {exam.title} ({exam.examType.toUpperCase()})
                     </option>
@@ -205,8 +207,8 @@ export function AdminResultsPage() {
 
         {/* Quick-Switch Assessment Pills */}
         {exams.length > 1 && (
-          <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center gap-2 overflow-x-auto pb-1">
-            <span className="text-[11px] font-bold text-[var(--muted-foreground)] shrink-0 flex items-center gap-1">
+          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto pb-1">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 shrink-0 flex items-center gap-1">
               <Layers className="h-3.5 w-3.5" /> Tests:
             </span>
             {exams.map((exam) => {
@@ -219,13 +221,13 @@ export function AdminResultsPage() {
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     isSelected
                       ? "btn-gradient text-white shadow-md shadow-indigo-500/25"
-                      : "bg-[var(--glass-input-bg)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--glass-border)]"
+                      : "bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
                   <span>{exam.title}</span>
                   <span
                     className={`text-[9px] uppercase px-1.5 py-0.2 rounded-md ${
-                      isSelected ? "bg-white/20 text-white font-extrabold" : "bg-white/[0.06] text-slate-400"
+                      isSelected ? "bg-white/20 text-white font-extrabold" : "bg-slate-100 dark:bg-white/[0.06] text-slate-500 dark:text-slate-400"
                     }`}
                   >
                     {exam.examType}
@@ -240,13 +242,13 @@ export function AdminResultsPage() {
       {isLoadingResults ? (
         <div className="p-16 text-center space-y-3">
           <div className="h-8 w-8 rounded-full border-3 border-indigo-500/20 border-t-indigo-500 animate-spin mx-auto" />
-          <p className="text-xs text-[var(--muted-foreground)]">Loading assessment results...</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Loading assessment results...</p>
         </div>
       ) : !resultsData ? (
-        <div className="p-12 rounded-3xl border border-dashed border-[var(--border)] text-center space-y-4 bg-white/[0.02]">
-          <AlertCircle className="h-8 w-8 text-[var(--muted-foreground)] mx-auto" />
-          <h3 className="text-base font-bold text-[var(--foreground)]">No Exam Selected</h3>
-          <p className="text-xs text-[var(--muted-foreground)]">
+        <div className="p-12 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-4 bg-slate-50/50 dark:bg-white/[0.02]">
+          <AlertCircle className="h-8 w-8 text-slate-400 mx-auto" />
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">No Exam Selected</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Please select an assessment from below to view its results:
           </p>
           <div className="flex flex-wrap justify-center gap-2 max-w-xl mx-auto pt-2">
@@ -255,7 +257,7 @@ export function AdminResultsPage() {
                 key={ex._id}
                 type="button"
                 onClick={() => handleSelectExam(ex._id)}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 transition cursor-pointer"
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 transition cursor-pointer"
               >
                 {ex.title}
               </button>
@@ -266,17 +268,17 @@ export function AdminResultsPage() {
         <div className="space-y-6">
           {/* ── SELECTED EXAM CONTROL & DISCLOSURE BANNER ──────────────────── */}
           <GlassCard className="p-6 relative overflow-hidden space-y-5">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30">
                     {resultsData.exam.examType} Exam
                   </span>
-                  <span className="text-xs text-[var(--muted-foreground)]">
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
                     {resultsData.exam.category} • {resultsData.exam.durationMinutes} mins
                   </span>
                 </div>
-                <h2 className="text-xl font-black text-[var(--foreground)]">
+                <h2 className="text-xl font-black text-slate-900 dark:text-white">
                   {resultsData.exam.title}
                 </h2>
               </div>
@@ -292,10 +294,10 @@ export function AdminResultsPage() {
                       currentState: isDisclosed,
                     })
                   }
-                  className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition shadow-md ${
+                  className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition shadow-xs cursor-pointer ${
                     isDisclosed
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30"
-                      : "bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 dark:hover:bg-emerald-500/30"
+                      : "bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 dark:hover:bg-amber-500/30"
                   }`}
                   title={
                     isDisclosed
@@ -321,7 +323,7 @@ export function AdminResultsPage() {
                   type="button"
                   disabled={isExportingPdf || resultsData.resultsTable.length === 0}
                   onClick={handleDownloadPdf}
-                  className="btn-gradient px-4 py-2.5 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 hover:scale-105 transition disabled:opacity-50"
+                  className="btn-gradient px-4 py-2.5 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 hover:scale-105 transition disabled:opacity-50 cursor-pointer"
                 >
                   <Download className="h-4 w-4" />
                   <span>{isExportingPdf ? "Generating PDF..." : "Download as PDF"}</span>
@@ -331,70 +333,70 @@ export function AdminResultsPage() {
 
             {/* Performance Summary Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              <div className="p-3 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                <span className="text-[10px] font-bold text-[var(--muted-foreground)] block uppercase">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
                   Appeared
                 </span>
-                <p className="text-xl font-black text-[var(--foreground)] mt-0.5">
+                <p className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
                   {resultsData.summary.totalSubmissions}
                 </p>
-                <span className="text-[10px] text-slate-400">Total Candidates</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Total Candidates</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                <span className="text-[10px] font-bold text-[var(--muted-foreground)] block uppercase">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
                   Pass Rate
                 </span>
-                <p className="text-xl font-black text-emerald-400 mt-0.5">
+                <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">
                   {resultsData.summary.passPercentage}%
                 </p>
-                <span className="text-[10px] text-emerald-300">
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-300">
                   {resultsData.summary.passedCount} Passed
                 </span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                <span className="text-[10px] font-bold text-[var(--muted-foreground)] block uppercase">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
                   Average Score
                 </span>
-                <p className="text-xl font-black text-indigo-400 mt-0.5">
-                  {resultsData.summary.avgScore} <span className="text-xs text-slate-400">/ {resultsData.exam.totalMarks}</span>
+                <p className="text-xl font-black text-indigo-600 dark:text-indigo-400 mt-0.5">
+                  {resultsData.summary.avgScore} <span className="text-xs text-slate-500 dark:text-slate-400">/ {resultsData.exam.totalMarks}</span>
                 </p>
-                <span className="text-[10px] text-slate-400">Cohort Mean</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Cohort Mean</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                <span className="text-[10px] font-bold text-[var(--muted-foreground)] block uppercase">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
                   Highest Score
                 </span>
-                <p className="text-xl font-black text-amber-400 mt-0.5">
-                  {resultsData.summary.highestScore} <span className="text-xs text-slate-400">/ {resultsData.exam.totalMarks}</span>
+                <p className="text-xl font-black text-amber-600 dark:text-amber-400 mt-0.5">
+                  {resultsData.summary.highestScore} <span className="text-xs text-slate-500 dark:text-slate-400">/ {resultsData.exam.totalMarks}</span>
                 </p>
-                <span className="text-[10px] text-amber-300 font-semibold">Rank #1 Benchmark</span>
+                <span className="text-[10px] text-amber-600 dark:text-amber-300 font-semibold">Rank #1 Benchmark</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                <span className="text-[10px] font-bold text-[var(--muted-foreground)] block uppercase">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
                   Passing Cutoff
                 </span>
-                <p className="text-xl font-black text-[var(--foreground)] mt-0.5">
+                <p className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
                   {resultsData.exam.passingScorePercentage}%
                 </p>
-                <span className="text-[10px] text-slate-400">Minimum to Pass</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Minimum to Pass</span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)]">
-                <span className="text-[10px] font-bold text-[var(--muted-foreground)] block uppercase">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block uppercase">
                   Student Visibility
                 </span>
                 <p
                   className={`text-sm font-black mt-1 ${
-                    isDisclosed ? "text-emerald-400" : "text-amber-400"
+                    isDisclosed ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
                   }`}
                 >
                   {isDisclosed ? "DISCLOSED" : "HIDDEN"}
                 </p>
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">
                   {isDisclosed ? "Live in Student Hub" : "Confidential"}
                 </span>
               </div>
@@ -403,7 +405,7 @@ export function AdminResultsPage() {
 
           {/* ── TABLE CONTROLS & SEARCH ───────────────────────────────────── */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-xs">
+            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs">
               {[
                 { id: "all", label: "All Candidates" },
                 { id: "passed", label: "Passed" },
@@ -412,10 +414,10 @@ export function AdminResultsPage() {
                 <button
                   key={tab.id}
                   onClick={() => setStatusFilter(tab.id as any)}
-                  className={`px-3.5 py-1.5 rounded-xl font-bold transition ${
+                  className={`px-3.5 py-1.5 rounded-xl font-bold transition cursor-pointer ${
                     statusFilter === tab.id
-                      ? "bg-white dark:bg-[var(--glass-input-bg)] text-[var(--primary)] shadow-sm"
-                      : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                      ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-xs"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
                   {tab.label}
@@ -424,23 +426,23 @@ export function AdminResultsPage() {
             </div>
 
             <div className="relative w-full sm:w-80">
-              <Search className="h-3.5 w-3.5 text-[var(--muted-foreground)] absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search candidate by name, roll no, email..."
-                className="w-full pl-8 pr-3 py-2 rounded-xl bg-[var(--glass-input-bg)] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)]"
+                className="w-full pl-8 pr-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-500"
               />
             </div>
           </div>
 
           {/* ── TABULAR MARKSHEET GRID (ROWS & COLUMNS) ────────────────────── */}
           {filteredRows.length === 0 ? (
-            <div className="p-12 rounded-3xl border border-dashed border-[var(--border)] text-center space-y-3">
-              <User className="h-8 w-8 text-[var(--muted-foreground)] mx-auto" />
-              <h3 className="text-base font-bold text-[var(--foreground)]">No Student Submissions Yet</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">
+            <div className="p-12 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-3 bg-slate-50/50 dark:bg-white/[0.02]">
+              <User className="h-8 w-8 text-slate-400 mx-auto" />
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">No Student Submissions Yet</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Student submissions will appear here once candidates complete the examination.
               </p>
             </div>
@@ -449,7 +451,7 @@ export function AdminResultsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-[var(--border)] bg-slate-950/60 text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted-foreground)]">
+                    <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-950/80 text-[10px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                       <th className="py-3 px-4">Rank</th>
                       <th className="py-3 px-4">Student</th>
                       <th className="py-3 px-4">Register No</th>
@@ -462,31 +464,31 @@ export function AdminResultsPage() {
                       <th className="py-3 px-4 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--border)]">
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                     {filteredRows.map((row) => {
                       const isTop3 = row.rank <= 3;
                       return (
                         <tr
                           key={row.submissionId}
-                          className="hover:bg-[var(--glass-input-bg)] transition-colors group"
+                          className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
                         >
                           {/* Rank / Position */}
                           <td className="py-3.5 px-4">
                             <div className="flex items-center gap-1.5 font-black">
                               {row.rank === 1 ? (
-                                <span className="flex items-center gap-1 text-amber-400 font-extrabold">
+                                <span className="flex items-center gap-1 text-amber-500 font-extrabold">
                                   <Trophy className="h-4 w-4" /> #1
                                 </span>
                               ) : row.rank === 2 ? (
-                                <span className="flex items-center gap-1 text-slate-300 font-extrabold">
+                                <span className="flex items-center gap-1 text-slate-500 dark:text-slate-300 font-extrabold">
                                   <Award className="h-4 w-4" /> #2
                                 </span>
                               ) : row.rank === 3 ? (
-                                <span className="flex items-center gap-1 text-amber-600 font-extrabold">
+                                <span className="flex items-center gap-1 text-amber-700 dark:text-amber-500 font-extrabold">
                                   <Award className="h-4 w-4" /> #3
                                 </span>
                               ) : (
-                                <span className="text-[var(--muted-foreground)] font-bold">
+                                <span className="text-slate-500 dark:text-slate-400 font-bold">
                                   #{row.rank}
                                 </span>
                               )}
@@ -496,14 +498,14 @@ export function AdminResultsPage() {
                           {/* Student Info */}
                           <td className="py-3.5 px-4">
                             <div className="flex items-center gap-2.5">
-                              <div className="w-7 h-7 rounded-full bg-[rgb(var(--primary-rgb)/20%)] text-[var(--primary)] flex items-center justify-center text-xs font-black">
+                              <div className="w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 flex items-center justify-center text-xs font-black">
                                 {row.studentName.charAt(0)}
                               </div>
                               <div>
-                                <span className="font-bold text-[var(--foreground)] block">
+                                <span className="font-bold text-slate-900 dark:text-white block">
                                   {row.studentName}
                                 </span>
-                                <span className="text-[10px] text-[var(--muted-foreground)]">
+                                <span className="text-[10px] text-slate-500 dark:text-slate-400">
                                   {row.studentEmail}
                                 </span>
                               </div>
@@ -511,7 +513,7 @@ export function AdminResultsPage() {
                           </td>
 
                           {/* Register Number */}
-                          <td className="py-3.5 px-4 font-mono font-bold text-[var(--foreground)] text-[11px]">
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white text-[11px]">
                             {row.registerNumber}
                           </td>
 
@@ -523,8 +525,8 @@ export function AdminResultsPage() {
                                   key={idx}
                                   className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border ${
                                     q.isCorrect || q.score > 0
-                                      ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
-                                      : "bg-rose-500/15 border-rose-500/30 text-rose-300"
+                                      ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-500/15 dark:border-emerald-500/30 dark:text-emerald-300"
+                                      : "bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/30 dark:text-rose-300"
                                   }`}
                                   title={`Q${idx + 1}: ${q.score}/${q.maxMarks} marks`}
                                 >
@@ -532,7 +534,7 @@ export function AdminResultsPage() {
                                 </span>
                               ))}
                               {row.questionScores.length > 5 && (
-                                <span className="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] text-slate-400">
+                                <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[9px] text-slate-600 dark:text-slate-400 font-bold">
                                   +{row.questionScores.length - 5}
                                 </span>
                               )}
@@ -541,10 +543,10 @@ export function AdminResultsPage() {
 
                           {/* Total Score */}
                           <td className="py-3.5 px-4 text-center">
-                            <strong className="text-sm font-black text-[var(--foreground)]">
+                            <strong className="text-sm font-black text-slate-900 dark:text-white">
                               {row.totalScore}
                             </strong>
-                            <span className="text-[10px] text-[var(--muted-foreground)]">
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400">
                               /{row.maxScore}
                             </span>
                           </td>
@@ -553,7 +555,7 @@ export function AdminResultsPage() {
                           <td className="py-3.5 px-4 text-center">
                             <span
                               className={`font-black text-xs ${
-                                row.passed ? "text-emerald-400" : "text-rose-400"
+                                row.passed ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                               }`}
                             >
                               {row.percentage}%
@@ -561,17 +563,17 @@ export function AdminResultsPage() {
                           </td>
 
                           {/* Duration */}
-                          <td className="py-3.5 px-4 text-center text-slate-400 text-[11px]">
+                          <td className="py-3.5 px-4 text-center text-slate-600 dark:text-slate-400 font-mono text-[11px]">
                             {Math.floor(row.durationSeconds / 60)}m {row.durationSeconds % 60}s
                           </td>
 
                           {/* Integrity */}
                           <td className="py-3.5 px-4 text-center">
                             <span
-                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                                 row.proctoringIntegrity >= 80
-                                  ? "bg-emerald-500/15 text-emerald-400"
-                                  : "bg-rose-500/15 text-rose-400"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-transparent"
+                                  : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-400 dark:border-transparent"
                               }`}
                             >
                               {row.proctoringIntegrity}%
@@ -581,16 +583,16 @@ export function AdminResultsPage() {
                           {/* Status */}
                           <td className="py-3.5 px-4 text-center">
                             {row.isBlocked || row.status === "disqualified" ? (
-                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 inline-flex items-center gap-1">
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40 inline-flex items-center gap-1">
                                 <Lock className="w-2.5 h-2.5" />
                                 Blocked
                               </span>
                             ) : (
                               <span
-                                className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                                className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${
                                   row.passed
-                                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                                    : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30"
+                                    : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-400 dark:border-rose-500/30"
                                 }`}
                               >
                                 {row.passed ? "Passed" : "Failed"}
@@ -605,7 +607,7 @@ export function AdminResultsPage() {
                                 <button
                                   onClick={() => handleUnblockStudent(row.studentId, row.studentName)}
                                   disabled={unblockMutation.isPending}
-                                  className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/30 hover:text-white transition flex items-center gap-1 cursor-pointer"
+                                  className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 dark:bg-emerald-500/15 dark:border-emerald-500/30 dark:text-emerald-300 transition flex items-center gap-1 cursor-pointer"
                                   title="Unblock candidate to allow them to continue the exam"
                                 >
                                   <Unlock className="h-3 w-3" />
@@ -614,7 +616,7 @@ export function AdminResultsPage() {
                               )}
                               <button
                                 onClick={() => setInspectSubmission(row)}
-                                className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-[var(--glass-input-bg)] border border-[var(--border)] hover:text-[var(--primary)] hover:border-[rgb(var(--primary-rgb)/40%)] transition cursor-pointer"
+                                className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-100 hover:bg-indigo-600 text-slate-700 hover:text-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:text-white transition cursor-pointer"
                               >
                                 Inspect
                               </button>
@@ -632,21 +634,21 @@ export function AdminResultsPage() {
       )}
 
       {/* ── INSPECT SUBMISSION DETAILS MODAL ──────────────────────────────── */}
-      {inspectSubmission && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 select-none overflow-y-auto">
-          <div className="max-w-2xl w-full bg-slate-900 border border-[var(--border)] rounded-3xl p-6 shadow-2xl space-y-5 max-h-[85vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      {inspectSubmission && createPortal(
+        <div className="fixed inset-0 z-[99999] bg-slate-950/60 dark:bg-black/80 backdrop-blur-md flex items-center justify-center p-4 select-none overflow-y-auto">
+          <div className="max-w-2xl w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-5 max-h-[85vh] overflow-y-auto text-slate-900 dark:text-white">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
               <div>
-                <span className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">
+                <span className="text-[10px] uppercase font-bold text-indigo-600 dark:text-indigo-400 tracking-wider">
                   Submission Audit • Rank #{inspectSubmission.rank}
                 </span>
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
                   {inspectSubmission.studentName} ({inspectSubmission.registerNumber})
                 </h3>
               </div>
               <button
                 onClick={() => setInspectSubmission(null)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -654,12 +656,12 @@ export function AdminResultsPage() {
 
             {/* Blocked Alert Banner in Modal */}
             {(inspectSubmission.isBlocked || inspectSubmission.status === "disqualified") && (
-              <div className="p-4 rounded-2xl bg-rose-950/30 border border-rose-500/40 flex items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2.5 text-rose-300">
-                  <Lock className="w-5 h-5 shrink-0 text-rose-400" />
+              <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-500/40 flex items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5 text-rose-800 dark:text-rose-300">
+                  <Lock className="w-5 h-5 shrink-0 text-rose-600 dark:text-rose-400" />
                   <div>
-                    <strong className="block text-white">Exam Access Blocked by Proctoring System</strong>
-                    <span className="text-[11px] text-slate-300">
+                    <strong className="block text-slate-900 dark:text-white">Exam Access Blocked by Proctoring System</strong>
+                    <span className="text-[11px] text-slate-600 dark:text-slate-300">
                       {inspectSubmission.blockedReason || "Candidate exceeded anti-cheat violation limit."}
                     </span>
                   </div>
@@ -677,25 +679,25 @@ export function AdminResultsPage() {
 
             {/* Score Overview */}
             <div className="grid grid-cols-3 gap-3 text-center text-xs">
-              <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Total Score</span>
-                <strong className="text-lg font-black text-white">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Total Score</span>
+                <strong className="text-lg font-black text-slate-900 dark:text-white">
                   {inspectSubmission.totalScore} / {inspectSubmission.maxScore}
                 </strong>
               </div>
-              <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Percentage</span>
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Percentage</span>
                 <strong
                   className={`text-lg font-black ${
-                    inspectSubmission.passed ? "text-emerald-400" : "text-rose-400"
+                    inspectSubmission.passed ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                   }`}
                 >
                   {inspectSubmission.percentage}%
                 </strong>
               </div>
-              <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Integrity Score</span>
-                <strong className="text-lg font-black text-emerald-400">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Integrity Score</span>
+                <strong className="text-lg font-black text-emerald-600 dark:text-emerald-400">
                   {inspectSubmission.proctoringIntegrity}%
                 </strong>
               </div>
@@ -703,26 +705,26 @@ export function AdminResultsPage() {
 
             {/* Question Breakdown List */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-300">Question-by-Question Evaluation</h4>
+              <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300">Question-by-Question Evaluation</h4>
 
               {inspectSubmission.questionScores.map((q, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-2xl bg-slate-950/50 border border-slate-800 space-y-2 text-xs"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 space-y-2 text-xs shadow-xs"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-300 text-[10px] font-bold">
                         Q{idx + 1} ({q.type.toUpperCase()})
                       </span>
-                      <span className="font-semibold text-white">{q.questionTitle}</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">{q.questionTitle}</span>
                     </div>
 
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         q.isCorrect
-                          ? "bg-emerald-500/20 text-emerald-400"
-                          : "bg-rose-500/20 text-rose-400"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400"
+                          : "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-400"
                       }`}
                     >
                       {q.score} / {q.maxMarks} Marks
@@ -730,18 +732,18 @@ export function AdminResultsPage() {
                   </div>
 
                   {q.type === "mcq" ? (
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-300">
+                    <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-[11px] text-slate-700 dark:text-slate-300">
                       <span>Selected Answer: </span>
-                      <strong className="text-white">{q.userAnswer || "Not Answered"}</strong>
+                      <strong className="text-slate-900 dark:text-white">{q.userAnswer || "Not Answered"}</strong>
                     </div>
                   ) : (
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-[10px] text-slate-400">
+                      <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                         <span>Test Cases Passed: {q.testCasesPassed || 0} / {q.totalTestCases || 0}</span>
                         <span>Exec Time: {q.executionTimeMs || 0}ms</span>
                       </div>
                       {q.userAnswer && (
-                        <pre className="p-2.5 rounded-xl bg-black/60 border border-slate-800 text-blue-300 font-mono text-[10px] max-h-32 overflow-y-auto whitespace-pre-wrap">
+                        <pre className="p-2.5 rounded-xl bg-slate-900 text-blue-300 dark:bg-black/60 border border-slate-200 dark:border-slate-800 font-mono text-[10px] max-h-32 overflow-y-auto whitespace-pre-wrap">
                           {q.userAnswer}
                         </pre>
                       )}
@@ -751,7 +753,8 @@ export function AdminResultsPage() {
               ))}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

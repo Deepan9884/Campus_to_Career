@@ -38,24 +38,24 @@ export const InteractiveAppBackground: React.FC = () => {
 
   return (
     <div id="interactive-canvas-bg" className="fixed inset-0 pointer-events-none overflow-hidden z-0 no-print" aria-hidden="true">
-      {/* Primary top-left orb */}
+      {/* Dark mode only: Primary top-left orb */}
       <div
-        className={`absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br ${orbConfig.orb1} blur-[180px] animate-pulse pointer-events-none`}
+        className={`absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br ${orbConfig.orb1} blur-[180px] animate-pulse pointer-events-none dark:block hidden`}
         style={{ animationDuration: "12s" }}
       />
-      {/* Secondary right orb */}
+      {/* Dark mode only: Secondary right orb */}
       <div
-        className={`absolute top-1/4 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-bl ${orbConfig.orb2} blur-[160px] animate-pulse pointer-events-none`}
+        className={`absolute top-1/4 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-bl ${orbConfig.orb2} blur-[160px] animate-pulse pointer-events-none dark:block hidden`}
         style={{ animationDuration: "16s", animationDelay: "4s" }}
       />
-      {/* Bottom center orb */}
+      {/* Dark mode only: Bottom center orb */}
       <div
-        className="absolute bottom-0 left-1/3 w-[500px] h-[500px] rounded-full blur-[150px] animate-pulse pointer-events-none"
+        className="absolute bottom-0 left-1/3 w-[500px] h-[500px] rounded-full blur-[150px] animate-pulse pointer-events-none dark:block hidden"
         style={{ background: "radial-gradient(circle, rgba(196,181,253,0.16), transparent 70%)", animationDuration: "20s", animationDelay: "8s" }}
       />
-      {/* New: Mid-screen diagonal accent orb */}
+      {/* Dark mode only: Mid-screen diagonal accent orb */}
       <div
-        className={`absolute top-1/2 left-1/4 w-[450px] h-[350px] rounded-full bg-gradient-to-tr ${orbConfig.orb3} blur-[140px] animate-pulse pointer-events-none`}
+        className={`absolute top-1/2 left-1/4 w-[450px] h-[350px] rounded-full bg-gradient-to-tr ${orbConfig.orb3} blur-[140px] animate-pulse pointer-events-none dark:block hidden`}
         style={{ animationDuration: "18s", animationDelay: "2s" }}
       />
       {/* Dark mode vignette overlay */}
@@ -71,10 +71,10 @@ export const InteractiveAppBackground: React.FC = () => {
           backgroundSize: "32px 32px",
         }}
       />
-      {/* Light mode soft vignette */}
+      {/* Light mode ultra-subtle top ambient glow */}
       <div
         className="absolute inset-0 block dark:hidden pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(250,248,255,0.15) 85%)" }}
+        style={{ background: "radial-gradient(ellipse at 50% -10%, rgba(79,70,229,0.03) 0%, transparent 70%)" }}
       />
     </div>
   );

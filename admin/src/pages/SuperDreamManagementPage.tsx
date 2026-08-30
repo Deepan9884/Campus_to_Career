@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { GlassCard } from "../components/GlassCard";
 import {
@@ -329,9 +330,9 @@ export function SuperDreamManagementPage() {
       completed: section1Programming.filter((p: any) => p.status === "Mastered").length,
       total: section1Programming.length || 9,
       icon: Code2,
-      color: "text-indigo-400",
-      bgColor: "bg-indigo-500/10",
-      borderColor: "border-indigo-500/30",
+      color: "text-indigo-600 dark:text-indigo-400",
+      bgColor: "bg-indigo-50/80 dark:bg-indigo-500/10",
+      borderColor: "border-indigo-200 dark:border-indigo-500/30",
     },
     {
       id: 2,
@@ -339,9 +340,9 @@ export function SuperDreamManagementPage() {
       completed: section2CsFundamentals.filter((c: any) => c.completed || c.rating >= 4).length,
       total: section2CsFundamentals.length || 10,
       icon: Cpu,
-      color: "text-sky-400",
-      bgColor: "bg-sky-500/10",
-      borderColor: "border-sky-500/30",
+      color: "text-sky-600 dark:text-sky-400",
+      bgColor: "bg-sky-50/80 dark:bg-sky-500/10",
+      borderColor: "border-sky-200 dark:border-sky-500/30",
     },
     {
       id: 3,
@@ -349,9 +350,9 @@ export function SuperDreamManagementPage() {
       completed: Object.values(codingStats).filter((s: any) => s.isConnected || s.totalSolved > 0).length,
       total: 4,
       icon: Binary,
-      color: "text-emerald-400",
-      bgColor: "bg-emerald-500/10",
-      borderColor: "border-emerald-500/30",
+      color: "text-emerald-600 dark:text-emerald-400",
+      bgColor: "bg-emerald-50/80 dark:bg-emerald-500/10",
+      borderColor: "border-emerald-200 dark:border-emerald-500/30",
     },
     {
       id: 4,
@@ -359,9 +360,9 @@ export function SuperDreamManagementPage() {
       completed: section4SoftwareDev.filter((d: any) => d.verified || d.current >= d.target && d.target > 0).length,
       total: section4SoftwareDev.length || 4,
       icon: Layers,
-      color: "text-orange-400",
-      bgColor: "bg-orange-500/10",
-      borderColor: "border-orange-500/30",
+      color: "text-orange-600 dark:text-orange-400",
+      bgColor: "bg-orange-50/80 dark:bg-orange-500/10",
+      borderColor: "border-orange-200 dark:border-orange-500/30",
     },
     {
       id: 5,
@@ -369,9 +370,9 @@ export function SuperDreamManagementPage() {
       completed: section5AiDataScience.filter((a: any) => a.verified || a.current >= a.target && a.target > 0).length,
       total: section5AiDataScience.length || 6,
       icon: BrainCircuit,
-      color: "text-pink-400",
-      bgColor: "bg-pink-500/10",
-      borderColor: "border-pink-500/30",
+      color: "text-pink-600 dark:text-pink-400",
+      bgColor: "bg-pink-50/80 dark:bg-pink-500/10",
+      borderColor: "border-pink-200 dark:border-pink-500/30",
     },
     {
       id: 6,
@@ -379,9 +380,9 @@ export function SuperDreamManagementPage() {
       completed: section6CloudDevOps.filter((c: any) => c.verified || c.current >= c.target && c.target > 0).length,
       total: section6CloudDevOps.length || 6,
       icon: Cloud,
-      color: "text-purple-400",
-      bgColor: "bg-purple-500/10",
-      borderColor: "border-purple-500/30",
+      color: "text-purple-600 dark:text-purple-400",
+      bgColor: "bg-purple-50/80 dark:bg-purple-500/10",
+      borderColor: "border-purple-200 dark:border-purple-500/30",
     },
     {
       id: 7,
@@ -389,9 +390,9 @@ export function SuperDreamManagementPage() {
       completed: section7GithubPortfolio.filter((g: any) => g.verified || g.current > 0).length,
       total: section7GithubPortfolio.length || 7,
       icon: Github,
-      color: "text-amber-400",
-      bgColor: "bg-amber-500/10",
-      borderColor: "border-amber-500/30",
+      color: "text-amber-600 dark:text-amber-400",
+      bgColor: "bg-amber-50/80 dark:bg-amber-500/10",
+      borderColor: "border-amber-200 dark:border-amber-500/30",
     },
     {
       id: 8,
@@ -399,9 +400,9 @@ export function SuperDreamManagementPage() {
       completed: section8Certifications.filter((c: any) => c.verified || c.status === "Completed").length,
       total: section8Certifications.length || 5,
       icon: Award,
-      color: "text-teal-400",
-      bgColor: "bg-teal-500/10",
-      borderColor: "border-teal-500/30",
+      color: "text-teal-600 dark:text-teal-400",
+      bgColor: "bg-teal-50/80 dark:bg-teal-500/10",
+      borderColor: "border-teal-200 dark:border-teal-500/30",
     },
     {
       id: 9,
@@ -409,9 +410,9 @@ export function SuperDreamManagementPage() {
       completed: section9InterviewPrep.filter((i: any) => i.current > 0).length,
       total: section9InterviewPrep.length || 5,
       icon: Mic,
-      color: "text-rose-400",
-      bgColor: "bg-rose-500/10",
-      borderColor: "border-rose-500/30",
+      color: "text-rose-600 dark:text-rose-400",
+      bgColor: "bg-rose-50/80 dark:bg-rose-500/10",
+      borderColor: "border-rose-200 dark:border-rose-500/30",
     },
     {
       id: 10,
@@ -419,9 +420,9 @@ export function SuperDreamManagementPage() {
       completed: section10Evaluation.facultyMentorSignature ? 1 : 0,
       total: 1,
       icon: Crown,
-      color: "text-yellow-400",
-      bgColor: "bg-yellow-500/10",
-      borderColor: "border-yellow-500/30",
+      color: "text-amber-600 dark:text-yellow-400",
+      bgColor: "bg-amber-50/80 dark:bg-yellow-500/10",
+      borderColor: "border-amber-200 dark:border-yellow-500/30",
     },
   ];
 
@@ -446,10 +447,10 @@ export function SuperDreamManagementPage() {
               <span
                 className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
                   p.status === "Mastered"
-                    ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30"
                     : p.status === "In Progress"
-                    ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
-                    : "bg-slate-500/20 text-slate-400 border-slate-500/30"
+                    ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30"
+                    : "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30"
                 }`}
               >
                 {p.status}
@@ -457,31 +458,31 @@ export function SuperDreamManagementPage() {
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="p-2 rounded-xl bg-slate-900/40 border border-white/5">
-                <p className="text-[10px] text-[var(--muted-foreground)]">Problems</p>
-                <p className="font-bold text-[var(--foreground)] font-mono">{p.problemsSolved || 0}</p>
+              <div className="p-2 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 shadow-2xs">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Problems</p>
+                <p className="font-bold text-slate-900 dark:text-white font-mono mt-0.5">{p.problemsSolved || 0}</p>
               </div>
-              <div className="p-2 rounded-xl bg-slate-900/40 border border-white/5">
-                <p className="text-[10px] text-[var(--muted-foreground)]">Hours Logged</p>
-                <p className="font-bold text-[var(--foreground)] font-mono">{p.hoursSpent || 0}h</p>
+              <div className="p-2 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 shadow-2xs">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Hours Logged</p>
+                <p className="font-bold text-slate-900 dark:text-white font-mono mt-0.5">{p.hoursSpent || 0}h</p>
               </div>
-              <div className="p-2 rounded-xl bg-slate-900/40 border border-white/5">
-                <p className="text-[10px] text-[var(--muted-foreground)]">Quiz Score</p>
-                <p className="font-bold text-indigo-400 font-mono">{p.bestQuizScore || 0}%</p>
+              <div className="p-2 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 shadow-2xs">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Quiz Score</p>
+                <p className="font-bold text-indigo-600 dark:text-indigo-400 font-mono mt-0.5">{p.bestQuizScore || 0}%</p>
               </div>
             </div>
 
             <div className="space-y-1 text-xs">
-              <p className="text-[10px] text-[var(--muted-foreground)] font-semibold uppercase">Mastered Subtopics:</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Mastered Subtopics:</p>
               <div className="flex flex-wrap gap-1">
                 {(p.subtopicsMastered || []).length > 0 ? (
                   (p.subtopicsMastered || []).map((sub: string, i: number) => (
-                    <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 font-medium">
+                    <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-transparent font-medium">
                       {sub}
                     </span>
                   ))
                 ) : (
-                  <span className="text-[11px] text-[var(--muted-foreground)] italic">Foundational concepts in progress</span>
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 italic">Foundational concepts in progress</span>
                 )}
               </div>
             </div>
@@ -491,51 +492,282 @@ export function SuperDreamManagementPage() {
     </GlassCard>
   );
 
-  const renderSection2 = () => (
-    <GlassCard className="p-6 space-y-4 border-sky-500/30">
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2">
-          <Cpu className="w-5 h-5 text-sky-400" />
-          {SECTION_TITLES[2]} ({section2CsFundamentals.length} Subjects)
-        </h3>
-        <span className="text-xs font-mono font-bold text-sky-400">
-          {section2CsFundamentals.filter((c: any) => c.rating >= 4).length} Highly Rated
-        </span>
-      </div>
+const CS_SUBJECT_DETAILS: Record<string, {
+  code: string;
+  category: string;
+  hours: number;
+  topics: string[];
+  course: { name: string; portal: string; url?: string };
+}> = {
+  "Data Structures": {
+    code: "CS-DS-101",
+    category: "Foundations & Memory Models",
+    hours: 45,
+    topics: ["B-Trees & Tries", "Heaps & Priority Queues", "Disjoint Set (Union-Find)", "Segment Trees"],
+    course: { name: "Data Structures & Algorithms", portal: "UC Berkeley (CS 61B)", url: "https://sp21.datastructur.es/" },
+  },
+  "Algorithms": {
+    code: "CS-ALGO-102",
+    category: "Complexity & Paradigms",
+    hours: 50,
+    topics: ["Dynamic Programming (2D/Bitmask)", "Graph Theory (Max Flow, SCC)", "Divide & Conquer", "NP-Completeness"],
+    course: { name: "Design & Analysis of Algorithms", portal: "MIT OCW (6.046J)", url: "https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/" },
+  },
+  "Operating Systems": {
+    code: "CS-OS-201",
+    category: "Systems & Architecture",
+    hours: 45,
+    topics: ["Process Scheduling (CFS)", "Virtual Memory & Paging", "Deadlock & Banker's Algo", "POSIX Threads & Mutexes"],
+    course: { name: "Operating Systems Engineering", portal: "MIT OCW (6.828)", url: "https://pdos.csail.mit.edu/6.828/" },
+  },
+  "Computer Networks": {
+    code: "CS-CN-203",
+    category: "Networking & Protocols",
+    hours: 35,
+    topics: ["TCP 3-Way Handshake & BBR", "OSI & Subnetting (CIDR)", "DNS, TLS 1.3 & HTTP/3", "Routing (BGP / OSPF)"],
+    course: { name: "Computer Networking", portal: "Stanford (CS 144)", url: "https://cs144.github.io/" },
+  },
+  "DBMS & Transactions": {
+    code: "CS-DBMS-202",
+    category: "Data & Storage Engines",
+    hours: 40,
+    topics: ["ACID & 2PL Concurrency", "B+ Tree & LSM Indexing", "BCNF Normalization", "WAL & ARIES Recovery"],
+    course: { name: "Database Systems", portal: "CMU (15-445 / Pavlo)", url: "https://15445.courses.cs.cmu.edu/" },
+  },
+  "Distributed Systems": {
+    code: "CS-DS-301",
+    category: "Distributed Architecture",
+    hours: 40,
+    topics: ["CAP Theorem & PACELC", "Raft & Paxos Consensus", "Consistent Hashing & Vector Clocks", "Distributed Tracing"],
+    course: { name: "Distributed Systems", portal: "MIT OCW (6.824)", url: "https://pdos.csail.mit.edu/6.824/" },
+  },
+  "System Design (HLD & LLD)": {
+    code: "CS-SD-302",
+    category: "Architecture & Scalability",
+    hours: 50,
+    topics: ["Load Balancing & CDN", "Database Sharding & Replication", "Kafka Message Queues", "Design Patterns (SOLID, Factory)"],
+    course: { name: "System Design for FAANG", portal: "Harvard / MIT", url: "https://github.com/donnemartin/system-design-primer" },
+  },
+  "Compiler Design": {
+    code: "CS-CD-205",
+    category: "Languages & Parsers",
+    hours: 35,
+    topics: ["Lexical Analysis & Flex", "LR / LL Parsing & Bison", "AST & Intermediate Code (IR)", "Code Optimization"],
+    course: { name: "Compilers", portal: "Stanford (CS 143)", url: "https://web.stanford.edu/class/cs143/" },
+  },
+  "Computer Architecture": {
+    code: "CS-CA-204",
+    category: "Hardware & Instruction Sets",
+    hours: 35,
+    topics: ["Pipelining & Hazards", "Cache Coherence (MESI)", "Instruction Sets (RISC-V/x86)", "Branch Prediction"],
+    course: { name: "Computer Architecture", portal: "Carnegie Mellon (18-447)", url: "https://safari.ethz.ch/architecture/" },
+  },
+  "Software Engineering & CI/CD": {
+    code: "CS-SE-206",
+    category: "Lifecycle & DevOps",
+    hours: 30,
+    topics: ["Agile Scrum & SDLC", "CI/CD GitHub Actions", "Unit & Integration Testing (TDD)", "Docker & Microservices"],
+    course: { name: "Software Engineering", portal: "MIT / Industry Standards", url: "https://missing.csail.mit.edu/" },
+  },
+};
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {section2CsFundamentals.map((cs: any) => {
-          const attempt = csAttempts[cs.id];
-          return (
-            <div key={cs.id} className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="font-bold text-sm text-[var(--foreground)]">{cs.subject}</h4>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className={`w-3.5 h-3.5 ${
-                        star <= (cs.rating || 0) ? "text-amber-400 fill-amber-400" : "text-slate-600"
-                      }`}
-                    />
-                  ))}
-                </div>
+  const renderSection2 = () => {
+    const verifiedCount = section2CsFundamentals.filter((c: any) => c.completed).length;
+    const highlyRatedCount = section2CsFundamentals.filter((c: any) => c.rating >= 4).length;
+
+    return (
+      <GlassCard className="p-6 space-y-5 border-sky-500/30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border)] pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 grid place-items-center shrink-0">
+              <Cpu className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 uppercase tracking-wider font-mono">
+                  FAANG CS FOUNDATIONS
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                  10 Core Engineering Disciplines
+                </span>
               </div>
+              <h3 className="text-base font-bold text-[var(--foreground)] mt-0.5">
+                {SECTION_TITLES[2]} (10 Subjects)
+              </h3>
+            </div>
+          </div>
 
-              <div className="p-3 rounded-xl bg-slate-900/40 border border-white/5 space-y-1 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--muted-foreground)]">Diagnostic Status:</span>
-                  <span className={`font-bold font-mono ${cs.completed || attempt?.passed ? "text-emerald-400" : "text-amber-400"}`}>
-                    {attempt ? `${attempt.bestScore}% (Passed)` : (cs.completed ? "Verified" : "Pending Diagnostic")}
+          <div className="flex items-center gap-3">
+            <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-xs font-mono">
+              <span className="text-slate-500 dark:text-slate-400">Verified Mastery: </span>
+              <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{verifiedCount} / 10</strong>
+            </div>
+            <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-xs font-mono">
+              <span className="text-slate-500 dark:text-slate-400">Rating ≥ 4★: </span>
+              <strong className="text-sky-600 dark:text-sky-400 font-bold">{highlyRatedCount} / 10</strong>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {section2CsFundamentals.map((cs: any) => {
+            const attempt = csAttempts[cs.id];
+            const meta = CS_SUBJECT_DETAILS[cs.subject] || {
+              code: "CS-CORE",
+              category: "Core Computer Science",
+              hours: 35,
+              topics: ["Foundational Principles", "Algorithm Complexity", "Systems Architecture", "Design Trade-offs"],
+              course: { name: "Computer Science Foundations", portal: "Top University Portal" },
+            };
+
+            const isVerified = Boolean(cs.completed);
+            const ratingVal = Number(cs.rating || 0);
+
+            return (
+              <div
+                key={cs.id}
+                className={`p-5 rounded-2xl bg-[var(--glass-input-bg)] border space-y-3.5 transition ${
+                  isVerified
+                    ? "border-emerald-500/40 ring-1 ring-emerald-500/20"
+                    : "border-[var(--border)]"
+                }`}
+              >
+                {/* Header: Title, Code, & Category */}
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-300/30">
+                        {meta.code}
+                      </span>
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                        {meta.category}
+                      </span>
+                    </div>
+                    <h4 className="font-bold text-base text-[var(--foreground)] mt-1">
+                      {cs.subject}
+                    </h4>
+                  </div>
+
+                  {/* Status Badge */}
+                  <span
+                    className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                      isVerified
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30 flex items-center gap-1"
+                        : attempt?.passed
+                        ? "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-500/20 dark:text-sky-400 dark:border-sky-500/30"
+                        : ratingVal >= 3
+                        ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30"
+                        : "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30"
+                    }`}
+                  >
+                    {isVerified ? (
+                      <>
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>Verified Mastery</span>
+                      </>
+                    ) : attempt?.passed ? (
+                      `Diagnostic Passed (${attempt.bestScore}%)`
+                    ) : ratingVal >= 3 ? (
+                      `Self-Assessed (${ratingVal}★)`
+                    ) : (
+                      "Pending Diagnostic"
+                    )}
                   </span>
                 </div>
+
+                {/* Star Rating & Benchmarks Row */}
+                <div className="flex items-center justify-between text-xs pt-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">Competency Rating:</span>
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`w-3.5 h-3.5 ${
+                            star <= ratingVal
+                              ? "text-amber-500 fill-amber-500"
+                              : "text-slate-300 dark:text-slate-700"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="font-bold text-slate-700 dark:text-slate-300 font-mono ml-1">
+                      {ratingVal > 0 ? `${ratingVal}/5` : "Unrated"}
+                    </span>
+                  </div>
+
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                    Depth: ~{meta.hours}h Target
+                  </span>
+                </div>
+
+                {/* Key Syllabus & Interview Topics */}
+                <div className="space-y-1.5">
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
+                    Core Syllabus & FAANG Topics:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {meta.topics.map((top, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[10.5px] px-2 py-0.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 dark:bg-slate-900/80 dark:border-white/10 dark:text-slate-300 font-medium"
+                      >
+                        {top}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Diagnostic Score & Course Portal Reference */}
+                <div className="p-3 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Course Reference:</span>
+                    <div className="flex items-center gap-1.5 font-semibold text-slate-900 dark:text-slate-200 mt-0.5">
+                      <BookOpen className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                      <span>{meta.course.name}</span>
+                      <span className="text-[10px] font-mono text-sky-600 dark:text-sky-400 font-bold">({meta.course.portal})</span>
+                    </div>
+                  </div>
+
+                  {meta.course.url && (
+                    <a
+                      href={meta.course.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 font-medium shrink-0"
+                    >
+                      <span>Syllabus Portal</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+
+                {/* Mentor Verification Action Bar */}
+                <div className="pt-2.5 border-t border-[var(--border)] flex items-center justify-between gap-2">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[220px]">
+                    {cs.remarks || (isVerified ? "Verified by Faculty Mentor" : "Assessed via proctored examination")}
+                  </span>
+
+                  <button
+                    onClick={() => handleVerifyItem("section2CsFundamentals", cs.id, isVerified)}
+                    disabled={verifyMutation.isPending}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs ${
+                      isVerified
+                        ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30"
+                        : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20"
+                    }`}
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>{isVerified ? "Revoke Mastery" : "Verify Subject Mastery"}</span>
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-    </GlassCard>
-  );
+            );
+          })}
+        </div>
+      </GlassCard>
+    );
+  };
 
   const renderSection3 = () => (
     <GlassCard className="p-6 space-y-5 border-emerald-500/30">
@@ -559,8 +791,10 @@ export function SuperDreamManagementPage() {
             <div key={plat} className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-xs uppercase tracking-wider text-[var(--primary)] font-mono">{plat}</span>
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${
-                  isConnected ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-500/20 text-slate-400"
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${
+                  isConnected
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30"
+                    : "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30"
                 }`}>
                   {isConnected ? "Connected" : "Not Linked"}
                 </span>
@@ -572,13 +806,13 @@ export function SuperDreamManagementPage() {
               </div>
 
               <div className="grid grid-cols-3 gap-1.5 text-center text-[10px]">
-                <div className="p-1 rounded bg-emerald-500/10 text-emerald-400 font-bold">E: {easy}</div>
-                <div className="p-1 rounded bg-amber-500/10 text-amber-400 font-bold">M: {medium}</div>
-                <div className="p-1 rounded bg-rose-500/10 text-rose-400 font-bold">H: {hard}</div>
+                <div className="p-1 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-transparent font-bold">E: {easy}</div>
+                <div className="p-1 rounded bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-transparent font-bold">M: {medium}</div>
+                <div className="p-1 rounded bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:border-transparent font-bold">H: {hard}</div>
               </div>
 
               {stats.profileUrl && (
-                <a href={stats.profileUrl} target="_blank" rel="noreferrer" className="text-xs text-indigo-400 hover:underline flex items-center gap-1 truncate pt-1 border-t border-[var(--border)]">
+                <a href={stats.profileUrl} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 truncate pt-1 border-t border-[var(--border)]">
                   <ExternalLink className="w-3 h-3 shrink-0" />
                   <span className="truncate">{stats.username || "Open Profile"}</span>
                 </a>
@@ -601,11 +835,11 @@ export function SuperDreamManagementPage() {
               cur = Number(hr.totalSolved || (Number(hr.easySolved || 0) + Number(hr.mediumSolved || 0) + Number(hr.hardSolved || 0)) || 0);
             }
             return (
-              <div key={d.id} className="p-3 rounded-xl bg-slate-900/40 border border-white/5 space-y-1">
+              <div key={d.id} className="p-3 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 space-y-1 shadow-2xs">
                 <p className="text-[11px] font-bold text-[var(--foreground)] truncate">{d.activity}</p>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-base font-black text-emerald-400 font-mono">{cur}</span>
-                  <span className="text-[10px] text-[var(--muted-foreground)]">/ {d.target}</span>
+                  <span className="text-base font-black text-emerald-600 dark:text-emerald-400 font-mono">{cur}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">/ {d.target}</span>
                 </div>
               </div>
             );
@@ -622,7 +856,7 @@ export function SuperDreamManagementPage() {
           <Layers className="w-5 h-5 text-orange-400" />
           {SECTION_TITLES[4]} ({section4SoftwareDev.length} Enterprise Modules)
         </h3>
-        <span className="text-xs font-mono font-bold text-orange-400">
+        <span className="text-xs font-mono font-bold text-orange-600 dark:text-orange-400">
           {section4SoftwareDev.filter((d: any) => d.verified).length} Mentor Verified
         </span>
       </div>
@@ -647,10 +881,10 @@ export function SuperDreamManagementPage() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400">
+                    <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-transparent">
                       Project 0{proj.projectNumber || 1}
                     </span>
-                    <span className="text-xs font-semibold text-[var(--muted-foreground)]">{proj.category || "Full-Stack"}</span>
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{proj.category || "Full-Stack"}</span>
                   </div>
                   <h4 className="font-bold text-base text-[var(--foreground)] mt-1">{proj.activity || proj.title}</h4>
                 </div>
@@ -658,10 +892,10 @@ export function SuperDreamManagementPage() {
                 <span
                   className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
                     proj.verified
-                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 flex items-center gap-1"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30 flex items-center gap-1"
                       : hasSubmission
-                      ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
-                      : "bg-slate-500/20 text-slate-400 border-slate-500/30"
+                      ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30"
+                      : "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30"
                   }`}
                 >
                   {proj.verified && <CheckCircle2 className="w-3 h-3" />}
@@ -677,7 +911,7 @@ export function SuperDreamManagementPage() {
 
               <div className="flex flex-wrap gap-1.5">
                 {(proj.techStack || []).map((tech: string, i: number) => (
-                  <span key={i} className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[var(--foreground)] font-mono">
+                  <span key={i} className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-slate-300 font-mono">
                     {tech}
                   </span>
                 ))}
@@ -686,14 +920,14 @@ export function SuperDreamManagementPage() {
               <div className="pt-3 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   {proj.githubUrl ? (
-                    <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="text-xs text-indigo-400 hover:underline flex items-center gap-1 font-mono">
+                    <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 font-mono">
                       <Github className="w-3.5 h-3.5" /> Source Code
                     </a>
                   ) : (
-                    <span className="text-xs text-[var(--muted-foreground)] italic">Repo not submitted</span>
+                    <span className="text-xs text-slate-400 dark:text-slate-500 italic">Repo not submitted</span>
                   )}
                   {proj.liveUrl && (
-                    <a href={proj.liveUrl} target="_blank" rel="noreferrer" className="text-xs text-emerald-400 hover:underline flex items-center gap-1">
+                    <a href={proj.liveUrl} target="_blank" rel="noreferrer" className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
                       <ExternalLink className="w-3.5 h-3.5" /> Live Demo
                     </a>
                   )}
@@ -710,10 +944,10 @@ export function SuperDreamManagementPage() {
                   disabled={verifyMutation.isPending || (!proj.verified && !hasSubmission)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
                     proj.verified
-                      ? "bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30 cursor-pointer"
+                      ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 cursor-pointer"
                       : hasSubmission
                       ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-500/20 cursor-pointer"
-                      : "bg-slate-800/40 text-slate-500 border border-slate-700/50 cursor-not-allowed opacity-60"
+                      : "bg-slate-100 text-slate-400 border border-slate-200 dark:bg-slate-800/40 dark:text-slate-500 dark:border-slate-700/50 cursor-not-allowed"
                   }`}
                 >
                   <Check className="w-3.5 h-3.5" />
@@ -738,7 +972,7 @@ export function SuperDreamManagementPage() {
           <BrainCircuit className="w-5 h-5 text-pink-400" />
           {SECTION_TITLES[5]} ({section5AiDataScience.length} Pipelines)
         </h3>
-        <span className="text-xs font-mono font-bold text-pink-400">
+        <span className="text-xs font-mono font-bold text-pink-600 dark:text-pink-400">
           {section5AiDataScience.filter((a: any) => a.verified).length} Verified
         </span>
       </div>
@@ -756,15 +990,15 @@ export function SuperDreamManagementPage() {
             <div key={ai.id} className="p-5 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] flex flex-col justify-between gap-3">
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-pink-500/15 text-pink-400">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-pink-50 border border-pink-200 text-pink-700 dark:bg-pink-500/15 dark:text-pink-400 dark:border-transparent font-medium">
                     {ai.framework || "PyTorch / Transformers"}
                   </span>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                     ai.verified
-                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30"
                       : hasProgress
-                      ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
-                      : "bg-slate-500/20 text-slate-400 border-slate-500/30"
+                      ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30"
+                      : "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30"
                   }`}>
                     {ai.verified
                       ? "Verified"
@@ -778,7 +1012,7 @@ export function SuperDreamManagementPage() {
               </div>
 
               <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between">
-                <span className="text-xs text-indigo-400 font-mono">Progress: {ai.current} / {ai.target}</span>
+                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-mono font-bold">Progress: {ai.current} / {ai.target}</span>
                 <button
                   onClick={() => {
                     if (!ai.verified && !hasProgress) {
@@ -790,10 +1024,10 @@ export function SuperDreamManagementPage() {
                   disabled={verifyMutation.isPending || (!ai.verified && !hasProgress)}
                   className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
                     ai.verified
-                      ? "bg-rose-500/20 text-rose-400 border border-rose-500/30 cursor-pointer"
+                      ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 cursor-pointer"
                       : hasProgress
-                      ? "bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
-                      : "bg-slate-800/40 text-slate-500 border border-slate-700/50 cursor-not-allowed opacity-60"
+                      ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs cursor-pointer"
+                      : "bg-slate-100 text-slate-400 border border-slate-200 dark:bg-slate-800/40 dark:text-slate-500 dark:border-slate-700/50 cursor-not-allowed"
                   }`}
                 >
                   <Check className="w-3.5 h-3.5" />
@@ -814,7 +1048,7 @@ export function SuperDreamManagementPage() {
           <Cloud className="w-5 h-5 text-purple-400" />
           {SECTION_TITLES[6]} ({section6CloudDevOps.length} Architectures)
         </h3>
-        <span className="text-xs font-mono font-bold text-purple-400">
+        <span className="text-xs font-mono font-bold text-purple-600 dark:text-purple-400">
           {section6CloudDevOps.filter((c: any) => c.verified).length} Verified
         </span>
       </div>
@@ -832,15 +1066,15 @@ export function SuperDreamManagementPage() {
             <div key={c.id} className="p-5 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] flex flex-col justify-between gap-3">
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/15 text-purple-400">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-50 border border-purple-200 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400 dark:border-transparent font-medium">
                     {c.cloudProvider || "Multi-Cloud"}
                   </span>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                     c.verified
-                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30"
                       : hasProgress
-                      ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
-                      : "bg-slate-500/20 text-slate-400 border-slate-500/30"
+                      ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30"
+                      : "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30"
                   }`}>
                     {c.verified
                       ? "Verified"
@@ -854,7 +1088,7 @@ export function SuperDreamManagementPage() {
               </div>
 
               <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between">
-                <span className="text-xs text-indigo-400 font-mono">Configured: {c.current} / {c.target}</span>
+                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-mono font-bold">Configured: {c.current} / {c.target}</span>
                 <button
                   onClick={() => {
                     if (!c.verified && !hasProgress) {
@@ -866,10 +1100,10 @@ export function SuperDreamManagementPage() {
                   disabled={verifyMutation.isPending || (!c.verified && !hasProgress)}
                   className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
                     c.verified
-                      ? "bg-rose-500/20 text-rose-400 border border-rose-500/30 cursor-pointer"
+                      ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 cursor-pointer"
                       : hasProgress
-                      ? "bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
-                      : "bg-slate-800/40 text-slate-500 border border-slate-700/50 cursor-not-allowed opacity-60"
+                      ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs cursor-pointer"
+                      : "bg-slate-100 text-slate-400 border border-slate-200 dark:bg-slate-800/40 dark:text-slate-500 dark:border-slate-700/50 cursor-not-allowed"
                   }`}
                 >
                   <Check className="w-3.5 h-3.5" />
@@ -897,8 +1131,8 @@ export function SuperDreamManagementPage() {
           <div key={g.id} className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-2">
             <h4 className="font-bold text-sm text-[var(--foreground)]">{g.activity}</h4>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-indigo-400 font-mono">{g.current || 0}</span>
-              <span className="text-xs text-[var(--muted-foreground)]">/ Target: {g.targetDisplay || g.target || 1} {g.unit || ""}</span>
+              <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono">{g.current || 0}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">/ Target: {g.targetDisplay || g.target || 1} {g.unit || ""}</span>
             </div>
             {g.details && <p className="text-[11px] text-[var(--muted-foreground)]">{g.details}</p>}
           </div>
@@ -930,22 +1164,22 @@ export function SuperDreamManagementPage() {
             <div
               key={cert.id}
               className={`p-5 rounded-2xl bg-[var(--glass-input-bg)] border space-y-3 ${
-                cert.verified ? "border-emerald-500/40" : "border-[var(--border)]"
+                cert.verified ? "border-emerald-500/40 ring-1 ring-emerald-500/20" : "border-[var(--border)]"
               }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <span className="text-xs font-bold text-[var(--warning)]">{cert.issuer || "Certification Body"}</span>
+                  <span className="text-xs font-bold text-amber-600 dark:text-[var(--warning)]">{cert.issuer || "Certification Body"}</span>
                   <h4 className="font-bold text-base text-[var(--foreground)] mt-0.5">{cert.certification}</h4>
                 </div>
 
                 <span
                   className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                     cert.verified
-                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30"
                       : hasProof
-                      ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
-                      : "bg-slate-500/20 text-slate-400 border-slate-500/30"
+                      ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30"
+                      : "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/30"
                   }`}
                 >
                   {cert.verified
@@ -959,19 +1193,19 @@ export function SuperDreamManagementPage() {
               <div className="space-y-1.5 text-xs text-[var(--muted-foreground)]">
                 <p>Credential ID: <strong className="text-[var(--foreground)] font-mono">{cert.credentialId || "Not Linked"}</strong></p>
                 {cert.credentialUrl && (
-                  <a href={cert.credentialUrl} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline flex items-center gap-1 font-mono">
+                  <a href={cert.credentialUrl} target="_blank" rel="noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 font-mono">
                     <ExternalLink className="w-3 h-3" /> View Credential URL
                   </a>
                 )}
                 {cert.certificatePdfName && (
-                  <p className="text-emerald-400 flex items-center gap-1 font-mono">
+                  <p className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-mono">
                     <FileBadge className="w-3.5 h-3.5 shrink-0" /> {cert.certificatePdfName}
                   </p>
                 )}
               </div>
 
               <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between">
-                <span className="text-xs text-[var(--muted-foreground)]">
+                <span className="text-xs text-[var(--muted-foreground)] font-medium">
                   Status: {cert.status || (hasProof ? "Submitted" : "Not Started")}
                 </span>
                 <button
@@ -985,10 +1219,10 @@ export function SuperDreamManagementPage() {
                   disabled={verifyMutation.isPending || (!cert.verified && !hasProof)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
                     cert.verified
-                      ? "bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30 cursor-pointer"
+                      ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 cursor-pointer"
                       : hasProof
                       ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-500/20 cursor-pointer"
-                      : "bg-slate-800/40 text-slate-500 border border-slate-700/50 cursor-not-allowed opacity-60"
+                      : "bg-slate-100 text-slate-400 border border-slate-200 dark:bg-slate-800/40 dark:text-slate-500 dark:border-slate-700/50 cursor-not-allowed"
                   }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
@@ -1012,19 +1246,19 @@ export function SuperDreamManagementPage() {
       <GlassCard className="p-6 space-y-5 border-indigo-500/30">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border)] pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 grid place-items-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-transparent grid place-items-center shrink-0">
               <FileText className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 uppercase tracking-wider font-mono">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-transparent uppercase tracking-wider font-mono">
                   LIVE ATS RESUME TELEMETRY
                 </span>
                 <span
                   className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                     latestResume
-                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                      : "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30"
+                      : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30"
                   }`}
                 >
                   {latestResume ? `Verified • ${latestResume.status}` : "No Resume Uploaded"}
@@ -1039,7 +1273,7 @@ export function SuperDreamManagementPage() {
           {latestResume?.extractedText && (
             <button
               onClick={() => setShowResumeTextModal(true)}
-              className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[var(--glass-input-bg)] border border-[var(--border)] text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 transition flex items-center gap-1.5 cursor-pointer shadow-sm self-start sm:self-auto"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[var(--glass-input-bg)] border border-[var(--border)] text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition flex items-center gap-1.5 cursor-pointer shadow-xs self-start sm:self-auto"
             >
               <Eye className="w-3.5 h-3.5" />
               <span>Inspect Extracted Text</span>
@@ -1052,25 +1286,25 @@ export function SuperDreamManagementPage() {
             {/* Top Score & Meta Strip */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* ATS Score Dial Card */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-500/15 via-purple-500/10 to-emerald-500/10 border border-indigo-500/30 text-center flex flex-col items-center justify-center space-y-1">
-                <p className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider">
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50 via-purple-50 to-emerald-50 border border-indigo-200 dark:from-indigo-500/15 dark:via-purple-500/10 dark:to-emerald-500/10 dark:border-indigo-500/30 text-center flex flex-col items-center justify-center space-y-1">
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">
                   ATS Match Score
                 </p>
                 <div className="flex items-baseline justify-center gap-1">
                   <span
                     className={`text-3xl font-black font-mono ${
                       latestResume.atsScore >= 80
-                        ? "text-emerald-400"
+                        ? "text-emerald-600 dark:text-emerald-400"
                         : latestResume.atsScore >= 60
-                        ? "text-amber-400"
-                        : "text-rose-400"
+                        ? "text-amber-600 dark:text-amber-400"
+                        : "text-rose-600 dark:text-rose-400"
                     }`}
                   >
                     {latestResume.atsScore}
                   </span>
-                  <span className="text-xs text-[var(--muted-foreground)] font-medium">/ 100</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">/ 100</span>
                 </div>
-                <span className="text-[10px] font-bold text-indigo-300">
+                <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300">
                   {latestResume.atsScore >= 80
                     ? "Tier-1 Competitive"
                     : latestResume.atsScore >= 60
@@ -1088,20 +1322,20 @@ export function SuperDreamManagementPage() {
                       {latestResume.filename}
                     </h4>
                   </div>
-                  <span className="text-[11px] text-[var(--muted-foreground)] font-mono">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                     Last Parsed: {new Date(latestResume.updatedAt).toLocaleDateString()}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
                   <div>
-                    <span className="text-[var(--muted-foreground)]">Target Engineering Track: </span>
+                    <span className="text-slate-500 dark:text-slate-400">Target Engineering Track: </span>
                     <strong className="text-[var(--foreground)]">
                       {latestResume.targetRole || profile.targetRole || "Software Engineer"}
                     </strong>
                   </div>
                   <div>
-                    <span className="text-[var(--muted-foreground)]">Total Revisions: </span>
+                    <span className="text-slate-500 dark:text-slate-400">Total Revisions: </span>
                     <strong className="text-[var(--foreground)] font-mono">
                       {resumeData?.totalResumes || 1} Uploaded
                     </strong>
@@ -1121,7 +1355,7 @@ export function SuperDreamManagementPage() {
               {/* Matched Keywords */}
               <div className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-emerald-500/30 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                  <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4" />
                     Verified Matched Keywords ({(latestResume.matchedKeywords || []).length})
                   </span>
@@ -1131,13 +1365,13 @@ export function SuperDreamManagementPage() {
                     (latestResume.matchedKeywords || []).map((kw, i) => (
                       <span
                         key={i}
-                        className="text-[10px] font-mono px-2.5 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/20"
+                        className="text-[10px] font-mono px-2.5 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/20"
                       >
                         {kw}
                       </span>
                     ))
                   ) : (
-                    <span className="text-xs text-[var(--muted-foreground)] italic">
+                    <span className="text-xs text-slate-400 dark:text-slate-500 italic">
                       No explicit keywords matched yet
                     </span>
                   )}
@@ -1147,7 +1381,7 @@ export function SuperDreamManagementPage() {
               {/* Missing Critical Keywords */}
               <div className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-amber-500/30 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
                     <AlertCircle className="w-4 h-4" />
                     Missing Critical ATS Keywords ({(latestResume.missingKeywords || []).length})
                   </span>
@@ -1157,13 +1391,13 @@ export function SuperDreamManagementPage() {
                     (latestResume.missingKeywords || []).map((kw, i) => (
                       <span
                         key={i}
-                        className="text-[10px] font-mono px-2.5 py-0.5 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/20"
+                        className="text-[10px] font-mono px-2.5 py-0.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/20"
                       >
                         + {kw}
                       </span>
                     ))
                   ) : (
-                    <span className="text-xs text-emerald-400 italic">
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 italic">
                       No major keyword gaps identified
                     </span>
                   )}
@@ -1176,13 +1410,13 @@ export function SuperDreamManagementPage() {
               {(latestResume.strengths || []).length > 0 && (
                 <div className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-2">
                   <h5 className="text-xs font-bold text-[var(--foreground)] flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                     Key Resume Strengths
                   </h5>
                   <ul className="space-y-1.5 text-xs text-[var(--muted-foreground)]">
                     {(latestResume.strengths || []).map((str, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                         <span>{str}</span>
                       </li>
                     ))}
@@ -1193,13 +1427,13 @@ export function SuperDreamManagementPage() {
               {(latestResume.improvements || []).length > 0 && (
                 <div className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-2">
                   <h5 className="text-xs font-bold text-[var(--foreground)] flex items-center gap-1.5">
-                    <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                    <ShieldAlert className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                     Recommended ATS Improvements
                   </h5>
                   <ul className="space-y-1.5 text-xs text-[var(--muted-foreground)]">
                     {(latestResume.improvements || []).map((imp, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                        <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                         <span>{imp}</span>
                       </li>
                     ))}
@@ -1210,7 +1444,7 @@ export function SuperDreamManagementPage() {
           </div>
         ) : (
           <div className="p-8 text-center rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-2">
-            <FileText className="w-8 h-8 text-slate-500 mx-auto" />
+            <FileText className="w-8 h-8 text-slate-400 dark:text-slate-500 mx-auto" />
             <h4 className="text-xs font-bold text-[var(--foreground)]">No ATS Resume Uploaded Yet</h4>
             <p className="text-xs text-[var(--muted-foreground)] max-w-md mx-auto">
               The candidate has not uploaded an ATS resume on their student portal yet. Once uploaded, real-time keyword matching, ATS scoring, and strengths will appear here.
@@ -1226,7 +1460,7 @@ export function SuperDreamManagementPage() {
             <Mic className="w-5 h-5 text-rose-400" />
             Mock Technical, Behavioral &amp; AI Interview Goals
           </h3>
-          <span className="text-xs font-mono font-bold text-rose-400">
+          <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400">
             {interviewData?.completedSessions || 0} Total Sessions Completed
           </span>
         </div>
@@ -1236,8 +1470,8 @@ export function SuperDreamManagementPage() {
             <div key={item.id} className="p-4 rounded-2xl bg-[var(--glass-input-bg)] border border-[var(--border)] space-y-2">
               <h4 className="font-bold text-sm text-[var(--foreground)]">{item.activity}</h4>
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-black text-rose-400 font-mono">{item.current || 0}</span>
-                <span className="text-xs text-[var(--muted-foreground)]">/ Target: {item.target || 1} Rounds</span>
+                <span className="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono">{item.current || 0}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">/ Target: {item.target || 1} Rounds</span>
               </div>
             </div>
           ))}
@@ -1253,19 +1487,19 @@ export function SuperDreamManagementPage() {
               {(interviewData?.recentSessions || []).map((session) => (
                 <div
                   key={session.id}
-                  className="p-3.5 rounded-xl bg-slate-900/40 border border-white/5 flex items-center justify-between gap-3 text-xs"
+                  className="p-3.5 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/40 dark:border-white/5 flex items-center justify-between gap-3 text-xs"
                 >
                   <div>
                     <h5 className="font-bold text-[var(--foreground)]">{session.title}</h5>
-                    <p className="text-[10px] text-[var(--muted-foreground)]">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
                       {session.targetRole} • {new Date(session.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="font-black font-mono text-emerald-400 text-sm">
+                    <span className="font-black font-mono text-emerald-600 dark:text-emerald-400 text-sm">
                       {session.overallScore}%
                     </span>
-                    <span className="text-[9px] text-[var(--muted-foreground)] block">Score</span>
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 block">Score</span>
                   </div>
                 </div>
               ))}
@@ -1393,11 +1627,7 @@ export function SuperDreamManagementPage() {
 
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 live-dot" />
-                LIVE MENTOR TELEMETRY ENGINE
-              </span>
-              <span className="text-xs text-[var(--muted-foreground)] font-mono">
+              <span className="text-xs text-[var(--muted-foreground)] font-mono font-medium">
                 Synced: {lastRefreshedAt.toLocaleTimeString()}
               </span>
             </div>
@@ -1456,40 +1686,64 @@ export function SuperDreamManagementPage() {
 
       {/* 2. REAL-TIME COHORT SUMMARY KPI STRIP */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="kpi-card kpi-card-violet space-y-2">
+        <div className="kpi-card kpi-card-violet space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-[var(--muted-foreground)] font-medium">Registered Candidates</p>
-            <Users className="w-4 h-4 text-violet-300" />
+            <div className="p-2 rounded-xl bg-indigo-100/80 dark:bg-violet-500/25 border border-indigo-200 dark:border-violet-500/30">
+              <Users className="h-4 w-4 text-indigo-600 dark:text-violet-300" />
+            </div>
+            <span className="text-[10px] font-extrabold text-indigo-700 dark:text-violet-300 bg-indigo-100/80 dark:bg-violet-500/20 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-violet-500/20">
+              Roster
+            </span>
           </div>
-          <p className="text-3xl font-black text-violet-300 font-mono">{totalRegistered}</p>
-          <p className="text-[11px] text-violet-400/80 font-semibold">Real-Time Track Enrolled</p>
+          <div>
+            <p className="text-xs text-slate-600 dark:text-[var(--muted-foreground)] font-bold">Registered Candidates</p>
+            <p className="text-3xl font-black text-indigo-700 dark:text-violet-300 font-mono tracking-tight mt-0.5">{totalRegistered}</p>
+          </div>
         </div>
 
-        <div className="kpi-card kpi-card-emerald space-y-2">
+        <div className="kpi-card kpi-card-emerald space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-[var(--muted-foreground)] font-medium">Cohort Avg Readiness</p>
-            <TrendingUp className="w-4 h-4 text-emerald-300" />
+            <div className="p-2 rounded-xl bg-emerald-100/80 dark:bg-emerald-500/25 border border-emerald-200 dark:border-emerald-500/30">
+              <TrendingUp className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />
+            </div>
+            <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/20">
+              Readiness
+            </span>
           </div>
-          <p className="text-3xl font-black text-emerald-300 font-mono">{avgReadiness}%</p>
-          <p className="text-[11px] text-emerald-400/80 font-semibold">Cohort Performance Index</p>
+          <div>
+            <p className="text-xs text-slate-600 dark:text-[var(--muted-foreground)] font-bold">Cohort Avg Readiness</p>
+            <p className="text-3xl font-black text-emerald-600 dark:text-emerald-300 font-mono tracking-tight mt-0.5">{avgReadiness}%</p>
+          </div>
         </div>
 
-        <div className="kpi-card kpi-card-amber space-y-2">
+        <div className="kpi-card kpi-card-amber space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-[var(--muted-foreground)] font-medium">Verified Deliverables</p>
-            <Award className="w-4 h-4 text-amber-300" />
+            <div className="p-2 rounded-xl bg-amber-100/80 dark:bg-amber-500/25 border border-amber-200 dark:border-amber-500/30">
+              <Award className="h-4 w-4 text-amber-600 dark:text-amber-300" />
+            </div>
+            <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-500/20">
+              Verified
+            </span>
           </div>
-          <p className="text-3xl font-black text-amber-300 font-mono">{totalVerifiedDeliverables}</p>
-          <p className="text-[11px] text-amber-400/80 font-semibold">Across 10 Modules</p>
+          <div>
+            <p className="text-xs text-slate-600 dark:text-[var(--muted-foreground)] font-bold">Verified Deliverables</p>
+            <p className="text-3xl font-black text-amber-600 dark:text-amber-300 font-mono tracking-tight mt-0.5">{totalVerifiedDeliverables}</p>
+          </div>
         </div>
 
-        <div className="kpi-card kpi-card-pink space-y-2">
+        <div className="kpi-card kpi-card-pink space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-[var(--muted-foreground)] font-medium">Live Movement Feed</p>
-            <Activity className="w-4 h-4 text-pink-300" />
+            <div className="p-2 rounded-xl bg-pink-100/80 dark:bg-pink-500/25 border border-pink-200 dark:border-pink-500/30">
+              <Activity className="h-4 w-4 text-pink-600 dark:text-pink-300" />
+            </div>
+            <span className="text-[10px] font-extrabold text-pink-700 dark:text-pink-300 bg-pink-100/80 dark:bg-pink-500/20 px-2 py-0.5 rounded-full border border-pink-200 dark:border-pink-500/20">
+              Live Feed
+            </span>
           </div>
-          <p className="text-3xl font-black text-pink-300 font-mono">{movements.length}</p>
-          <p className="text-[11px] text-pink-400/80 font-semibold">Real-time Telemetry Events</p>
+          <div>
+            <p className="text-xs text-slate-600 dark:text-[var(--muted-foreground)] font-bold">Live Movement Feed</p>
+            <p className="text-3xl font-black text-pink-600 dark:text-pink-300 font-mono tracking-tight mt-0.5">{movements.length}</p>
+          </div>
         </div>
       </div>
 
@@ -1611,11 +1865,11 @@ export function SuperDreamManagementPage() {
                         </div>
 
                         {/* Readiness Metric Circle/Badge */}
-                        <div className="text-right shrink-0 p-2.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-center min-w-[70px]">
-                          <span className="text-xl font-black font-mono text-[var(--warning)] block">
+                        <div className="text-right shrink-0 p-2.5 rounded-2xl bg-indigo-50 border border-indigo-200 dark:bg-indigo-500/10 dark:border-indigo-500/20 text-center min-w-[70px]">
+                          <span className="text-xl font-black font-mono text-amber-600 dark:text-amber-400 block">
                             {cand.readinessIndex}%
                           </span>
-                          <span className="text-[9px] uppercase font-bold text-[var(--muted-foreground)] block">
+                          <span className="text-[9px] uppercase font-bold text-slate-500 dark:text-slate-400 block">
                             Readiness
                           </span>
                         </div>
@@ -1624,15 +1878,15 @@ export function SuperDreamManagementPage() {
                       {/* Role & Imp Details */}
                       <div className="space-y-2 pt-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-[var(--muted-foreground)]">Target Track:</span>
-                          <span className="font-bold text-indigo-300 truncate max-w-[200px] text-right">
+                          <span className="text-slate-500 dark:text-slate-400">Target Track:</span>
+                          <span className="font-bold text-indigo-600 dark:text-indigo-300 truncate max-w-[200px] text-right">
                             {cand.targetRole || "Career Accelerator Track"}
                           </span>
                         </div>
 
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-[var(--muted-foreground)]">Target Tier:</span>
-                          <span className="font-bold text-emerald-400 truncate max-w-[200px] text-right">
+                          <span className="text-slate-500 dark:text-slate-400">Target Tier:</span>
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400 truncate max-w-[200px] text-right">
                             {cand.tierName || "Pending Evaluation"}
                           </span>
                         </div>
@@ -1640,17 +1894,17 @@ export function SuperDreamManagementPage() {
 
                       {/* Important Detail Badges Strip */}
                       <div className="grid grid-cols-3 gap-2 text-center text-xs pt-1">
-                        <div className="p-2 rounded-xl bg-slate-900/40 border border-white/5">
-                          <p className="text-[9px] text-[var(--muted-foreground)] uppercase font-semibold">Active Phase</p>
-                          <p className="font-bold text-indigo-400 font-mono mt-0.5">Phase 0{cand.activePhase}</p>
+                        <div className="p-2 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 shadow-2xs">
+                          <p className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Active Phase</p>
+                          <p className="font-bold text-indigo-600 dark:text-indigo-400 font-mono mt-0.5">Phase 0{cand.activePhase}</p>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-900/40 border border-white/5">
-                          <p className="text-[9px] text-[var(--muted-foreground)] uppercase font-semibold">Verified</p>
-                          <p className="font-bold text-emerald-400 font-mono mt-0.5">{cand.verifiedDeliverablesCount || 0} Items</p>
+                        <div className="p-2 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 shadow-2xs">
+                          <p className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Verified</p>
+                          <p className="font-bold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">{cand.verifiedDeliverablesCount || 0} Items</p>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-900/40 border border-white/5">
-                          <p className="text-[9px] text-[var(--muted-foreground)] uppercase font-semibold">Status</p>
-                          <p className="font-bold text-amber-400 font-mono mt-0.5 truncate">{cand.status}</p>
+                        <div className="p-2 rounded-xl bg-slate-100/80 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 shadow-2xs">
+                          <p className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Status</p>
+                          <p className="font-bold text-amber-600 dark:text-amber-400 font-mono mt-0.5 truncate">{cand.status}</p>
                         </div>
                       </div>
                     </div>
@@ -1664,14 +1918,14 @@ export function SuperDreamManagementPage() {
                             unassignMenteeMutation.mutate(cand.id);
                           }
                         }}
-                        className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/15 border border-red-500/20 transition flex items-center gap-1.5 cursor-pointer"
+                        className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/20 transition flex items-center gap-1.5 cursor-pointer"
                         title="Unassign this student from your roster"
                       >
                         <UserMinus className="w-3.5 h-3.5" />
                         <span>Unassign</span>
                       </button>
 
-                      <div className="flex items-center gap-1 text-xs font-bold text-indigo-400 group-hover:text-indigo-300">
+                      <div className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">
                         <span>Inspect 360 Report</span>
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                       </div>
@@ -1880,13 +2134,13 @@ export function SuperDreamManagementPage() {
                       onClick={() => setActivePanelSection(secId)}
                       className={`p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer border ${
                         isActive
-                          ? "bg-gradient-to-b from-indigo-500/25 to-purple-500/15 border-indigo-500/50 text-white shadow-lg ring-2 ring-indigo-500/30"
-                          : "bg-[var(--glass-input-bg)] border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                          ? "bg-indigo-50 border-indigo-300 text-indigo-700 shadow-md ring-2 ring-indigo-500/20 dark:bg-gradient-to-b dark:from-indigo-500/25 dark:to-purple-500/15 dark:border-indigo-500/50 dark:text-white dark:ring-indigo-500/30"
+                          : "bg-[var(--glass-input-bg)] border-[var(--border)] text-slate-600 hover:text-slate-900 dark:text-[var(--muted-foreground)] dark:hover:text-[var(--foreground)] hover:bg-slate-50 dark:hover:bg-white/[0.04]"
                       }`}
                     >
-                      <Icon className={`w-4 h-4 ${isActive ? "text-indigo-400" : ""}`} />
+                      <Icon className={`w-4 h-4 ${isActive ? "text-indigo-600 dark:text-indigo-400" : ""}`} />
                       <span className="text-[10px] font-bold">Sec {secId}</span>
-                      <span className="text-[9px] font-medium text-[var(--muted-foreground)] truncate max-w-[70px]">
+                      <span className="text-[9px] font-medium text-slate-500 dark:text-[var(--muted-foreground)] truncate max-w-[70px]">
                         {shortTitles[secId]}
                       </span>
                     </button>
@@ -2005,35 +2259,35 @@ export function SuperDreamManagementPage() {
       />
 
       {/* Extracted Resume Text Modal */}
-      {showResumeTextModal && latestResume && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-3xl max-h-[85vh] bg-[var(--card)] border border-[var(--border)] rounded-3xl p-6 shadow-2xl flex flex-col space-y-4">
-            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+      {showResumeTextModal && latestResume && createPortal(
+        <div className="fixed inset-0 z-[99999] bg-slate-950/60 dark:bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200 select-none">
+          <div className="w-full max-w-3xl max-h-[85vh] bg-white dark:bg-[var(--card)] border border-slate-200 dark:border-[var(--border)] rounded-3xl p-6 shadow-2xl flex flex-col space-y-4 text-slate-900 dark:text-white">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-[var(--border)] pb-3">
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-indigo-400" />
+                <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 <div>
-                  <h3 className="font-bold text-base text-[var(--foreground)]">
+                  <h3 className="font-bold text-base text-slate-900 dark:text-[var(--foreground)]">
                     Extracted Resume Content
                   </h3>
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-slate-500 dark:text-[var(--muted-foreground)]">
                     {latestResume.filename} • ATS Score: {latestResume.atsScore}%
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setShowResumeTextModal(false)}
-                className="p-2 rounded-xl bg-slate-800/50 text-[var(--muted-foreground)] hover:text-white transition cursor-pointer"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/50 text-slate-500 hover:text-slate-900 dark:text-[var(--muted-foreground)] dark:hover:text-white transition cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 rounded-2xl bg-slate-950/70 border border-white/5 font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
+            <div className="flex-1 overflow-y-auto p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-white/5 font-mono text-xs text-slate-800 dark:text-slate-300 whitespace-pre-wrap leading-relaxed select-text">
               {latestResume.extractedText || "No raw text available."}
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
-              <span className="text-xs text-[var(--muted-foreground)]">
+            <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-[var(--border)]">
+              <span className="text-xs text-slate-500 dark:text-[var(--muted-foreground)]">
                 Parsed on {new Date(latestResume.updatedAt).toLocaleDateString()}
               </span>
               <button
@@ -2044,34 +2298,35 @@ export function SuperDreamManagementPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ── ASSIGN MENTEE TO SUPER DREAM MODAL ───────────────────────── */}
-      {showAssignMenteeModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl text-slate-100 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      {showAssignMenteeModal && createPortal(
+        <div className="fixed inset-0 z-[99999] bg-slate-950/60 dark:bg-black/80 backdrop-blur-md flex items-center justify-center p-4 select-none">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 shadow-2xl text-slate-900 dark:text-slate-100 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl btn-gradient text-white">
+                <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/30">
                   <UserCheck className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-sm text-white">Assign Student to Mentee Cohort</h3>
-                  <p className="text-[11px] text-slate-400">Link student to your Super Dream & mentee roster</p>
+                  <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Assign Student to Mentee Cohort</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Link student to your Super Dream & mentee roster</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowAssignMenteeModal(false)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 transition cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 select-text">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                   Student Email Address or User ID *
                 </label>
                 <input
@@ -2079,36 +2334,37 @@ export function SuperDreamManagementPage() {
                   value={assignStudentInput}
                   onChange={(e) => setAssignStudentInput(e.target.value)}
                   placeholder="e.g. student@college.edu or 65f..."
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:border-indigo-500 focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && assignStudentInput.trim()) {
                       assignMenteeMutation.mutate(assignStudentInput.trim());
                     }
                   }}
                 />
-                <span className="text-[10px] text-slate-400 block">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 block">
                   Once assigned, only this student will appear under your Super Dream and mentee management.
                 </span>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-2 border-t border-slate-800">
+            <div className="flex gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
               <button
                 onClick={() => setShowAssignMenteeModal(false)}
-                className="flex-1 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300 hover:bg-slate-700 transition"
+                className="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 disabled={!assignStudentInput.trim() || assignMenteeMutation.isPending}
                 onClick={() => assignMenteeMutation.mutate(assignStudentInput.trim())}
-                className="flex-1 btn-gradient py-2 rounded-xl text-xs font-bold text-white transition disabled:opacity-50"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 py-2 rounded-xl text-xs font-bold text-white transition disabled:opacity-50 cursor-pointer shadow-xs"
               >
                 {assignMenteeMutation.isPending ? "Assigning..." : "Confirm Assignment"}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

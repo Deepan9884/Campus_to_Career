@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Plus,
@@ -291,9 +292,9 @@ export function ExhaustiveTestBuilderModal({
     onClose();
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in">
-      <div className="w-full max-w-5xl h-[92vh] rounded-2xl bg-slate-900 border border-rose-500/40 shadow-2xl flex flex-col text-white overflow-hidden relative">
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 dark:bg-black/85 backdrop-blur-md animate-in fade-in select-none">
+      <div className="w-full max-w-5xl h-[92vh] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-rose-500/40 shadow-2xl flex flex-col text-slate-900 dark:text-white overflow-hidden relative">
         {/* Header */}
         <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-slate-950/80 shrink-0">
           <div className="flex items-center gap-3">
@@ -1285,6 +1286,7 @@ export function ExhaustiveTestBuilderModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

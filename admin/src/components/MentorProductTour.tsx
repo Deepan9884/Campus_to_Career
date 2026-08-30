@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { GlassCard } from "./GlassCard";
 import {
   Users,
@@ -245,8 +246,8 @@ export function MentorProductTour({ open, onClose }: MentorProductTourProps) {
     setCurrentStep((prev) => Math.max(0, prev - 1));
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[rgb(var(--background-rgb)/85%)] backdrop-blur-md animate-in fade-in duration-200">
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/60 dark:bg-[rgb(var(--background-rgb)/85%)] backdrop-blur-md animate-in fade-in duration-200 select-none">
       <GlassCard variant="strong" className="w-full max-w-lg p-6 space-y-6 border-[rgb(var(--primary-rgb)/30%)] shadow-2xl relative overflow-hidden">
         {/* Close Button */}
         <button
@@ -315,6 +316,7 @@ export function MentorProductTour({ open, onClose }: MentorProductTourProps) {
           </div>
         </div>
       </GlassCard>
-    </div>
+    </div>,
+    document.body
   );
 }
