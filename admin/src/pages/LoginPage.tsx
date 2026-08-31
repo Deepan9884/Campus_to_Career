@@ -28,6 +28,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
   const hasRealClientId = Boolean(clientId && !clientId.includes("demo1234567890abcdef"));
 
   const triggerGoogleAuth = useGoogleLogin({
+    scope: "openid profile email",
     onSuccess: async (tokenResponse) => {
       setGoogleLoading(true);
       try {
