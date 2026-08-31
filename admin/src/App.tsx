@@ -20,6 +20,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { getAccessToken, setAccessToken, API_BASE } from "./lib/api";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider, useTheme } from "./lib/theme-context";
 import { InteractiveAppBackground } from "./components/InteractiveAppBackground";
 import { getCohortAnalytics } from "./lib/admin-api";
@@ -556,18 +557,24 @@ export function App() {
     );
   }
 
+  const googleClientId =
+    import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+    "1000000000000-demo1234567890abcdef.apps.googleusercontent.com";
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <BrowserRouter>
-          {token ? (
-            <AuthenticatedApp onLogout={handleLogout} />
-          ) : (
-            <LoginPage onLoginSuccess={handleLoginSuccess} />
-          )}
-        </BrowserRouter>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <BrowserRouter>
+            {token ? (
+              <AuthenticatedApp onLogout={handleLogout} />
+            ) : (
+              <LoginPage onLoginSuccess={handleLoginSuccess} />
+            )}
+          </BrowserRouter>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </GoogleOAuthProvider>
   );
 }
 export default App;
