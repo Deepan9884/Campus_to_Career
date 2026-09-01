@@ -17,10 +17,21 @@ export default defineConfig({
   },
   vite: {
     server: {
+      // Allow Google OAuth popup to communicate with the opener window.
+      // Without same-origin-allow-popups, window.closed calls from
+      // accounts.google.com are blocked by the COOP policy.
+      headers: {
+        "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+        "Cross-Origin-Embedder-Policy": "unsafe-none",
+      },
       proxy: {
         "/api": {
           target: "http://localhost:5000",
           changeOrigin: true,
+          // Rewrite the cookie domain so that the httpOnly refreshToken cookie
+          // set by the backend (localhost:5000) is visible to the frontend
+          // origin (localhost:517x / 808x) when sent through this proxy.
+          cookieDomainRewrite: "localhost",
         },
       },
     },
