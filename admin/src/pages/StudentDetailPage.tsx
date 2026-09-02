@@ -258,6 +258,12 @@ export function StudentDetailPage() {
   });
   const mentorTasks: MentorTaskItem[] = tasksData?.tasks || [];
 
+  const { data: superDreamData, refetch: refetchSuperDream } = useQuery({
+    queryKey: ["superDreamStudentDetail", studentId],
+    queryFn: () => getStudentSuperDreamDetail(studentId as string),
+    enabled: !!studentId,
+  });
+
   const updateTaskMutation = useMutation({
     mutationFn: ({ taskId, payload }: { taskId: string; payload: Partial<MentorTaskItem> }) =>
       updateMentorTask(taskId, payload),
@@ -367,12 +373,6 @@ export function StudentDetailPage() {
   const events = data.events || [];
   const userSkills = data.userSkills || [];
   const activityLogs = data.activityLogs || [];
-
-  const { data: superDreamData, refetch: refetchSuperDream } = useQuery({
-    queryKey: ["superDreamStudentDetail", studentId],
-    queryFn: () => getStudentSuperDreamDetail(studentId as string),
-    enabled: !!studentId,
-  });
 
   const verifiedEvents = (events || []).filter(
     (e: any) => e?.verificationResult?.isVerified || e?.status === "verified"
