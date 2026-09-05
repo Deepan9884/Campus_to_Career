@@ -138,6 +138,8 @@ export function CodingPlatformAnalyticsCharts({
                       fontSize: "0.75rem",
                       color: "#fff",
                     }}
+                    itemStyle={{ color: "#E2E8F0" }}
+                    labelStyle={{ color: "#FFFFFF", fontWeight: "bold" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "0.75rem", paddingTop: "8px" }} />
                 </PieChart>
@@ -178,6 +180,8 @@ export function CodingPlatformAnalyticsCharts({
                       fontSize: "0.75rem",
                       color: "#fff",
                     }}
+                    itemStyle={{ color: "#E2E8F0" }}
+                    labelStyle={{ color: "#FFFFFF", fontWeight: "bold" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "0.75rem", paddingTop: "8px" }} />
                   <Bar dataKey="Easy" stackId="a" fill="#10b981" radius={[0, 0, 0, 0]} />
