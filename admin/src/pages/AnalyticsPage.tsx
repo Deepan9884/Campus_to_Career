@@ -164,7 +164,7 @@ export function AnalyticsPage() {
 
             <div className="flex items-center gap-2 bg-slate-100 dark:bg-[rgba(0,0,0,0.25)] p-1.5 px-3 rounded-xl border border-slate-200 dark:border-[var(--border)] text-xs">
               <span className="text-slate-500 dark:text-[var(--muted-foreground)] font-bold">Cohort:</span>
-              <span className="px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 dark:btn-gradient dark:text-white font-extrabold border border-indigo-200 dark:border-transparent shadow-xs">
+              <span className="px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 dark:bg-indigo-600/30 dark:text-indigo-300 font-extrabold border border-indigo-200 dark:border-indigo-500/30 shadow-xs">
                 {summary.totalStudents} Mentees
               </span>
             </div>

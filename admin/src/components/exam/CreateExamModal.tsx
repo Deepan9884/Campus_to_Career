@@ -889,7 +889,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
           {/* Modal Header */}
           <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/80">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-2xl bg-indigo-600 dark:btn-gradient flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+              <div className="h-10 w-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
                 <FileCode className="h-5 w-5" />
               </div>
               <div>

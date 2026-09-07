@@ -630,7 +630,7 @@ export function OverviewPage() {
                     onClick={() => setStatusFilter(tab.key as any)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                       statusFilter === tab.key
-                        ? "bg-white dark:btn-gradient text-indigo-700 dark:text-white shadow-xs font-extrabold"
+                        ? "btn-gradient text-white shadow-md shadow-indigo-500/20 font-extrabold"
                         : "text-slate-600 dark:text-[var(--muted-foreground)] hover:text-slate-900 dark:hover:text-[var(--foreground)] hover:bg-slate-200/60 dark:hover:bg-[rgba(255,255,255,0.06)]"
                     }`}
                   >

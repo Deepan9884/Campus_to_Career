@@ -73,7 +73,7 @@ export function QuestionPaperPreviewModal({
         {/* ── MODAL HEADER ─────────────────────────────────────────────────── */}
         <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/80 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-indigo-600 dark:btn-gradient text-white shadow-md shadow-indigo-500/20">
+            <div className="p-2.5 rounded-2xl bg-indigo-600 text-white shadow-md shadow-indigo-500/20">
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
