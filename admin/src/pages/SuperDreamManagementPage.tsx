@@ -52,6 +52,7 @@ import {
   UserPlus,
   UserMinus,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -61,6 +62,7 @@ import {
   submitMentorEvaluationSignoff,
   assignSuperDreamMentee,
   unassignSuperDreamMentee,
+  searchRegisteredStudents,
   type SuperDreamCohortStudent,
 } from "../lib/admin-api";
 import {
@@ -116,6 +118,26 @@ export function SuperDreamManagementPage() {
   const [showResumeTextModal, setShowResumeTextModal] = useState(false);
   const [showAssignMenteeModal, setShowAssignMenteeModal] = useState(false);
   const [assignStudentInput, setAssignStudentInput] = useState("");
+  const [assignSearchResults, setAssignSearchResults] = useState<any[]>([]);
+  const [isSearchingStudents, setIsSearchingStudents] = useState(false);
+
+  // Live student search in assign modal
+  const handleLiveStudentSearch = async (val: string) => {
+    setAssignStudentInput(val);
+    if (!val.trim()) {
+      setAssignSearchResults([]);
+      return;
+    }
+    setIsSearchingStudents(true);
+    try {
+      const res = await searchRegisteredStudents(val);
+      setAssignSearchResults(res.students || []);
+    } catch {
+      setAssignSearchResults([]);
+    } finally {
+      setIsSearchingStudents(false);
+    }
+  };
 
   // Assign Mentee Mutation
   const assignMenteeMutation = useMutation({
@@ -127,6 +149,7 @@ export function SuperDreamManagementPage() {
       queryClient.invalidateQueries({ queryKey: ["adminCohortAnalytics"] });
       setShowAssignMenteeModal(false);
       setAssignStudentInput("");
+      setAssignSearchResults([]);
     },
     onError: (err: any) => {
       toast.error(err.message || "Failed to assign student to mentee roster");
@@ -166,39 +189,18 @@ export function SuperDreamManagementPage() {
 
   const rawCandidates: SuperDreamCohortStudent[] = cohortData?.cohort || [];
   
-  // Client-side strict filter: Only assigned mentees, excluding any mentor, admin, or faculty records
+  // Filter out any accounts that are explicitly marked as faculty/admin
   const candidates: SuperDreamCohortStudent[] = rawCandidates.filter((cand) => {
     if (cand.isAssignedToMe === false) {
       return false;
     }
     const roleStr = (cand.targetRole || "").toLowerCase();
     const nameStr = (cand.name || "").toLowerCase();
-    const emailStr = (cand.email || "").toLowerCase();
-    if (
-      roleStr.includes("mentor") ||
-      roleStr.includes("faculty") ||
-      roleStr.includes("admin") ||
-      roleStr.includes("professor") ||
-      roleStr.includes("hod") ||
-      roleStr.includes("staff")
-    ) {
-      return false;
-    }
     if (
       nameStr.startsWith("dr.") ||
       nameStr.startsWith("prof.") ||
       nameStr.includes("faculty") ||
-      nameStr.includes("mentor") ||
-      nameStr.includes("admin") ||
-      nameStr.includes("saranya")
-    ) {
-      return false;
-    }
-    if (
-      emailStr.includes("mentor") ||
-      emailStr.includes("faculty") ||
-      emailStr.includes("admin") ||
-      emailStr.includes("s.saranya")
+      roleStr.includes("faculty")
     ) {
       return false;
     }
@@ -2313,11 +2315,15 @@ const CS_SUBJECT_DETAILS: Record<string, {
                 </div>
                 <div>
                   <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Assign Student to Mentee Cohort</h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Link student to your Super Dream & mentee roster</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Search and link registered student to your mentee roster</p>
                 </div>
               </div>
               <button
-                onClick={() => setShowAssignMenteeModal(false)}
+                onClick={() => {
+                  setShowAssignMenteeModal(false);
+                  setAssignStudentInput("");
+                  setAssignSearchResults([]);
+                }}
                 className="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 transition cursor-pointer"
               >
                 <X className="w-4 h-4" />
@@ -2327,29 +2333,78 @@ const CS_SUBJECT_DETAILS: Record<string, {
             <div className="space-y-3 select-text">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  Student Email Address or User ID *
+                  Student Name, Email, or Register Number *
                 </label>
-                <input
-                  type="text"
-                  value={assignStudentInput}
-                  onChange={(e) => setAssignStudentInput(e.target.value)}
-                  placeholder="e.g. student@college.edu or 65f..."
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && assignStudentInput.trim()) {
-                      assignMenteeMutation.mutate(assignStudentInput.trim());
-                    }
-                  }}
-                />
+                <div className="relative">
+                  <Search className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
+                  <input
+                    type="text"
+                    value={assignStudentInput}
+                    onChange={(e) => handleLiveStudentSearch(e.target.value)}
+                    placeholder="Search by name, email, register no..."
+                    className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && assignStudentInput.trim()) {
+                        assignMenteeMutation.mutate(assignStudentInput.trim());
+                      }
+                    }}
+                  />
+                  {isSearchingStudents && (
+                    <Loader2 className="h-4 w-4 absolute right-3 top-3 animate-spin text-indigo-600" />
+                  )}
+                </div>
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 block">
-                  Once assigned, only this student will appear under your Super Dream and mentee management.
+                  Search across registered students to add to your Super Dream and mentee management.
                 </span>
               </div>
+
+              {/* Live Search Suggestions */}
+              {assignSearchResults.length > 0 && (
+                <div className="space-y-1.5 max-h-48 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs">
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold px-2 py-1 uppercase">
+                    Matching Students ({assignSearchResults.length})
+                  </p>
+                  {assignSearchResults.map((s) => (
+                    <div
+                      key={s._id}
+                      onClick={() => {
+                        if (!s.isMyMentee) {
+                          assignMenteeMutation.mutate(s.email || s._id);
+                        }
+                      }}
+                      className={`p-2 rounded-lg flex items-center justify-between cursor-pointer transition ${
+                        s.isMyMentee ? "bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20" : "hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="h-7 w-7 rounded-lg bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 grid place-items-center font-bold shrink-0">
+                          {s.name ? s.name.charAt(0).toUpperCase() : "S"}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-slate-900 dark:text-white text-xs truncate">{s.name}</p>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{s.email}</p>
+                        </div>
+                      </div>
+                      {s.isMyMentee ? (
+                        <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1 shrink-0">
+                          <CheckCircle2 className="h-3 w-3" /> Assigned
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0">Click to Assign +</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
               <button
-                onClick={() => setShowAssignMenteeModal(false)}
+                onClick={() => {
+                  setShowAssignMenteeModal(false);
+                  setAssignStudentInput("");
+                  setAssignSearchResults([]);
+                }}
                 className="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
               >
                 Cancel
@@ -2357,9 +2412,15 @@ const CS_SUBJECT_DETAILS: Record<string, {
               <button
                 disabled={!assignStudentInput.trim() || assignMenteeMutation.isPending}
                 onClick={() => assignMenteeMutation.mutate(assignStudentInput.trim())}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 py-2 rounded-xl text-xs font-bold text-white transition disabled:opacity-50 cursor-pointer shadow-xs"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 py-2 rounded-xl text-xs font-bold text-white transition disabled:opacity-50 cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
               >
-                {assignMenteeMutation.isPending ? "Assigning..." : "Confirm Assignment"}
+                {assignMenteeMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Assigning...
+                  </>
+                ) : (
+                  "Confirm Assignment"
+                )}
               </button>
             </div>
           </div>

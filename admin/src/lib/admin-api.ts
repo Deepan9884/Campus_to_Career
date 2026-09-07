@@ -796,15 +796,19 @@ export async function blockStudentExam(
 
 export async function assignSuperDreamMentee(studentIdOrEmail: string): Promise<{ message: string; student: any }> {
   return api.post<{ message: string; student: any }>("/super-dream/assign-mentee", {
-    studentId: studentIdOrEmail.includes("@") ? undefined : studentIdOrEmail,
-    studentEmail: studentIdOrEmail.includes("@") ? studentIdOrEmail : undefined,
+    studentId: studentIdOrEmail,
+    studentEmail: studentIdOrEmail,
+    query: studentIdOrEmail,
+    name: studentIdOrEmail,
+    email: studentIdOrEmail,
   });
 }
 
 export async function unassignSuperDreamMentee(studentIdOrEmail: string): Promise<{ message: string; unassignedStudentId: string }> {
   return api.post<{ message: string; unassignedStudentId: string }>("/super-dream/unassign-mentee", {
-    studentId: studentIdOrEmail.includes("@") ? undefined : studentIdOrEmail,
-    studentEmail: studentIdOrEmail.includes("@") ? studentIdOrEmail : undefined,
+    studentId: studentIdOrEmail,
+    studentEmail: studentIdOrEmail,
+    query: studentIdOrEmail,
   });
 }
 
