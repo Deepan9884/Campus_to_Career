@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDebounce } from "../lib/useDebounce";
 import {
   Search,
   X,
@@ -42,13 +43,14 @@ export function CommandPalette({
   const queryClient = useQueryClient();
   const { resolvedTheme, setTheme } = useTheme();
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 250);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Search registered students
   const { data: searchData, isLoading: searching } = useQuery({
-    queryKey: ["adminCommandPaletteSearch", query],
-    queryFn: () => (query.trim() ? searchRegisteredStudents(query) : Promise.resolve({ students: [] })),
-    enabled: query.trim().length > 0,
+    queryKey: ["adminCommandPaletteSearch", debouncedQuery],
+    queryFn: () => (debouncedQuery.trim() ? searchRegisteredStudents(debouncedQuery) : Promise.resolve({ students: [] })),
+    enabled: debouncedQuery.trim().length > 0,
   });
 
   const { data: proctorFeed } = useQuery({

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useDebounce } from "../lib/useDebounce";
 import {
   FileCode,
   Plus,
@@ -54,6 +55,7 @@ export function ExamsManagementPage() {
   const [activeTypeFilter, setActiveTypeFilter] = useState<string>("all");
   const [activeStatusFilter, setActiveStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedExamForPreview, setSelectedExamForPreview] = useState<ExamItem | null>(null);
   const [selectedExamForBatch, setSelectedExamForBatch] = useState<ExamItem | null>(null);
@@ -61,8 +63,8 @@ export function ExamsManagementPage() {
 
   // Fetch all exams
   const { data: exams = [], isLoading, refetch } = useQuery({
-    queryKey: ["admin-exams", activeTypeFilter, activeStatusFilter, searchQuery],
-    queryFn: () => getAdminExams(activeTypeFilter, searchQuery, activeStatusFilter),
+    queryKey: ["admin-exams", activeTypeFilter, activeStatusFilter, debouncedSearchQuery],
+    queryFn: () => getAdminExams(activeTypeFilter, debouncedSearchQuery, activeStatusFilter),
   });
 
   // Toggle disclosure mutation

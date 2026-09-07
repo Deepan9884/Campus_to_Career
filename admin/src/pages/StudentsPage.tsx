@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { useDebounce } from "../lib/useDebounce";
 import { GlassCard } from "../components/GlassCard";
 import { ScoreRing } from "../components/Score";
 import { AIInterventionModal } from "../components/AIInterventionModal";
@@ -48,6 +49,7 @@ export function StudentsPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
   const [filter, setFilter] = useState("my-mentees");
 
   // Selection & Batch Action State
@@ -65,8 +67,8 @@ export function StudentsPage() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["adminStudentsList", page, search, filter, pageSize],
-    queryFn: () => getStudentsList(page, search, filter, pageSize),
+    queryKey: ["adminStudentsList", page, debouncedSearch, filter, pageSize],
+    queryFn: () => getStudentsList(page, debouncedSearch, filter, pageSize),
   });
 
   const students = data?.students || [];

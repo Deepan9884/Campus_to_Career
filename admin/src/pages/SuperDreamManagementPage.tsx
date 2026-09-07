@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDebounce } from "../lib/useDebounce";
 import { GlassCard } from "../components/GlassCard";
 import {
   Users,
@@ -180,11 +181,12 @@ export function SuperDreamManagementPage() {
   const [mentorSigInput, setMentorSigInput] = useState("");
   const [hodSigInput, setHodSigInput] = useState("");
 
-  // 1. Fetch Real Cohort Candidates from MongoDB (Zero Mock Data, Real-Time Live Polling)
+  const debouncedSearchCandidate = useDebounce(searchCandidate, 350);
+
+  // 1. Fetch Real Cohort Candidates from MongoDB (Cached & Reactively Updated)
   const { data: cohortData, isLoading: isCohortLoading, refetch: refetchCohort } = useQuery({
-    queryKey: ["superDreamCohort", searchCandidate, phaseFilter],
-    queryFn: () => getSuperDreamCohort(searchCandidate, phaseFilter),
-    refetchInterval: 5000, // Live poll cohort updates every 5 seconds
+    queryKey: ["superDreamCohort", debouncedSearchCandidate, phaseFilter],
+    queryFn: () => getSuperDreamCohort(debouncedSearchCandidate, phaseFilter),
   });
 
   const rawCandidates: SuperDreamCohortStudent[] = cohortData?.cohort || [];
@@ -217,7 +219,6 @@ export function SuperDreamManagementPage() {
     queryKey: ["superDreamStudentDetail", selectedStudentId],
     queryFn: () => getStudentSuperDreamDetail(selectedStudentId),
     enabled: Boolean(selectedStudentId),
-    refetchInterval: selectedStudentId ? 3000 : false, // Live poll active student updates every 3 seconds
   });
 
   const selectedCandidate = candidates.find((c) => c.id === selectedStudentId);

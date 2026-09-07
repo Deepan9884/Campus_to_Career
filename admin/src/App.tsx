@@ -45,6 +45,8 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
+      staleTime: 30_000, // 30 seconds fresh cache to avoid thrashing network on tab navigation
+      gcTime: 5 * 60 * 1000, // 5 minutes in-memory cache
     },
   },
 });
