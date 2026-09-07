@@ -483,3 +483,46 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
   transform: scale(1.15);
 }
+
+/* ─── Global Recharts Tooltip Styling (Zero Invisible Text) ─── */
+.recharts-default-tooltip {
+  border-radius: 1rem !important;
+  font-family: inherit !important;
+  font-size: 0.75rem !important;
+}
+
+html:not(.light) .recharts-default-tooltip,
+.dark .recharts-default-tooltip {
+  background-color: #0F172A !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+  color: #F8FAFC !important;
+}
+
+html:not(.light) .recharts-tooltip-item,
+html:not(.light) .recharts-tooltip-item-name,
+html:not(.light) .recharts-tooltip-item-value,
+html:not(.light) .recharts-tooltip-label,
+.dark .recharts-tooltip-item,
+.dark .recharts-tooltip-item-name,
+.dark .recharts-tooltip-item-value,
+.dark .recharts-tooltip-label {
+  color: #F8FAFC !important;
+  font-weight: 600 !important;
+}
+
+.light .recharts-default-tooltip {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+  color: #0F172A !important;
+}
+
+.light .recharts-tooltip-item,
+.light .recharts-tooltip-item-name,
+.light .recharts-tooltip-item-value,
+.light .recharts-tooltip-label {
+  color: #0F172A !important;
+  font-weight: 600 !important;
+}
+

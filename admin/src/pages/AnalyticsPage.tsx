@@ -249,8 +249,10 @@ export function AnalyticsPage() {
                     borderRadius: "1rem",
                     fontSize: "0.75rem",
                     color: tooltipColor,
-                    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
                   }}
+                  itemStyle={{ color: tooltipColor, fontWeight: 600 }}
+                  labelStyle={{ color: tooltipColor, fontWeight: 700 }}
                 />
                 <Legend wrapperStyle={{ fontSize: "0.75rem", paddingTop: "8px" }} />
               </PieChart>
@@ -284,8 +286,10 @@ export function AnalyticsPage() {
                       borderRadius: "1rem",
                       fontSize: "0.75rem",
                       color: tooltipColor,
-                      boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
                     }}
+                    itemStyle={{ color: tooltipColor, fontWeight: 600 }}
+                    labelStyle={{ color: tooltipColor, fontWeight: 700 }}
                   />
                   <Bar dataKey="Lacking Mentees" fill="#f59e0b" radius={[8, 8, 0, 0]} />
                 </BarChart>
@@ -325,8 +329,10 @@ export function AnalyticsPage() {
                     borderRadius: "1rem",
                     fontSize: "0.75rem",
                     color: tooltipColor,
-                    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
                   }}
+                  itemStyle={{ color: tooltipColor, fontWeight: 600 }}
+                  labelStyle={{ color: tooltipColor, fontWeight: 700 }}
                 />
                 <Bar dataKey="Students" fill="var(--primary)" radius={[8, 8, 0, 0]} />
               </BarChart>
