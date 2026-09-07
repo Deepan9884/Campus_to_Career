@@ -87,32 +87,123 @@ export function StudentsPage() {
     },
   });
 
-  // Add Mentee Mutation
+  // Add Mentee Mutation with Instant Optimistic Cache Updates
   const addMenteeMutation = useMutation({
     mutationFn: (emailOrId: string) => addMentee(emailOrId),
-    onSuccess: (res) => {
+    onMutate: async (emailOrId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["adminStudentsList"] });
+      const previousQueries = queryClient.getQueriesData({ queryKey: ["adminStudentsList"] });
+
+      queryClient.setQueriesData({ queryKey: ["adminStudentsList"] }, (old: any) => {
+        if (!old || !old.students) return old;
+        return {
+          ...old,
+          students: old.students.map((s: any) => {
+            if (s.email?.toLowerCase() === emailOrId.toLowerCase() || s._id === emailOrId) {
+              return { ...s, isMyMentee: true };
+            }
+            return s;
+          }),
+        };
+      });
+
+      return { previousQueries };
+    },
+    onSuccess: (res, emailOrId) => {
       toast.success(res.message || "Mentee added successfully!");
       setMenteeEmailInput("");
       setSearchResults([]);
+      queryClient.setQueriesData({ queryKey: ["adminStudentsList"] }, (old: any) => {
+        if (!old || !old.students) return old;
+        return {
+          ...old,
+          students: old.students.map((s: any) => {
+            if (
+              s.email?.toLowerCase() === emailOrId.toLowerCase() ||
+              s._id === emailOrId ||
+              (res.student && s._id === res.student._id)
+            ) {
+              return { ...s, isMyMentee: true };
+            }
+            return s;
+          }),
+        };
+      });
       queryClient.invalidateQueries({ queryKey: ["adminStudentsList"] });
       queryClient.invalidateQueries({ queryKey: ["adminCohortAnalytics"] });
+      queryClient.invalidateQueries({ queryKey: ["adminMenteesList"] });
     },
-    onError: (err: any) => {
+    onError: (err: any, _vars, context: any) => {
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([key, value]: [any, any]) => {
+          queryClient.setQueryData(key, value);
+        });
+      }
       toast.error(
         err?.message || "No student account found with this email. Only registered students can be added as mentees."
       );
     },
   });
 
-  // Remove Mentee Mutation
+  // Remove Mentee Mutation with Instant Optimistic Cache Updates
   const removeMenteeMutation = useMutation({
     mutationFn: (studentId: string) => removeMentee(studentId),
-    onSuccess: (res) => {
+    onMutate: async (studentId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["adminStudentsList"] });
+      const previousQueries = queryClient.getQueriesData({ queryKey: ["adminStudentsList"] });
+
+      queryClient.setQueriesData({ queryKey: ["adminStudentsList"] }, (old: any, query: any) => {
+        if (!old || !old.students) return old;
+        const currentFilter = query?.queryKey?.[3] || filter;
+        if (currentFilter === "my-mentees") {
+          return {
+            ...old,
+            students: old.students.filter((s: any) => s._id !== studentId),
+            pagination: {
+              ...old.pagination,
+              total: Math.max(0, (old.pagination?.total || 1) - 1),
+            },
+          };
+        }
+        return {
+          ...old,
+          students: old.students.map((s: any) => {
+            if (s._id === studentId) {
+              return { ...s, isMyMentee: false };
+            }
+            return s;
+          }),
+        };
+      });
+
+      return { previousQueries };
+    },
+    onSuccess: (res, studentId) => {
       toast.success(res.message || "Mentee removed successfully");
+      queryClient.setQueriesData({ queryKey: ["adminStudentsList"] }, (old: any, query: any) => {
+        if (!old || !old.students) return old;
+        const currentFilter = query?.queryKey?.[3] || filter;
+        if (currentFilter === "my-mentees") {
+          return {
+            ...old,
+            students: old.students.filter((s: any) => s._id !== studentId),
+          };
+        }
+        return {
+          ...old,
+          students: old.students.map((s: any) => (s._id === studentId ? { ...s, isMyMentee: false } : s)),
+        };
+      });
       queryClient.invalidateQueries({ queryKey: ["adminStudentsList"] });
       queryClient.invalidateQueries({ queryKey: ["adminCohortAnalytics"] });
+      queryClient.invalidateQueries({ queryKey: ["adminMenteesList"] });
     },
-    onError: (err: any) => {
+    onError: (err: any, _vars, context: any) => {
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([key, value]: [any, any]) => {
+          queryClient.setQueryData(key, value);
+        });
+      }
       toast.error(err?.message || "Failed to remove mentee");
     },
   });
@@ -426,25 +517,34 @@ export function StudentsPage() {
                       <td className="py-4 px-5 whitespace-nowrap">
                         {st.isMyMentee ? (
                           <div className="flex items-center gap-1.5">
-                            <span className="px-2.5 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-[10px] font-bold text-indigo-600 dark:text-indigo-300 flex items-center gap-1 whitespace-nowrap">
+                            <span className="px-2.5 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-[10px] font-bold text-indigo-600 dark:text-indigo-300 flex items-center gap-1 whitespace-nowrap shadow-xs">
                               <CheckCircle2 className="h-3 w-3 text-indigo-500" /> Assigned Mentee
                             </span>
                             <button
                               onClick={() => removeMenteeMutation.mutate(st._id)}
-                              disabled={removeMenteeMutation.isPending}
+                              disabled={removeMenteeMutation.isPending && removeMenteeMutation.variables === st._id}
                               title="Remove from My Mentees"
-                              className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition"
+                              className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
                             >
-                              <UserMinus className="h-3.5 w-3.5" />
+                              {removeMenteeMutation.isPending && removeMenteeMutation.variables === st._id ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin text-rose-500" />
+                              ) : (
+                                <UserMinus className="h-3.5 w-3.5" />
+                              )}
                             </button>
                           </div>
                         ) : (
                           <button
                             onClick={() => addMenteeMutation.mutate(st.email)}
-                            disabled={addMenteeMutation.isPending}
-                            className="px-2.5 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-[10px] font-bold text-indigo-600 dark:text-indigo-300 transition flex items-center gap-1 whitespace-nowrap shadow-sm"
+                            disabled={addMenteeMutation.isPending && addMenteeMutation.variables === st.email}
+                            className="px-2.5 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-[10px] font-bold text-indigo-600 dark:text-indigo-300 transition flex items-center gap-1 whitespace-nowrap shadow-sm cursor-pointer"
                           >
-                            <UserPlus className="h-3 w-3" /> Assign Mentee
+                            {addMenteeMutation.isPending && addMenteeMutation.variables === st.email ? (
+                              <Loader2 className="h-3 w-3 animate-spin text-indigo-500" />
+                            ) : (
+                              <UserPlus className="h-3 w-3" />
+                            )}
+                            <span>Assign Mentee</span>
                           </button>
                         )}
                       </td>
@@ -515,10 +615,15 @@ export function StudentsPage() {
                           ) : (
                             <button
                               onClick={() => addMenteeMutation.mutate(st.email)}
-                              disabled={addMenteeMutation.isPending}
-                              className="px-3.5 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-xs font-bold text-indigo-600 dark:text-indigo-300 inline-flex items-center gap-1.5 transition whitespace-nowrap shadow-sm"
+                              disabled={addMenteeMutation.isPending && addMenteeMutation.variables === st.email}
+                              className="px-3.5 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-xs font-bold text-indigo-600 dark:text-indigo-300 inline-flex items-center gap-1.5 transition whitespace-nowrap shadow-sm cursor-pointer"
                             >
-                              <UserPlus className="h-3.5 w-3.5" /> Assign Mentee
+                              {addMenteeMutation.isPending && addMenteeMutation.variables === st.email ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin text-indigo-500" />
+                              ) : (
+                                <UserPlus className="h-3.5 w-3.5" />
+                              )}
+                              <span>Assign Mentee</span>
                             </button>
                           )}
                         </div>
