@@ -152,10 +152,9 @@ export function StudentsPage() {
       await queryClient.cancelQueries({ queryKey: ["adminStudentsList"] });
       const previousQueries = queryClient.getQueriesData({ queryKey: ["adminStudentsList"] });
 
-      queryClient.setQueriesData({ queryKey: ["adminStudentsList"] }, (old: any, query: any) => {
+      queryClient.setQueriesData({ queryKey: ["adminStudentsList"] }, (old: any) => {
         if (!old || !old.students) return old;
-        const currentFilter = query?.queryKey?.[3] || filter;
-        if (currentFilter === "my-mentees") {
+        if (filter === "my-mentees") {
           return {
             ...old,
             students: old.students.filter((s: any) => s._id !== studentId),
@@ -180,10 +179,9 @@ export function StudentsPage() {
     },
     onSuccess: (res, studentId) => {
       toast.success(res.message || "Mentee removed successfully");
-      queryClient.setQueriesData({ queryKey: ["adminStudentsList"] }, (old: any, query: any) => {
+      queryClient.setQueriesData({ queryKey: ["adminStudentsList"] }, (old: any) => {
         if (!old || !old.students) return old;
-        const currentFilter = query?.queryKey?.[3] || filter;
-        if (currentFilter === "my-mentees") {
+        if (filter === "my-mentees") {
           return {
             ...old,
             students: old.students.filter((s: any) => s._id !== studentId),
