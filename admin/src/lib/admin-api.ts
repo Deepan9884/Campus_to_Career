@@ -115,8 +115,13 @@ export async function sendStudentFeedback(
   return api.post<{ message: string; notification: any }>(`/admin/students/${studentId}/feedback`, payload);
 }
 
-export async function addMentee(studentEmail: string): Promise<{ message: string; student: any }> {
-  return api.post<{ message: string; student: any }>("/admin/mentees", { studentEmail });
+export async function addMentee(emailOrId: string): Promise<{ message: string; student: any }> {
+  return api.post<{ message: string; student: any }>("/admin/mentees", {
+    studentEmail: emailOrId,
+    email: emailOrId,
+    studentId: emailOrId,
+    query: emailOrId,
+  });
 }
 
 export async function removeMentee(studentId: string): Promise<{ message: string }> {
