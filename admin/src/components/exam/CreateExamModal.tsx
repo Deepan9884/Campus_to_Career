@@ -61,6 +61,7 @@ import {
   type StudentSummary,
 } from "../../lib/admin-api";
 import { QuestionPaperPreviewModal } from "./QuestionPaperPreviewModal";
+import { formatMathText } from "../../lib/formatMathText";
 
 interface CreateExamModalProps {
   open: boolean;
@@ -575,8 +576,16 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
         count
       );
 
+      const sanitized = generated.map((q) => ({
+        ...q,
+        question: formatMathText(q.question),
+        options: (q.options || []).map((o) => formatMathText(o)),
+        correctAnswer: formatMathText(q.correctAnswer),
+        explanation: formatMathText(q.explanation),
+      }));
+
       const updated = [...sections];
-      updated[secIdx].mcqQuestions = generated;
+      updated[secIdx].mcqQuestions = sanitized;
       setSections(updated);
       toast.success(`Generated ${generated.length} MCQs for "${sec.title}"! Review questions below.`, { id: "ai-mcq-gen" });
     } catch (err: any) {
@@ -631,7 +640,14 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
       }
 
       if (resData.questions && resData.questions.length > 0) {
-        setExtractedDocResult(resData.questions);
+        const sanitized = resData.questions.map((q: any) => ({
+          ...q,
+          question: formatMathText(q.question),
+          options: (q.options || []).map((o: string) => formatMathText(o)),
+          correctAnswer: formatMathText(q.correctAnswer),
+          explanation: formatMathText(q.explanation),
+        }));
+        setExtractedDocResult(sanitized);
         toast.success(`Successfully extracted ${resData.questions.length} questions! Review and apply below.`, { id: "doc-extract" });
       } else {
         toast.error("No questions could be extracted. Please check the document format.", { id: "doc-extract" });
@@ -675,19 +691,27 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
     setParsingSlotKey(key);
     try {
       const parsedProblem = await parseCodingLink(url);
+      const sanitizedProblem = {
+        ...parsedProblem,
+        title: formatMathText(parsedProblem.title || ""),
+        problemStatement: formatMathText(parsedProblem.problemStatement || ""),
+        constraints: Array.isArray(parsedProblem.constraints)
+          ? parsedProblem.constraints.map((c: string) => formatMathText(c))
+          : parsedProblem.constraints,
+      };
 
       const updated = [...sections];
       const currentQuestions = [...(updated[secIdx].codingQuestions || [])];
 
       if (slotIdx < currentQuestions.length) {
-        currentQuestions[slotIdx] = parsedProblem;
+        currentQuestions[slotIdx] = sanitizedProblem;
       } else {
-        currentQuestions.push(parsedProblem);
+        currentQuestions.push(sanitizedProblem);
       }
 
       updated[secIdx].codingQuestions = currentQuestions;
       setSections(updated);
-      toast.success(`Challenge #${slotIdx + 1} imported: "${parsedProblem.title}" with test cases!`);
+      toast.success(`Challenge #${slotIdx + 1} imported: "${sanitizedProblem.title}" with test cases!`);
     } catch (err: any) {
       toast.error(err.message || `Failed to parse link for Challenge #${slotIdx + 1}`);
     } finally {
@@ -703,19 +727,27 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
     try {
       const topic = sec.topics.length > slotIdx ? sec.topics[slotIdx] : sec.topics[0] || "Algorithms";
       const generated = await generateAiCoding(topic, sec.difficulty as any);
+      const sanitizedGenerated = {
+        ...generated,
+        title: formatMathText(generated.title || ""),
+        problemStatement: formatMathText(generated.problemStatement || ""),
+        constraints: Array.isArray(generated.constraints)
+          ? generated.constraints.map((c: string) => formatMathText(c))
+          : generated.constraints,
+      };
 
       const updated = [...sections];
       const currentQuestions = [...(updated[secIdx].codingQuestions || [])];
 
       if (slotIdx < currentQuestions.length) {
-        currentQuestions[slotIdx] = generated;
+        currentQuestions[slotIdx] = sanitizedGenerated;
       } else {
-        currentQuestions.push(generated);
+        currentQuestions.push(sanitizedGenerated);
       }
 
       updated[secIdx].codingQuestions = currentQuestions;
       setSections(updated);
-      toast.success(`Generated Challenge #${slotIdx + 1}: "${generated.title}"!`);
+      toast.success(`Generated Challenge #${slotIdx + 1}: "${sanitizedGenerated.title}"!`);
     } catch (err: any) {
       toast.error(err.message || "Failed to generate AI coding challenge");
     } finally {
@@ -1782,7 +1814,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                                             {qIdx + 1}
                                           </span>
                                           <p className="text-xs font-bold text-slate-900 dark:text-white leading-relaxed">
-                                            {q.question}
+                                            {formatMathText(q.question)}
                                           </p>
                                         </div>
 
@@ -1816,7 +1848,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                                               }`}
                                             >
                                               <span className="truncate">
-                                                {String.fromCharCode(65 + oIdx)}. {opt}
+                                                {String.fromCharCode(65 + oIdx)}. {formatMathText(opt)}
                                               </span>
                                               {isCorrect && (
                                                 <span className="text-[9px] uppercase font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 px-1.5 py-0.2 rounded shrink-0">
@@ -1831,7 +1863,7 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                                       {/* Explanation */}
                                       {q.explanation && (
                                         <p className="text-[10px] text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800/80 leading-relaxed">
-                                          <strong className="text-indigo-600 dark:text-indigo-400">Explanation:</strong> {q.explanation}
+                                          <strong className="text-indigo-600 dark:text-indigo-400">Explanation:</strong> {formatMathText(q.explanation)}
                                         </p>
                                       )}
                                     </div>

@@ -1,3 +1,4 @@
+import { formatMathText } from "../../lib/formatMathText";
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -226,7 +227,7 @@ export function QuestionPaperPreviewModal({
                         </span>
                         <div className="space-y-2">
                           <p className="font-bold text-slate-900 dark:text-white text-sm whitespace-pre-wrap leading-relaxed">
-                            {q.question}
+                            {formatMathText(q.question)}
                           </p>
                           {q.imageUrl && (
                             <div className="mt-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 inline-block max-w-md">
@@ -277,7 +278,7 @@ export function QuestionPaperPreviewModal({
                                 {optionLabels[oIdx] || oIdx + 1}
                               </span>
                               <span className="truncate font-medium text-xs">
-                                {opt}
+                                {formatMathText(opt)}
                               </span>
                             </div>
                             {isCorrect && (
@@ -297,7 +298,7 @@ export function QuestionPaperPreviewModal({
                           <Sparkles className="h-3 w-3 text-indigo-600 dark:text-indigo-400" /> Faculty Technical Explanation
                         </span>
                         <p className="text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
-                          {q.explanation}
+                          {formatMathText(q.explanation)}
                         </p>
                       </div>
                     )}
@@ -328,7 +329,7 @@ export function QuestionPaperPreviewModal({
                         </span>
                         <div>
                           <h3 className="font-extrabold text-slate-900 dark:text-white text-sm">
-                            {code.title}
+                            {formatMathText(code.title)}
                           </h3>
                           <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                             Category: {code.category || "Algorithms"}
@@ -352,7 +353,7 @@ export function QuestionPaperPreviewModal({
                         Problem Statement
                       </span>
                       <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 leading-relaxed font-sans text-xs whitespace-pre-wrap">
-                        {code.problemStatement}
+                        {formatMathText(code.problemStatement)}
                       </div>
                     </div>
 
@@ -384,7 +385,7 @@ export function QuestionPaperPreviewModal({
                         </span>
                         <ul className="list-disc list-inside space-y-0.5 text-slate-700 dark:text-slate-300 font-mono text-[11px]">
                           {code.constraints.map((con, i) => (
-                            <li key={i}>{con}</li>
+                            <li key={i}>{formatMathText(con)}</li>
                           ))}
                         </ul>
                       </div>
