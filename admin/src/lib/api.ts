@@ -34,6 +34,19 @@ export class ApiError extends Error {
 
 let refreshing: Promise<void> | null = null;
 
+/** Whether current page is an active exam monitoring route (admin side) */
+function isActiveExamRoute(): boolean {
+  if (typeof window === "undefined") return false;
+  const p = window.location.pathname;
+  return (
+    p.includes("/exam") ||
+    p.includes("/test") ||
+    p.includes("/monitor") ||
+    p.includes("/proctoring") ||
+    p.includes("/assessment")
+  );
+}
+
 export async function tryAdminRefresh(): Promise<void> {
   if (refreshing) return refreshing;
   refreshing = (async () => {
@@ -44,7 +57,11 @@ export async function tryAdminRefresh(): Promise<void> {
     });
     if (!res.ok) {
       setAccessToken(null);
-      throw new ApiError(401, "Admin session expired");
+      // Don't throw during active exam monitoring — just clear token silently
+      if (!isActiveExamRoute()) {
+        throw new ApiError(401, "Admin session expired");
+      }
+      return;
     }
     const json = await res.json();
     setAccessToken(json.data?.accessToken || null);
@@ -82,7 +99,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       res = await fetch(url, { ...options, headers, credentials: "include" });
     } catch {
       setAccessToken(null);
-      throw new ApiError(401, "Admin session expired");
+      // During active exam monitoring, suppress the forced logout
+      if (!isActiveExamRoute()) {
+        throw new ApiError(401, "Admin session expired");
+      }
     }
   }
 
