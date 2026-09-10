@@ -515,7 +515,11 @@ export function ExhaustiveTestBuilderModal({
                     <input
                       type="checkbox"
                       checked={webcamRequired}
-                      onChange={(e) => setWebcamRequired(e.target.checked)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setWebcamRequired(checked);
+                        if (!checked) setAiFaceDetection(false);
+                      }}
                       className="w-4 h-4 rounded text-rose-500 focus:ring-rose-400"
                     />
                   </label>
@@ -533,14 +537,15 @@ export function ExhaustiveTestBuilderModal({
                     />
                   </label>
 
-                  <label className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-700">
+                  <label className={`p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-700 ${!webcamRequired ? "opacity-50 pointer-events-none" : ""}`}>
                     <div className="space-y-0.5 pr-2">
                       <p className="font-bold text-white">AI Multi-Face & Object Detection</p>
                       <p className="text-[11px] text-slate-400">Detects mobile phones and secondary persons</p>
                     </div>
                     <input
                       type="checkbox"
-                      checked={aiFaceDetection}
+                      disabled={!webcamRequired}
+                      checked={aiFaceDetection && webcamRequired}
                       onChange={(e) => setAiFaceDetection(e.target.checked)}
                       className="w-4 h-4 rounded text-rose-500 focus:ring-rose-400"
                     />
@@ -558,6 +563,24 @@ export function ExhaustiveTestBuilderModal({
                       className="w-4 h-4 rounded text-rose-500 focus:ring-rose-400"
                     />
                   </label>
+
+                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                    <div className="space-y-0.5 pr-2">
+                      <p className="font-bold text-white">Tab Switch Strike Limit</p>
+                      <p className="text-[11px] text-slate-400">Max tab switches before disqualification</p>
+                    </div>
+                    <select
+                      value={tabSwitchLimit}
+                      onChange={(e) => setTabSwitchLimit(Number(e.target.value))}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-bold text-white cursor-pointer"
+                    >
+                      <option value={1}>1 Strike (Strict)</option>
+                      <option value={2}>2 Strikes</option>
+                      <option value={3}>3 Strikes (Standard)</option>
+                      <option value={5}>5 Strikes (Lenient)</option>
+                      <option value={999}>Unlimited</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>

@@ -29,6 +29,50 @@ interface QuestionPaperPreviewModalProps {
   exam: ExamItem | null;
 }
 
+// Helper to adapt LeetCode parameter inputs (e.g. nums = [1, 1, 2]) into standard stdin (1 1 2)
+function cleanStdinInput(raw: any): string {
+  if (!raw) return "";
+  let str = String(raw).trim();
+  str = str.replace(/^(?:Input\s*:\s*)+/i, "").trim();
+  const varRegex = /(?:^|,|\n)\s*([a-zA-Z_]\w*)\s*=\s*(\[[^\]]*\]|'[^']*'|"[^"]*"|[^,\n]+)/g;
+  const matches = [...str.matchAll(varRegex)];
+  if (matches.length > 0) {
+    const parts: string[] = [];
+    for (const m of matches) {
+      const val = m[2].trim();
+      if (val.startsWith("[") && val.endsWith("]")) {
+        const inner = val.slice(1, -1).trim();
+        const items = inner.length > 0
+          ? inner.split(",").map((x) => x.trim().replace(/^['"]|['"]$/g, "")).filter(Boolean)
+          : [];
+        parts.push(items.join(" "));
+      } else {
+        parts.push(val.replace(/^['"]|['"]$/g, ""));
+      }
+    }
+    return parts.join("\n");
+  }
+  if (str.startsWith("[") && str.endsWith("]")) {
+    const inner = str.slice(1, -1).trim();
+    const items = inner.length > 0
+      ? inner.split(",").map((x) => x.trim().replace(/^['"]|['"]$/g, "")).filter(Boolean)
+      : [];
+    return items.join(" ");
+  }
+  return String(raw).trim();
+}
+
+// Helper to sanitize expected output strings (e.g. "2, nums = [1,2,_]" -> "2")
+function cleanExpectedOutput(raw: any): string {
+  if (!raw) return "";
+  let str = String(raw).trim();
+  str = str.replace(/^(?:Output\s*:\s*)+/i, "").trim();
+  str = str.replace(/,\s*[a-zA-Z_]\w*\s*=\s*\[[^\]]*\]/gi, "").trim();
+  str = str.replace(/,\s*[a-zA-Z_]\w*\s*=\s*[^,\n\r]+/gi, "").trim();
+  str = str.replace(/,\s*(?:where|with|hence|and)\b.*$/gi, "").trim();
+  return str;
+}
+
 export function QuestionPaperPreviewModal({
   open,
   onClose,
@@ -413,10 +457,10 @@ export function QuestionPaperPreviewModal({
                                   #{tcIdx + 1}
                                 </td>
                                 <td className="py-2.5 px-3 text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
-                                  {tc.input || "<empty>"}
+                                  {cleanStdinInput(tc.input) || "<empty>"}
                                 </td>
                                 <td className="py-2.5 px-3 text-emerald-600 dark:text-emerald-400 whitespace-pre-wrap font-bold">
-                                  {tc.expectedOutput}
+                                  {cleanExpectedOutput(tc.expectedOutput)}
                                 </td>
                                 <td className="py-2.5 px-3 text-right font-sans">
                                   {tc.isHidden ? (

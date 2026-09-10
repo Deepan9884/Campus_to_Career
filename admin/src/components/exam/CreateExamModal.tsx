@@ -2361,42 +2361,90 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                         <label className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer shadow-xs">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">Fullscreen Mode Required</span>
+                          <div className="space-y-0.5 pr-2">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block">Fullscreen Mode Required</span>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">Lock into fullscreen; blocks test viewing or coding outside fullscreen.</p>
+                          </div>
                           <input
                             type="checkbox"
                             checked={fullscreenEnforced}
                             onChange={(e) => setFullscreenEnforced(e.target.checked)}
-                            className="accent-indigo-600 w-4 h-4 cursor-pointer"
+                            className="accent-indigo-600 w-4 h-4 cursor-pointer shrink-0"
                           />
                         </label>
 
                         <label className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer shadow-xs">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">Webcam Monitoring</span>
+                          <div className="space-y-0.5 pr-2">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block">Webcam Monitoring</span>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">Requires live video stream preview of candidate.</p>
+                          </div>
                           <input
                             type="checkbox"
                             checked={webcamRequired}
-                            onChange={(e) => setWebcamRequired(e.target.checked)}
-                            className="accent-indigo-600 w-4 h-4 cursor-pointer"
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setWebcamRequired(checked);
+                              if (!checked) setAiFaceDetection(false);
+                            }}
+                            className="accent-indigo-600 w-4 h-4 cursor-pointer shrink-0"
+                          />
+                        </label>
+
+                        <label className={`p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer shadow-xs ${!webcamRequired ? "opacity-50 pointer-events-none" : ""}`}>
+                          <div className="space-y-0.5 pr-2">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block">AI Face & Phone Detection</span>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">Detects multiple persons, absent face, or phones via camera.</p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            disabled={!webcamRequired}
+                            checked={aiFaceDetection && webcamRequired}
+                            onChange={(e) => setAiFaceDetection(e.target.checked)}
+                            className="accent-indigo-600 w-4 h-4 cursor-pointer shrink-0"
                           />
                         </label>
 
                         <label className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer shadow-xs">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">Disable Copy/Paste & Shortcuts</span>
+                          <div className="space-y-0.5 pr-2">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block">Disable Copy/Paste & Shortcuts</span>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">Blocks copy/paste without triggering browser permission popups.</p>
+                          </div>
                           <input
                             type="checkbox"
                             checked={copyPasteDisabled}
                             onChange={(e) => setCopyPasteDisabled(e.target.checked)}
-                            className="accent-indigo-600 w-4 h-4 cursor-pointer"
+                            className="accent-indigo-600 w-4 h-4 cursor-pointer shrink-0"
                           />
                         </label>
 
+                        <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+                          <div className="space-y-0.5 pr-2">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block">Tab Switch Strike Limit</span>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">Max tab/window switches before disqualification.</p>
+                          </div>
+                          <select
+                            value={tabSwitchLimit}
+                            onChange={(e) => setTabSwitchLimit(Number(e.target.value))}
+                            className="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white cursor-pointer"
+                          >
+                            <option value={1}>1 Strike (Strict)</option>
+                            <option value={2}>2 Strikes</option>
+                            <option value={3}>3 Strikes (Standard)</option>
+                            <option value={5}>5 Strikes (Lenient)</option>
+                            <option value={999}>Unlimited</option>
+                          </select>
+                        </div>
+
                         <label className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer shadow-xs">
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">Permit Retakes</span>
+                          <div className="space-y-0.5 pr-2">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block">Permit Retakes</span>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">Allow candidates to re-attempt assessment if failed.</p>
+                          </div>
                           <input
                             type="checkbox"
                             checked={allowRetakes}
                             onChange={(e) => setAllowRetakes(e.target.checked)}
-                            className="accent-indigo-600 w-4 h-4 cursor-pointer"
+                            className="accent-indigo-600 w-4 h-4 cursor-pointer shrink-0"
                           />
                         </label>
                       </div>
