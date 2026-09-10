@@ -226,9 +226,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
               </>
             ) : (
               <div className="flex flex-col items-center w-full gap-3">
-                <div className="h-9 w-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
-                  <GraduationCap className="h-5 w-5" />
-                </div>
+                <img
+                  src="/logo-icon.png"
+                  alt="Campus to Career"
+                  className="h-8 w-8 object-contain drop-shadow-xs transition-transform hover:scale-105 cursor-pointer"
+                  onClick={toggleSidebar}
+                  title="Expand sidebar"
+                />
                 <button
                   onClick={toggleSidebar}
                   className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
