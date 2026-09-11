@@ -141,128 +141,141 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
   };
 
   return (
-    <div className="dark min-h-screen bg-[#07090e] text-slate-100 flex flex-col justify-center selection:bg-indigo-500 selection:text-white font-sans">
-      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen">
-        
-        {/* Left Panel - Branding & Telemetry Overview (Desktop Only) */}
-        <div className="hidden lg:flex lg:col-span-6 xl:col-span-7 relative bg-slate-900/60 border-r border-slate-800/80 p-12 flex-col justify-between overflow-hidden">
-          {/* Subtle Ambient Glow & Grid Background */}
-          <div className="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
-          <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-600/15 blur-[120px] pointer-events-none" />
-          <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-violet-600/15 blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col justify-center selection:bg-indigo-600 selection:text-white font-sans relative overflow-hidden">
+      {/* Soft Ambient Light Glow & Subtle Dot Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(#CBD5E1_1px,transparent_1px)] [background-size:24px_24px] opacity-50 pointer-events-none" />
+      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-200/50 blur-[130px] pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-blue-200/40 blur-[130px] pointer-events-none" />
 
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen relative z-10">
+        
+        {/* Left Panel - Branding & Institutional Telemetry Showcase (Desktop Only) */}
+        <div className="hidden lg:flex lg:col-span-6 xl:col-span-7 relative bg-white/75 backdrop-blur-xl border-r border-slate-200/90 p-12 xl:p-16 flex-col justify-between overflow-hidden">
           {/* Top Brand Header */}
-          <div className="relative z-10 flex items-center gap-3">
-            <img src="/logo-dark.png" alt="Campus to Career AI" className="h-28 md:h-32 w-auto max-w-[380px] object-contain drop-shadow-xl" />
-            <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-semibold shrink-0">
-              Mentor Workspace
+          <div className="relative z-10 flex items-center justify-between gap-4">
+            <img
+              src="/logo.png"
+              alt="Campus to Career AI"
+              className="h-14 xl:h-16 w-auto max-w-[280px] object-contain drop-shadow-xs"
+            />
+            <span className="text-xs px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-bold shrink-0 tracking-wide">
+              Faculty & Mentor Workspace
             </span>
           </div>
 
           {/* Hero Branding Content */}
-          <div className="relative z-10 max-w-lg space-y-8 my-auto py-12">
+          <div className="relative z-10 max-w-xl space-y-8 my-auto py-12">
             <div className="space-y-3">
-              <h1 className="text-3xl xl:text-4xl font-bold tracking-tight text-white leading-tight">
-                Student placement & career telemetry.
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                Enterprise Placement Operations
+              </div>
+              <h1 className="text-3xl xl:text-4xl font-black tracking-tight text-slate-900 leading-tight">
+                Student placement benchmarks & cohort telemetry.
               </h1>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Monitor student skill gaps, coding activity, ATS resumes, and mock interviews.
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Monitor student skill deficiencies, competitive coding performance, ATS resume scores, and multi-round AI voice interview audits from one unified command center.
               </p>
             </div>
 
             {/* Live Metrics Card Preview */}
-            <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-4 shadow-2xl backdrop-blur-md">
-              <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                <span className="text-xs font-semibold text-slate-200 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 space-y-5 shadow-xl shadow-slate-200/50">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
                   Live Cohort Telemetry
                 </span>
-                <span className="text-[11px] font-normal text-slate-400">Updated just now</span>
+                <span className="text-[11px] font-medium text-slate-400">Updated Real-Time</span>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
-                  <div className="flex items-center gap-1.5 text-slate-400 text-xs font-medium mb-1">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold mb-1">
+                    <TrendingUp className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                     <span>Placement</span>
                   </div>
-                  <p className="text-xl font-bold tracking-tight text-white font-sans">94.8%</p>
+                  <p className="text-2xl font-black tracking-tight text-slate-900 font-sans">94.8%</p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
-                  <div className="flex items-center gap-1.5 text-slate-400 text-xs font-medium mb-1">
-                    <Users className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
-                    <span>Students</span>
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold mb-1">
+                    <Users className="h-3.5 w-3.5 text-indigo-600 shrink-0" />
+                    <span>Candidates</span>
                   </div>
-                  <p className="text-xl font-bold tracking-tight text-white font-sans">1,240</p>
+                  <p className="text-2xl font-black tracking-tight text-slate-900 font-sans">1,240</p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
-                  <div className="flex items-center gap-1.5 text-slate-400 text-xs font-medium mb-1">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-purple-400 shrink-0" />
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold mb-1">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-purple-600 shrink-0" />
                     <span>Audits</span>
                   </div>
-                  <p className="text-xl font-bold tracking-tight text-white font-sans">18.4k</p>
+                  <p className="text-2xl font-black tracking-tight text-slate-900 font-sans">18.4k</p>
+                </div>
+              </div>
+
+              {/* Executive Feature Highlights */}
+              <div className="grid grid-cols-2 gap-2 pt-1 text-xs text-slate-600 font-medium">
+                <div className="flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                  <span>AI Diagnostic Interventions</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  <span>Live Proctoring Radar</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                  <span>Super Dream Cutoff Engine</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                  <span>Master CSV Cohort Export</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Footer Metadata */}
-          <div className="relative z-10 flex items-center justify-between text-xs text-slate-400 pt-6 border-t border-slate-800/60">
-            <span className="flex items-center gap-1.5">
-              <Shield className="h-3.5 w-3.5 text-emerald-400" /> Enterprise RBAC Protected
+          <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 pt-6 border-t border-slate-200/80">
+            <span className="flex items-center gap-1.5 font-medium">
+              <Shield className="h-3.5 w-3.5 text-emerald-600" /> Institutional RBAC Protected
             </span>
-            <span>Campus to Career Portal v2.4</span>
+            <span className="font-semibold text-slate-400">Campus to Career AI v2.4</span>
           </div>
         </div>
 
-        {/* Right Panel - Login Form */}
+        {/* Right Panel - Executive Light Theme Sign-In Form */}
         <div className="lg:col-span-6 xl:col-span-5 flex items-center justify-center p-6 md:p-12">
-          <div className="w-full max-w-md space-y-7">
+          <div className="w-full max-w-md space-y-6">
             
             {/* Mobile Header Brand Icon */}
-            <div className="lg:hidden flex items-center gap-3 mb-2">
-              <img src="/logo-dark.png" alt="Campus to Career AI" className="h-10 w-auto max-w-[200px] object-contain" />
+            <div className="lg:hidden flex items-center justify-center gap-3 mb-2">
+              <img src="/logo.png" alt="Campus to Career AI" className="h-12 w-auto max-w-[240px] object-contain" />
             </div>
 
-            {/* Premium Login Card (Dark Theme Liquid Glass) */}
-            <div className="rounded-3xl p-8 space-y-6 relative overflow-hidden bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-2xl text-white">
-              {/* Decorative corner glow */}
-              <div
-                className="absolute top-0 right-0 w-48 h-32 pointer-events-none opacity-25"
-                style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
-              />
-
+            {/* Executive Light Theme Login Card */}
+            <div className="rounded-3xl p-8 sm:p-10 space-y-6 relative overflow-hidden bg-white border border-slate-200/90 shadow-xl shadow-slate-200/60 text-slate-900">
+              
               {/* Section Heading */}
               <div className="space-y-1.5 relative z-10">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[11px] font-black uppercase tracking-wider text-indigo-300 bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full shadow-sm">
-                    Mentor Portal Access
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-3 py-1 rounded-full shadow-xs">
+                    Faculty & Mentor Portal
                   </span>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white">
-                  <span
-                    className="bg-gradient-to-r from-violet-400 via-pink-400 to-amber-300 bg-clip-text font-black"
-                    style={{
-                      backgroundImage: "linear-gradient(135deg, #A78BFA 0%, #F9A8D4 50%, #FDE68A 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                    }}
-                  >
-                    Sign in
-                  </span>{" "}
-                  <span>to workspace</span>
+                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+                  Sign in to workspace
                 </h2>
-                <p className="text-slate-400 text-xs">
-                  Enter your credentials to access the mentor portal.
+                <p className="text-slate-500 text-xs leading-relaxed">
+                  Enter your institutional credentials to manage student placement telemetry.
                 </p>
               </div>
 
               {/* Login Form */}
               <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300">
+                  <label className="block text-xs font-bold text-slate-700">
                     Email Address
                   </label>
                   <div className="relative">
@@ -273,20 +286,20 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="mentor@campustocareer.ai"
                       required
-                      className="w-full bg-slate-950/80 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none placeholder:text-slate-500 transition"
+                      className="w-full bg-slate-50/80 border border-slate-200 focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 text-slate-900 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none placeholder:text-slate-400 transition"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-semibold text-slate-300">
+                    <label className="block text-xs font-bold text-slate-700">
                       Password
                     </label>
                     <button
                       type="button"
                       onClick={() => toast.info("Contact your campus system administrator to reset credentials.")}
-                      className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition cursor-pointer"
+                      className="text-xs text-indigo-600 hover:text-indigo-700 font-semibold transition cursor-pointer"
                     >
                       Forgot password?
                     </button>
@@ -299,12 +312,13 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
                       required
-                      className="w-full bg-slate-950/80 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white rounded-xl pl-10 pr-10 py-2.5 text-sm outline-none placeholder:text-slate-500 transition"
+                      className="w-full bg-slate-50/80 border border-slate-200 focus:border-indigo-600 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 text-slate-900 rounded-xl pl-10 pr-10 py-2.5 text-sm outline-none placeholder:text-slate-400 transition"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-3 text-slate-400 hover:text-white transition cursor-pointer"
+                      className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-700 transition cursor-pointer"
+                      title={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -313,12 +327,12 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
 
                 {/* Remember Me Checkbox */}
                 <div className="flex items-center justify-between pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-400 hover:text-slate-300">
+                  <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-600 hover:text-slate-800">
                     <input
                       type="checkbox"
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
-                      className="h-4 w-4 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                      className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                     />
                     <span>Keep me signed in for 30 days</span>
                   </label>
@@ -328,7 +342,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full btn-gradient text-white font-bold text-sm py-3 rounded-xl shadow-lg shadow-indigo-500/30 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer hover:scale-[1.02]"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-sm py-3 rounded-xl shadow-md shadow-indigo-500/20 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer hover:scale-[1.01]"
                 >
                   {loading ? (
                     <>
@@ -347,10 +361,10 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
               {/* Divider */}
               <div className="relative my-1 z-10">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-800" />
+                  <div className="w-full border-t border-slate-200" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-slate-900 px-3 text-slate-400">
+                  <span className="bg-white px-3 text-slate-400 font-medium">
                     Or continue with
                   </span>
                 </div>
@@ -362,7 +376,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={loading || googleLoading}
-                  className="w-full bg-slate-950/70 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 text-slate-200 font-medium text-xs sm:text-sm py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 min-h-[42px]"
+                  className="w-full bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold text-xs sm:text-sm py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 min-h-[42px] shadow-xs"
                 >
                   {googleLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
@@ -381,7 +395,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                   type="button"
                   onClick={handleGithubLogin}
                   disabled={loading || googleLoading}
-                  className="w-full bg-slate-950/70 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 text-slate-200 font-medium text-xs sm:text-sm py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 min-h-[42px]"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 min-h-[42px] shadow-xs"
                 >
                   <svg className="w-4 h-4 shrink-0 fill-current text-white" viewBox="0 0 24 24">
                     <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
@@ -391,10 +405,10 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
               </div>
 
               {/* Cross-Link to Student Portal */}
-              <div className="pt-2 text-center relative z-10 border-t border-slate-800">
+              <div className="pt-2 text-center relative z-10 border-t border-slate-100">
                 <a
                   href={import.meta.env.VITE_STUDENT_APP_URL || "http://localhost:5173"}
-                  className="text-xs text-indigo-400 hover:text-indigo-300 inline-flex items-center gap-1.5 font-semibold transition"
+                  className="text-xs text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1.5 font-bold transition"
                 >
                   <ArrowRight className="h-3.5 w-3.5 rotate-180" />
                   <span>Go to Student Portal</span>

@@ -299,7 +299,7 @@ export function OverviewPage() {
       </div>
 
       {/* Hiring Readiness & Placement Funnel Hub */}
-      <div className="elite-panel relative p-6 sm:p-7 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
+      <div data-tour="readiness-funnel" className="elite-panel relative p-6 sm:p-7 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
         <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2.5 flex-wrap">
@@ -411,7 +411,7 @@ export function OverviewPage() {
       </div>
 
       {/* 6-Card Rich Telemetry KPI Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
+      <div data-tour="kpi-grid" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
         {/* KPI 1: Assigned Mentees */}
         <div className="kpi-card kpi-card-violet space-y-3">
           <div className="flex items-center justify-between">
@@ -519,7 +519,7 @@ export function OverviewPage() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Left Column: Skill Deficiency Heatmap */}
         <div className="space-y-6 lg:col-span-1">
-          <div className="elite-panel rounded-2xl p-6 space-y-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
+          <div data-tour="skill-heatmap" className="elite-panel rounded-2xl p-6 space-y-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
               <div>
                 <h3 className="text-sm font-extrabold text-slate-900 dark:text-[var(--foreground)] flex items-center gap-2">
@@ -597,7 +597,7 @@ export function OverviewPage() {
 
         {/* Right Column: Mentees Readiness Directory */}
         <div className="space-y-6 lg:col-span-2">
-          <div className="elite-panel rounded-2xl p-6 space-y-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
+          <div data-tour="mentee-directory" className="elite-panel rounded-2xl p-6 space-y-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
             {/* Directory Header & In-page Filter Toolbar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
               <div>

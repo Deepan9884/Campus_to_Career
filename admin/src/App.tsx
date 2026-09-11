@@ -163,13 +163,13 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
   }, []);
 
   const navItems = [
-    { label: "Overview", href: "/", icon: LayoutDashboard },
-    { label: "Exams & Assessments", href: "/exams", icon: FileCode },
-    { label: "Results & Disclosures", href: "/results", icon: Award },
-    { label: "Student Roster", href: "/students", icon: Users },
-    { label: "Super Dream Track", href: "/super-dream", icon: Crown },
-    { label: "Cohort Analytics", href: "/analytics", icon: BarChart3 },
-    { label: "Settings", href: "/settings", icon: Settings },
+    { label: "Overview", href: "/", icon: LayoutDashboard, dataTour: "nav-overview" },
+    { label: "Exams & Assessments", href: "/exams", icon: FileCode, dataTour: "nav-exams" },
+    { label: "Results & Disclosures", href: "/results", icon: Award, dataTour: "nav-results" },
+    { label: "Student Roster", href: "/students", icon: Users, dataTour: "nav-students" },
+    { label: "Super Dream Track", href: "/super-dream", icon: Crown, dataTour: "nav-superdream" },
+    { label: "Cohort Analytics", href: "/analytics", icon: BarChart3, dataTour: "nav-analytics" },
+    { label: "Settings", href: "/settings", icon: Settings, dataTour: "nav-settings" },
   ];
 
   return (
@@ -247,6 +247,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
           {/* Quick Search & Command Hub Trigger Button */}
           {!sidebarCollapsed ? (
             <button
+              data-tour="command-palette-btn"
               onClick={() => setCommandPaletteOpen(true)}
               className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-100/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-indigo-300 dark:hover:border-indigo-500/40 hover:bg-white dark:hover:bg-slate-900 transition text-xs shadow-xs cursor-pointer"
             >
@@ -260,6 +261,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
             </button>
           ) : (
             <button
+              data-tour="command-palette-btn"
               onClick={() => setCommandPaletteOpen(true)}
               title="Command Hub (Cmd+K)"
               className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400 flex items-center justify-center hover:scale-105 hover:border-indigo-400 transition cursor-pointer shadow-xs"
@@ -279,13 +281,14 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                 <Link
                   key={item.href}
                   to={item.href}
+                  data-tour={item.dataTour}
                   onClick={() => setMobileOpen(false)}
                   title={sidebarCollapsed ? item.label : undefined}
                   className={`w-full rounded-xl text-xs font-bold flex items-center transition-all duration-200 group ${
                     sidebarCollapsed ? "p-2.5 justify-center" : "px-3.5 py-2.5 gap-3"
                   } ${
                     isActive
-                      ? "bg-indigo-600 dark:bg-gradient-to-r dark:from-indigo-600 dark:to-pink-600 text-white shadow-sm shadow-indigo-500/25"
+                      ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/25"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
                   }`}
                 >
@@ -309,6 +312,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                   </p>
                 </div>
                 <button
+                  data-tour="company-matcher-btn"
                   onClick={() => setCompanyMatcherOpen(true)}
                   className="w-full px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 flex items-center gap-2.5 transition text-left cursor-pointer"
                 >
@@ -316,6 +320,7 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
                   <span>Company Matcher</span>
                 </button>
                 <button
+                  data-tour="live-proctoring-btn"
                   onClick={() => setLiveProctoringOpen(true)}
                   className="w-full px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2.5 transition text-left cursor-pointer"
                 >
@@ -330,19 +335,22 @@ function MentorLayout({ onLogout }: { onLogout: () => void }) {
         {/* Sidebar Footer Actions */}
         <div className="space-y-2.5 pt-4 border-t border-slate-200 dark:border-slate-800">
           {/* Theme Switcher */}
-          {!sidebarCollapsed ? (
-            <div>
-              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 dark:text-slate-500 mb-1.5 px-1">
-                Theme Mode
-              </p>
-              <ThemeSwitcher compact={false} />
-            </div>
-          ) : (
-            <ThemeSwitcher compact={true} />
-          )}
+          <div data-tour="theme-switcher">
+            {!sidebarCollapsed ? (
+              <div>
+                <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 dark:text-slate-500 mb-1.5 px-1">
+                  Theme Mode
+                </p>
+                <ThemeSwitcher compact={false} />
+              </div>
+            ) : (
+              <ThemeSwitcher compact={true} />
+            )}
+          </div>
 
           {/* Mentor Tour Button */}
           <button
+            data-tour="mentor-tour-btn"
             onClick={() => setShowMentorTour(true)}
             title="Mentor Guide & Product Tour"
             className={`w-full rounded-xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-xs font-bold text-indigo-700 dark:text-indigo-300 flex items-center transition-all duration-200 group cursor-pointer ${
