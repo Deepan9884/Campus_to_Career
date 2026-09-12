@@ -1644,19 +1644,9 @@ const CS_SUBJECT_DETAILS: Record<string, {
           </div>
         </div>
 
-        {/* Master Toolbar & Quick Action Launchers */}
-        <div className="flex flex-wrap items-center gap-2.5 relative z-10">
-          <button
-            onClick={handleManualRefresh}
-            disabled={isRefreshing}
-            className="btn-gradient px-4 py-2.5 rounded-xl text-xs font-bold text-white transition flex items-center gap-2 shadow-lg shadow-indigo-500/25 cursor-pointer disabled:opacity-50"
-            title="Refresh from MongoDB"
-          >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
-            <span>{isRefreshing ? "Syncing..." : "Refresh Live Telemetry"}</span>
-          </button>
-
-          {selectedStudentId && (
+        {/* Quick Action Launchers */}
+        {selectedStudentId && (
+          <div className="flex flex-wrap items-center gap-2.5 relative z-10">
             <button
               onClick={() => window.print()}
               className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--glass-input-bg)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition cursor-pointer"
@@ -1664,90 +1654,8 @@ const CS_SUBJECT_DETAILS: Record<string, {
             >
               <Printer className="w-4 h-4" />
             </button>
-          )}
-
-          <button
-            onClick={() => setShowAssignMenteeModal(true)}
-            className="btn-gradient px-3.5 py-2 rounded-xl text-xs font-bold text-white transition flex items-center gap-1.5 shadow-md shadow-indigo-500/25 cursor-pointer"
-          >
-            <UserCheck className="w-3.5 h-3.5" /> Assign Mentee
-          </button>
-          <button
-            onClick={() => setShowTaskBuilderModal(true)}
-            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-500/25 cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" /> Assign Task
-          </button>
-          <button
-            onClick={() => setShowCourseCuratorModal(true)}
-            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1.5 shadow-md shadow-emerald-500/25 cursor-pointer"
-          >
-            <GraduationCap className="w-3.5 h-3.5" /> Curate Course
-          </button>
-        </div>
-      </div>
-
-      {/* 2. REAL-TIME COHORT SUMMARY KPI STRIP */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="kpi-card kpi-card-violet space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-indigo-100/80 dark:bg-violet-500/25 border border-indigo-200 dark:border-violet-500/30">
-              <Users className="h-4 w-4 text-indigo-600 dark:text-violet-300" />
-            </div>
-            <span className="text-[10px] font-extrabold text-indigo-700 dark:text-violet-300 bg-indigo-100/80 dark:bg-violet-500/20 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-violet-500/20">
-              Roster
-            </span>
           </div>
-          <div>
-            <p className="text-xs text-slate-600 dark:text-[var(--muted-foreground)] font-bold">Registered Candidates</p>
-            <p className="text-3xl font-black text-indigo-700 dark:text-violet-300 font-mono tracking-tight mt-0.5">{totalRegistered}</p>
-          </div>
-        </div>
-
-        <div className="kpi-card kpi-card-emerald space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-emerald-100/80 dark:bg-emerald-500/25 border border-emerald-200 dark:border-emerald-500/30">
-              <TrendingUp className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />
-            </div>
-            <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/20">
-              Readiness
-            </span>
-          </div>
-          <div>
-            <p className="text-xs text-slate-600 dark:text-[var(--muted-foreground)] font-bold">Cohort Avg Readiness</p>
-            <p className="text-3xl font-black text-emerald-600 dark:text-emerald-300 font-mono tracking-tight mt-0.5">{avgReadiness}%</p>
-          </div>
-        </div>
-
-        <div className="kpi-card kpi-card-amber space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-amber-100/80 dark:bg-amber-500/25 border border-amber-200 dark:border-amber-500/30">
-              <Award className="h-4 w-4 text-amber-600 dark:text-amber-300" />
-            </div>
-            <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-500/20">
-              Verified
-            </span>
-          </div>
-          <div>
-            <p className="text-xs text-slate-600 dark:text-[var(--muted-foreground)] font-bold">Verified Deliverables</p>
-            <p className="text-3xl font-black text-amber-600 dark:text-amber-300 font-mono tracking-tight mt-0.5">{totalVerifiedDeliverables}</p>
-          </div>
-        </div>
-
-        <div className="kpi-card kpi-card-pink space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-pink-100/80 dark:bg-pink-500/25 border border-pink-200 dark:border-pink-500/30">
-              <Activity className="h-4 w-4 text-pink-600 dark:text-pink-300" />
-            </div>
-            <span className="text-[10px] font-extrabold text-pink-700 dark:text-pink-300 bg-pink-100/80 dark:bg-pink-500/20 px-2 py-0.5 rounded-full border border-pink-200 dark:border-pink-500/20">
-              Live Feed
-            </span>
-          </div>
-          <div>
-            <p className="text-xs text-slate-600 dark:text-[var(--muted-foreground)] font-bold">Live Movement Feed</p>
-            <p className="text-3xl font-black text-pink-600 dark:text-pink-300 font-mono tracking-tight mt-0.5">{movements.length}</p>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* ========================================================================= */}

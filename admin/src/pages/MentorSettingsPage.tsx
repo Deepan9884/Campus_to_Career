@@ -22,9 +22,6 @@ import {
   Laptop,
   Palette,
   LayoutGrid,
-  Sliders,
-  Calendar,
-  Zap,
   FileSpreadsheet,
   BarChart2,
   AlertTriangle,
@@ -56,7 +53,7 @@ export function MentorSettingsPage() {
 
   // Settings Active Tab
   const [activeTab, setActiveTab] = useState<
-    "appearance" | "mentorship" | "notifications" | "data" | "profile" | "security"
+    "appearance" | "notifications" | "data" | "profile" | "security"
   >("appearance");
 
   // Profile Form State
@@ -157,7 +154,6 @@ export function MentorSettingsPage() {
 
   const tabs = [
     { id: "appearance", label: "Appearance & Theme", icon: Palette },
-    { id: "mentorship", label: "Mentorship & Cohort", icon: Sliders },
     { id: "notifications", label: "Notifications & Alerts", icon: Bell },
     { id: "data", label: "Data & Export", icon: FileSpreadsheet },
     { id: "profile", label: "Identity Profile", icon: UserIcon },
@@ -409,82 +405,6 @@ export function MentorSettingsPage() {
           </div>
         )}
 
-        {/* TAB 2: MENTORSHIP & COHORT RULES */}
-        {activeTab === "mentorship" && (
-          <GlassCard className="p-6 space-y-6">
-            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
-              <Sliders className="h-5 w-5 text-indigo-500" />
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">Cohort Thresholds & Office Hours</h3>
-              </div>
-            </div>
-
-            {/* At-Risk Threshold Slider */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" /> At-Risk Warning Threshold
-                </label>
-                <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-black">
-                  {mentorPreferences.atRiskThreshold}% Readiness
-                </span>
-              </div>
-              <input
-                type="range"
-                min="50"
-                max="85"
-                step="5"
-                value={mentorPreferences.atRiskThreshold}
-                onChange={(e) => {
-                  updatePreferences({ atRiskThreshold: Number(e.target.value) });
-                }}
-                className="w-full h-2 bg-slate-300 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
-              />
-            </div>
-
-            {/* Office Hours Calendly URL */}
-            <div className="pt-4 border-t border-slate-200 dark:border-white/10 space-y-2">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                1-on-1 Office Hours Link (Calendly / Meet)
-              </label>
-              <div className="relative">
-                <Calendar className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
-                <input
-                  type="url"
-                  value={mentorPreferences.officeHoursUrl}
-                  onChange={(e) => updatePreferences({ officeHoursUrl: e.target.value })}
-                  placeholder="https://calendly.com/mentor/30min"
-                  className="w-full glass-input rounded-xl pl-9 pr-3.5 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500/50"
-                />
-              </div>
-            </div>
-
-            {/* Inactivity Encouragement Automation */}
-            <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-slate-900/50">
-              <div className="space-y-0.5">
-                <p className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <Zap className="h-4 w-4 text-indigo-500" /> Auto-Encouragement Emails
-                </p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Send reminder after 3 days of inactivity
-                </p>
-              </div>
-              <input
-                type="checkbox"
-                checked={mentorPreferences.autoEncouragement}
-                onChange={(e) => {
-                  updatePreferences({ autoEncouragement: e.target.checked });
-                  toast.success(
-                    e.target.checked
-                      ? "Automated encouragement emails enabled"
-                      : "Automated encouragement emails paused"
-                  );
-                }}
-                className="h-4 w-4 rounded accent-indigo-600 cursor-pointer"
-              />
-            </div>
-          </GlassCard>
-        )}
 
         {/* TAB 3: NOTIFICATIONS & ALERTS */}
         {activeTab === "notifications" && (

@@ -231,8 +231,6 @@ export function OverviewPage() {
     if (statusFilter === "atrisk") return st.status === "At Risk" || st.overallReadiness < 45;
     return true;
   });
-
-  const urgentAtRisk = students.filter((s) => s.status === "At Risk" || s.overallReadiness < 45).slice(0, 3);
   const topPerformer = students.reduce((prev, current) =>
     (prev && prev.overallReadiness > current.overallReadiness) ? prev : current, students[0]);
 
@@ -709,23 +707,6 @@ export function OverviewPage() {
                             {student.targetRole}
                           </p>
 
-                          {/* Multi-Telemetry Stat Badges */}
-                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] mt-1.5">
-                            <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-500/12 dark:text-blue-400 dark:border-blue-500/20 font-bold">
-                              ATS: {student.resumeScore}%
-                            </span>
-                            <span className="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-500/12 dark:text-purple-400 dark:border-purple-500/20 font-bold">
-                              Mock: {student.avgInterviewScore}%
-                            </span>
-                            <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/12 dark:text-emerald-400 dark:border-emerald-500/20 font-bold">
-                              Solved: {student.totalProblemsSolved}
-                            </span>
-                            {student.verifiedEventsCount > 0 && (
-                              <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/12 dark:text-amber-400 dark:border-amber-500/20 font-bold">
-                                {student.verifiedEventsCount} Proofs
-                              </span>
-                            )}
-                          </div>
                         </div>
                       </div>
 
@@ -784,60 +765,6 @@ export function OverviewPage() {
             )}
           </div>
 
-          {/* Urgent Intervention Spotlight Card */}
-          {urgentAtRisk.length > 0 && (
-            <GlassCard className="p-5 border-rose-500/30 bg-rose-500/5 space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
-                  <AlertTriangle className="h-4 w-4 text-rose-500" /> Urgent Intervention Required ({urgentAtRisk.length})
-                </h4>
-                <span className="text-[10px] text-rose-600 dark:text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
-                  Action Recommended
-                </span>
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300">
-                These mentees are scoring below the placement threshold. Send a direct guidance note:
-              </p>
-
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 pt-1">
-                {urgentAtRisk.map((st) => (
-                  <div
-                    key={st._id}
-                    className="p-3 rounded-xl bg-white/80 dark:bg-slate-900/90 border border-rose-500/20 space-y-2 flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-slate-900 dark:text-white text-xs truncate" title={st.name}>
-                          {st.name}
-                        </span>
-                        <span className="text-[10px] font-black text-rose-600 dark:text-rose-400">
-                          {st.overallReadiness}%
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">{st.targetRole}</p>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 pt-1">
-                      <button
-                        onClick={() => setInterventionStudent(st)}
-                        className="flex-1 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-[10px] font-black text-indigo-600 dark:text-indigo-300 transition flex items-center justify-center gap-1 shadow-sm"
-                        title="AI Co-Pilot 2-Week Remedial Plan"
-                      >
-                        <Bot className="h-3 w-3 text-indigo-500" /> AI Plan
-                      </button>
-                      <button
-                        onClick={() => setTaskStudent(st)}
-                        className="flex-1 py-1.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-[10px] font-black text-purple-600 dark:text-purple-300 transition flex items-center justify-center gap-1 shadow-sm"
-                        title="Assign Specific Goal Milestone"
-                      >
-                        <ListTodo className="h-3 w-3 text-purple-500" /> Assign Goal
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-          )}
         </div>
       </div>
 
