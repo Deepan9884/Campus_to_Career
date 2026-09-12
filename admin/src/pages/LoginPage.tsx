@@ -58,24 +58,35 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen relative z-10">
         
         {/* Left Panel - Branding Showcase (Desktop Only) */}
-        <div className="hidden lg:flex lg:col-span-6 xl:col-span-7 relative bg-white/75 backdrop-blur-xl border-r border-slate-200/90 p-12 xl:p-16 flex-col justify-between overflow-hidden">
+        <div className="hidden lg:flex lg:col-span-6 xl:col-span-7 relative bg-white/75 backdrop-blur-xl border-r border-slate-200/90 p-8 xl:p-12 flex-col justify-between overflow-hidden">
           {/* Top Brand Header */}
           <div className="relative z-10 flex items-center justify-between gap-4">
             <img
               src="/logo.png"
               alt="Campus to Career AI"
-              className="h-14 xl:h-16 w-auto max-w-[280px] object-contain drop-shadow-xs"
+              className="h-12 xl:h-14 w-auto max-w-[260px] object-contain drop-shadow-xs"
             />
           </div>
 
           {/* Hero Branding Content */}
-          <div className="relative z-10 max-w-xl space-y-4 my-auto py-12">
-            <h1 className="text-3xl xl:text-4xl font-black tracking-tight text-slate-900 leading-tight">
-              Student placement benchmarks & cohort telemetry.
-            </h1>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Monitor student skill deficiencies, competitive coding performance, ATS resume scores, and multi-round AI voice interview audits from one unified command center.
-            </p>
+          <div className="relative z-10 max-w-xl space-y-5 my-auto py-6">
+            <div className="space-y-3">
+              <h1 className="text-2xl xl:text-3xl font-black tracking-tight text-slate-900 leading-tight">
+                Student placement benchmarks & cohort telemetry.
+              </h1>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Monitor student skill deficiencies, competitive coding performance, ATS resume scores, and multi-round AI voice interview audits from one unified command center.
+              </p>
+            </div>
+
+            {/* Faculty & Mentee Collaboration Illustration */}
+            <div className="relative rounded-2xl overflow-hidden border border-slate-200/80 bg-white shadow-md p-3 group">
+              <img
+                src="/teacher-mentor.png"
+                alt="Faculty Mentorship & Career Readiness"
+                className="w-full max-h-[300px] xl:max-h-[340px] object-contain rounded-xl transition-transform duration-500 group-hover:scale-[1.01]"
+              />
+            </div>
           </div>
         </div>
 
