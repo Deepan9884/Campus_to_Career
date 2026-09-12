@@ -80,11 +80,16 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
             </div>
 
             {/* Faculty & Mentee Collaboration Illustration */}
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200/80 bg-white shadow-md p-3 group">
+            <div className="relative flex items-center justify-center py-2">
               <img
                 src="/teacher-mentor.png"
                 alt="Faculty Mentorship & Career Readiness"
-                className="w-full max-h-[300px] xl:max-h-[340px] object-contain rounded-xl transition-transform duration-500 group-hover:scale-[1.01]"
+                style={{
+                  mixBlendMode: "multiply",
+                  WebkitMaskImage: "radial-gradient(ellipse 90% 90% at center, black 65%, transparent 100%)",
+                  maskImage: "radial-gradient(ellipse 90% 90% at center, black 65%, transparent 100%)",
+                }}
+                className="w-full max-h-[340px] xl:max-h-[390px] object-contain pointer-events-none select-none transition-transform duration-500 hover:scale-[1.01]"
               />
             </div>
           </div>
