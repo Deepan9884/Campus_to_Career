@@ -1618,7 +1618,7 @@ const CS_SUBJECT_DETAILS: Record<string, {
       <div className="elite-panel hero-card-shimmer relative rounded-3xl p-6 overflow-hidden flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div
           className="absolute top-0 right-0 w-72 h-32 pointer-events-none opacity-20"
-          style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
+          style={{ background: "radial-gradient(ellipse at top right, rgba(99,102,241,0.12), transparent 70%)" }}
         />
         <div className="flex items-start sm:items-center gap-4 relative z-10">
           <div className="w-16 h-16 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 p-2 grid place-items-center shadow-lg shrink-0 ring-2 ring-indigo-500/20">
@@ -1718,7 +1718,7 @@ const CS_SUBJECT_DETAILS: Record<string, {
                 <div className="flex items-center justify-center gap-3 pt-2">
                   <button
                     onClick={() => setShowAssignMenteeModal(true)}
-                    className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-sm shadow-indigo-500/25 flex items-center gap-1.5 cursor-pointer active:scale-95 transition"
                   >
                     <UserPlus className="w-3.5 h-3.5" />
                     <span>Assign Mentee to Super Dream</span>

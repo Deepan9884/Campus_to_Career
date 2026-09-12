@@ -6,34 +6,34 @@ export const InteractiveAppBackground: React.FC = () => {
 
   const orbConfig = {
     indigo: {
-      orb1: "from-violet-600/25 via-purple-600/16 to-transparent",
-      orb2: "from-pink-500/18 via-rose-500/12 to-transparent",
-      orb3: "from-indigo-500/14 via-violet-400/08 to-transparent",
+      orb1: "from-indigo-600/08 via-slate-800/05 to-transparent",
+      orb2: "from-blue-600/06 via-slate-900/05 to-transparent",
+      orb3: "from-indigo-500/05 via-slate-800/04 to-transparent",
     },
     purple: {
-      orb1: "from-purple-600/26 via-fuchsia-600/18 to-transparent",
-      orb2: "from-pink-500/20 via-rose-500/14 to-transparent",
-      orb3: "from-fuchsia-500/14 via-purple-400/08 to-transparent",
+      orb1: "from-purple-600/08 via-slate-800/05 to-transparent",
+      orb2: "from-indigo-600/06 via-slate-900/05 to-transparent",
+      orb3: "from-purple-500/05 via-slate-800/04 to-transparent",
     },
     emerald: {
-      orb1: "from-emerald-500/24 via-teal-500/16 to-transparent",
-      orb2: "from-teal-500/18 via-cyan-500/12 to-transparent",
-      orb3: "from-green-400/14 via-emerald-300/08 to-transparent",
+      orb1: "from-emerald-600/08 via-slate-800/05 to-transparent",
+      orb2: "from-teal-600/06 via-slate-900/05 to-transparent",
+      orb3: "from-emerald-500/05 via-slate-800/04 to-transparent",
     },
     amber: {
-      orb1: "from-amber-400/24 via-orange-400/16 to-transparent",
-      orb2: "from-yellow-400/18 via-amber-300/12 to-transparent",
-      orb3: "from-orange-300/14 via-amber-200/08 to-transparent",
+      orb1: "from-amber-600/08 via-slate-800/05 to-transparent",
+      orb2: "from-orange-600/06 via-slate-900/05 to-transparent",
+      orb3: "from-amber-500/05 via-slate-800/04 to-transparent",
     },
     cyan: {
-      orb1: "from-sky-500/24 via-cyan-500/16 to-transparent",
-      orb2: "from-blue-500/18 via-sky-400/12 to-transparent",
-      orb3: "from-cyan-400/14 via-sky-300/08 to-transparent",
+      orb1: "from-sky-600/08 via-slate-800/05 to-transparent",
+      orb2: "from-blue-600/06 via-slate-900/05 to-transparent",
+      orb3: "from-sky-500/05 via-slate-800/04 to-transparent",
     },
   }[accentColor] || {
-    orb1: "from-violet-600/25 via-purple-600/16 to-transparent",
-    orb2: "from-pink-500/18 via-rose-500/12 to-transparent",
-    orb3: "from-indigo-500/14 via-violet-400/08 to-transparent",
+    orb1: "from-indigo-600/08 via-slate-800/05 to-transparent",
+    orb2: "from-blue-600/06 via-slate-900/05 to-transparent",
+    orb3: "from-indigo-500/05 via-slate-800/04 to-transparent",
   };
 
   return (
@@ -51,7 +51,7 @@ export const InteractiveAppBackground: React.FC = () => {
       {/* Dark mode only: Bottom center orb */}
       <div
         className="absolute bottom-0 left-1/3 w-[500px] h-[500px] rounded-full blur-[150px] animate-pulse pointer-events-none dark:block hidden"
-        style={{ background: "radial-gradient(circle, rgba(196,181,253,0.16), transparent 70%)", animationDuration: "20s", animationDelay: "8s" }}
+        style={{ background: "radial-gradient(circle, rgba(99,102,241,0.04), transparent 70%)", animationDuration: "20s", animationDelay: "8s" }}
       />
       {/* Dark mode only: Mid-screen diagonal accent orb */}
       <div
@@ -61,7 +61,7 @@ export const InteractiveAppBackground: React.FC = () => {
       {/* Dark mode vignette overlay */}
       <div
         className="absolute inset-0 dark:block hidden pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(14,11,30,0.45) 70%, rgba(14,11,30,0.82) 100%)" }}
+        style={{ background: "radial-gradient(ellipse at 50% 40%, transparent 40%, rgba(11,15,23,0.50) 70%, rgba(11,15,23,0.92) 100%)" }}
       />
       {/* Dark mode subtle dot-mesh texture */}
       <div

@@ -254,8 +254,8 @@ export function OverviewPage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-            <span className="text-slate-900 dark:gradient-text-warm">Mentor Command</span>{" "}
-            <span className="text-indigo-600 dark:text-[var(--foreground)]">Center</span>
+            <span className="text-slate-900 dark:text-white">Mentor Command</span>{" "}
+            <span className="text-indigo-600 dark:text-indigo-400">Center</span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-[var(--muted-foreground)] leading-relaxed">
             Placement readiness and performance tracking.
@@ -300,7 +300,7 @@ export function OverviewPage() {
           <div className="space-y-2 max-w-xl">
             <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
               <span>Mentorship Placement</span>{" "}
-              <span className="text-indigo-600 dark:text-[var(--primary)]">Funnel</span>
+              <span className="text-indigo-600 dark:text-indigo-400">Funnel</span>
             </h2>
           </div>
 
@@ -342,15 +342,15 @@ export function OverviewPage() {
         <div className="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 space-y-2 relative z-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-bold text-slate-800 dark:text-[var(--foreground)]">
             <span className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-indigo-600 dark:text-[var(--primary)]" />
+              <Target className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
               Mentees Placement Readiness Distribution
             </span>
-            <span className="text-indigo-700 dark:text-[var(--primary)] font-extrabold bg-indigo-50 dark:bg-[rgb(var(--primary-rgb)/12%)] px-2.5 py-0.5 rounded-lg border border-indigo-200 dark:border-[rgb(var(--primary-rgb)/20%)]">
+            <span className="text-indigo-700 dark:text-indigo-300 font-extrabold bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-500/20">
               {avgCohortReadiness}% Average Readiness
             </span>
           </div>
 
-          <div className="h-3.5 w-full bg-slate-100 dark:bg-black/35 rounded-full overflow-hidden flex p-0.5 border border-slate-200 dark:border-slate-800 shadow-inner">
+          <div className="h-3.5 w-full bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden flex p-0.5 border border-slate-200 dark:border-slate-800 shadow-inner">
             {totalCount > 0 ? (
               <>
                 <div
@@ -370,7 +370,7 @@ export function OverviewPage() {
                 />
               </>
             ) : (
-              <div className="w-full bg-slate-200 dark:bg-[rgba(255,255,255,0.05)] h-full rounded-full" />
+              <div className="w-full bg-slate-200 dark:bg-slate-800 h-full rounded-full" />
             )}
           </div>
         </div>
@@ -382,102 +382,102 @@ export function OverviewPage() {
         {/* KPI 1: Assigned Mentees */}
         <div className="kpi-card kpi-card-violet space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-violet-500/25 border border-indigo-100 dark:border-violet-500/30">
-              <Users className="h-4 w-4 text-indigo-600 dark:text-violet-300" />
+            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-100 dark:border-indigo-500/25">
+              <Users className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
             </div>
-            <span className="text-[10px] font-extrabold text-indigo-700 dark:text-violet-300 bg-indigo-50 dark:bg-violet-500/20 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-violet-500/20">
+            <span className="text-[10px] font-extrabold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-500/25">
               Roster
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Assigned Mentees</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-violet-300 tracking-tight">{totalCount}</p>
-            <p className="text-[10px] text-indigo-600 dark:text-violet-400/70 font-semibold truncate">Active cohort</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">Assigned Mentees</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{totalCount}</p>
+            <p className="text-[10px] text-indigo-600 dark:text-indigo-400/80 font-semibold truncate">Active cohort</p>
           </div>
         </div>
 
         {/* KPI 2: ATS Resume Score */}
         <div className="kpi-card kpi-card-blue space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-500/25 border border-blue-100 dark:border-blue-500/30">
-              <FileText className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-500/15 border border-blue-100 dark:border-blue-500/25">
+              <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
-            <span className="text-[10px] font-extrabold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-500/20 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-500/20">
+            <span className="text-[10px] font-extrabold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-500/15 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-500/25">
               ATS
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Avg ATS Resume</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-blue-300 tracking-tight">{avgResumeScore}%</p>
-            <p className="text-[10px] text-blue-600 dark:text-blue-400/70 font-medium truncate">Resume evaluation</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">Avg ATS Resume</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{avgResumeScore}%</p>
+            <p className="text-[10px] text-blue-600 dark:text-blue-400/80 font-medium truncate">Resume evaluation</p>
           </div>
         </div>
 
         {/* KPI 3: Mock Interview Avg */}
         <div className="kpi-card kpi-card-purple space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-purple-50 dark:bg-purple-500/25 border border-purple-100 dark:border-purple-500/30">
-              <Mic className="h-4 w-4 text-purple-600 dark:text-purple-300" />
+            <div className="p-2 rounded-xl bg-purple-50 dark:bg-purple-500/15 border border-purple-100 dark:border-purple-500/25">
+              <Mic className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
-            <span className="text-[10px] font-extrabold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/20 px-2 py-0.5 rounded-full border border-purple-200 dark:border-purple-500/20">
+            <span className="text-[10px] font-extrabold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/15 px-2 py-0.5 rounded-full border border-purple-200 dark:border-purple-500/25">
               Mock
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Mock Interview</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-purple-300 tracking-tight">{avgInterviewScore}%</p>
-            <p className="text-[10px] text-purple-600 dark:text-purple-400/70 font-medium truncate">Technical rounds</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">Mock Interview</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{avgInterviewScore}%</p>
+            <p className="text-[10px] text-purple-600 dark:text-purple-400/80 font-medium truncate">Technical rounds</p>
           </div>
         </div>
 
         {/* KPI 4: Coding Solved */}
         <div className="kpi-card kpi-card-emerald space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/25 border border-emerald-100 dark:border-emerald-500/30">
-              <Code2 className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />
+            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-100 dark:border-emerald-500/25">
+              <Code2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/20">
+            <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/25">
               DSA
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Coding Solved</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-emerald-300 tracking-tight">{totalCodingProblems}</p>
-            <p className="text-[10px] text-emerald-600 dark:text-emerald-400/70 font-medium truncate">Total problems</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">Coding Solved</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{totalCodingProblems}</p>
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400/80 font-medium truncate">Total problems</p>
           </div>
         </div>
 
         {/* KPI 5: Verified Proofs */}
         <div className="kpi-card kpi-card-amber space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-500/25 border border-amber-100 dark:border-amber-500/30">
-              <ShieldCheck className="h-4 w-4 text-amber-600 dark:text-amber-300" />
+            <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-500/15 border border-amber-100 dark:border-amber-500/25">
+              <ShieldCheck className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
-            <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-500/20">
+            <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-500/25">
               Proofs
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Verified Proofs</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-amber-300 tracking-tight">{totalVerifiedProofs}</p>
-            <p className="text-[10px] text-amber-600 dark:text-amber-400/70 font-medium truncate">Credentials</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">Verified Proofs</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{totalVerifiedProofs}</p>
+            <p className="text-[10px] text-amber-600 dark:text-amber-400/80 font-medium truncate">Credentials</p>
           </div>
         </div>
 
         {/* KPI 6: Readiness Index */}
         <div className="kpi-card kpi-card-pink space-y-3">
           <div className="flex items-center justify-between">
-            <div className="p-2 rounded-xl bg-rose-50 dark:bg-pink-500/25 border border-rose-100 dark:border-pink-500/30">
-              <TrendingUp className="h-4 w-4 text-rose-600 dark:text-pink-300" />
+            <div className="p-2 rounded-xl bg-rose-50 dark:bg-rose-500/15 border border-rose-100 dark:border-rose-500/25">
+              <TrendingUp className="h-4 w-4 text-rose-600 dark:text-rose-400" />
             </div>
-            <span className="text-[10px] font-extrabold text-rose-700 dark:text-pink-300 bg-rose-50 dark:bg-pink-500/20 px-2 py-0.5 rounded-full border border-rose-200 dark:border-pink-500/20">
+            <span className="text-[10px] font-extrabold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/15 px-2 py-0.5 rounded-full border border-rose-200 dark:border-rose-500/25">
               Index
             </span>
           </div>
           <div>
-            <p className="text-[11px] text-slate-500 dark:text-[var(--muted-foreground)] font-semibold">Readiness Index</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-pink-300 tracking-tight">{avgCohortReadiness}%</p>
-            <p className="text-[10px] text-rose-600 dark:text-pink-400/70 font-medium truncate">{placementReadyCount} ready for hire</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">Readiness Index</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{avgCohortReadiness}%</p>
+            <p className="text-[10px] text-rose-600 dark:text-rose-400/80 font-medium truncate">{placementReadyCount} ready for hire</p>
           </div>
         </div>
       </div>

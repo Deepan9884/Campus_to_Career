@@ -158,15 +158,10 @@ export function AdminResultsPage() {
       <div className="elite-panel hero-card-shimmer relative rounded-3xl p-5 sm:p-6 overflow-hidden">
         <div
           className="absolute top-0 right-0 w-72 h-32 pointer-events-none opacity-20"
-          style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
+          style={{ background: "radial-gradient(ellipse at top right, rgba(99,102,241,0.12), transparent 70%)" }}
         />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30">
-                Evaluation & Marksheet Console
-              </span>
-            </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
               <span className="gradient-text-warm">Assessment Results</span>{" "}
               <span className="text-slate-900 dark:text-white">& Evaluation</span>
@@ -220,7 +215,7 @@ export function AdminResultsPage() {
                   onClick={() => handleSelectExam(exam._id)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
                     isSelected
-                      ? "btn-gradient text-white shadow-md shadow-indigo-500/25"
+                      ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/25"
                       : "bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
@@ -323,7 +318,7 @@ export function AdminResultsPage() {
                   type="button"
                   disabled={isExportingPdf || resultsData.resultsTable.length === 0}
                   onClick={handleDownloadPdf}
-                  className="btn-gradient px-4 py-2.5 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg shadow-indigo-500/25 hover:scale-105 transition disabled:opacity-50 cursor-pointer"
+                  className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2.5 rounded-xl text-xs font-bold text-white flex items-center gap-2 shadow-sm shadow-indigo-500/25 transition disabled:opacity-50 cursor-pointer"
                 >
                   <Download className="h-4 w-4" />
                   <span>{isExportingPdf ? "Generating PDF..." : "Download as PDF"}</span>

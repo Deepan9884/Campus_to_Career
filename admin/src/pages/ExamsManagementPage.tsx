@@ -160,18 +160,18 @@ export function ExamsManagementPage() {
       <div className="elite-panel hero-card-shimmer relative rounded-3xl p-5 sm:p-6 overflow-hidden">
         <div
           className="absolute top-0 right-0 w-72 h-32 pointer-events-none opacity-20"
-          style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
+          style={{ background: "radial-gradient(ellipse at top right, rgba(99,102,241,0.12), transparent 70%)" }}
         />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-[rgb(var(--primary-rgb)/15%)] text-[var(--primary)] border border-[rgb(var(--primary-rgb)/30%)]">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/10 dark:text-indigo-400 dark:border-indigo-500/20">
                 Faculty & Mentor Examination Hub
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight mt-1.5">
               <span className="gradient-text-warm">Assessments</span>{" "}
-              <span className="text-[var(--foreground)]">& Test Control</span>
+              <span className="text-slate-900 dark:text-white">& Test Control</span>
             </h1>
             <p className="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1 max-w-xl">
               Strict section gating, scheduled examination windows, question paper previews, and proctoring locks.
@@ -181,7 +181,7 @@ export function ExamsManagementPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowCreateModal(true)}
-              className="btn-gradient px-5 py-2.5 rounded-2xl text-xs font-black text-white shadow-lg shadow-indigo-500/25 flex items-center gap-2 hover:scale-102 transition cursor-pointer"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm shadow-indigo-500/25 flex items-center gap-2 transition hover:scale-102 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Create New Exam</span>
@@ -264,8 +264,8 @@ export function ExamsManagementPage() {
               onClick={() => setActiveTypeFilter(tab.id)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                 activeTypeFilter === tab.id
-                  ? "btn-gradient text-white shadow-md shadow-indigo-500/20"
-                  : "bg-[var(--glass-input-bg)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] border border-[var(--border)]"
+                  ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/25"
+                  : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60"
               }`}
             >
               {tab.label}
@@ -302,7 +302,7 @@ export function ExamsManagementPage() {
           </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md shadow-indigo-500/20"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm shadow-indigo-500/20 transition hover:scale-102 cursor-pointer"
           >
             Create First Exam
           </button>

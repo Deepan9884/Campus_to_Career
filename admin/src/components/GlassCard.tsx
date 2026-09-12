@@ -9,10 +9,10 @@ interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const GLOW_CLASS: Record<NonNullable<GlassCardProps["glow"]>, string> = {
-  violet: "shadow-[0_0_40px_rgba(167,139,250,0.30)]",
-  rose: "shadow-[0_0_40px_rgba(249,168,212,0.25)]",
-  mint: "shadow-[0_0_40px_rgba(134,239,172,0.25)]",
-  amber: "shadow-[0_0_40px_rgba(253,230,138,0.22)]",
+  violet: "shadow-[0_4px_20px_rgba(99,102,241,0.15)]",
+  rose: "shadow-[0_4px_20px_rgba(244,63,94,0.12)]",
+  mint: "shadow-[0_4px_20px_rgba(16,185,129,0.12)]",
+  amber: "shadow-[0_4px_20px_rgba(245,158,11,0.12)]",
   none: "",
 };
 
