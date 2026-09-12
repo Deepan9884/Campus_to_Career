@@ -214,8 +214,6 @@ export function OverviewPage() {
   const totalCodingProblems = students.reduce((acc, s) => acc + (s.totalProblemsSolved || 0), 0);
   const totalVerifiedProofs = students.reduce((acc, s) => acc + (s.verifiedEventsCount || 0), 0);
 
-  // Missing skills from cohort data or computed
-  const missingSkills = cohortData?.topMissingSkills || [];
   const topTargetRoles = cohortData?.topTargetRoles || [];
 
   // Filter students
@@ -300,14 +298,6 @@ export function OverviewPage() {
       <div data-tour="readiness-funnel" className="elite-panel relative p-6 sm:p-7 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
         <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-xl">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 flex items-center gap-1.5 uppercase tracking-wider">
-                <Zap className="h-3 w-3" /> Readiness Funnel
-              </span>
-              <span className="text-[11px] font-bold text-slate-500 dark:text-[var(--muted-foreground)]">
-                Target Benchmark: <strong className="text-emerald-600 dark:text-emerald-400">≥75%</strong>
-              </span>
-            </div>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white">
               <span>Mentorship Placement</span>{" "}
               <span className="text-indigo-600 dark:text-[var(--primary)]">Funnel</span>
@@ -385,27 +375,6 @@ export function OverviewPage() {
           </div>
         </div>
 
-        {/* Live Cohort Insight */}
-        {totalCount > 0 && (
-          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs relative z-10">
-            <div className="flex items-center gap-2 text-slate-600 dark:text-[var(--muted-foreground)]">
-              <Activity className="h-4 w-4 text-indigo-600 dark:text-[var(--primary)] shrink-0" />
-              <span>
-                {missingSkills.length > 0
-                  ? `Focus area: ${missingSkills[0].skill} is lacking across ${missingSkills[0].count} mentees.`
-                  : "Tracking telemetry across all assigned mentees."}
-              </span>
-            </div>
-
-            {topPerformer && (
-              <div className="flex items-center gap-2 text-slate-600 dark:text-[var(--muted-foreground)] font-medium">
-                <span>
-                  Highest readiness: <strong className="text-slate-900 dark:text-[var(--foreground)] font-bold">{topPerformer.name}</strong> ({topPerformer.overallReadiness}%)
-                </span>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* 6-Card Rich Telemetry KPI Grid */}
@@ -513,55 +482,11 @@ export function OverviewPage() {
         </div>
       </div>
 
-      {/* Main 2-Column Command Workspace */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Left Column: Skill Deficiency Heatmap */}
-        <div className="space-y-6 lg:col-span-1">
-          <div data-tour="skill-heatmap" className="elite-panel rounded-2xl p-6 space-y-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-              <div>
-                <h3 className="text-sm font-extrabold text-slate-900 dark:text-[var(--foreground)] flex items-center gap-2">
-                  <span className="section-accent-line" />
-                  <Target className="h-4 w-4 text-amber-500" /> Skill Gaps Heatmap
-                </h3>
-              </div>
-              <span className="text-[10px] text-amber-700 dark:text-amber-400 font-extrabold bg-amber-50 dark:bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-500/25 uppercase">
-                Gaps
-              </span>
-            </div>
-
-            <div className="space-y-2.5">
-              {missingSkills.length > 0 ? (
-                missingSkills.slice(0, 6).map((item, idx) => {
-                  const pct = Math.min(100, Math.round((item.count / Math.max(1, totalCount)) * 100));
-                  return (
-                    <div key={idx} className="space-y-1.5 p-2.5 rounded-xl bg-slate-50/80 dark:bg-[rgba(255,255,255,0.04)] border border-slate-200 dark:border-[var(--border)] hover:border-amber-300 dark:hover:border-amber-500/25 transition-colors">
-                      <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="text-slate-800 dark:text-[var(--foreground)]">
-                          {item.skill}
-                        </span>
-                        <span className="text-amber-600 dark:text-amber-400 font-extrabold text-[10px]">{item.count} lacking</span>
-                      </div>
-
-                      <div className="h-1.5 w-full bg-slate-200 dark:bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden">
-                        <div
-                          style={{ width: `${pct}%` }}
-                          className="h-full bg-gradient-to-r from-amber-500 to-rose-500 rounded-full"
-                        />
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="py-8 text-center text-xs text-slate-500 dark:text-[var(--muted-foreground)]">
-                  No skill gaps detected.
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Target Role Breakdown */}
-          {topTargetRoles.length > 0 && (
+      {/* Main Command Workspace */}
+      <div className={`grid gap-6 ${topTargetRoles.length > 0 ? "lg:grid-cols-3" : "grid-cols-1"}`}>
+        {/* Left Column: Target Role Breakdown */}
+        {topTargetRoles.length > 0 && (
+          <div className="space-y-6 lg:col-span-1">
             <div className="elite-panel rounded-2xl p-6 space-y-4 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
               <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                 <h3 className="text-sm font-extrabold text-slate-900 dark:text-[var(--foreground)] flex items-center gap-2">
@@ -590,11 +515,11 @@ export function OverviewPage() {
                 })}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Right Column: Mentees Readiness Directory */}
-        <div className="space-y-6 lg:col-span-2">
+        <div className={`space-y-6 ${topTargetRoles.length > 0 ? "lg:col-span-2" : "col-span-1"}`}>
           <div data-tour="mentee-directory" className="elite-panel rounded-2xl p-6 space-y-5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] shadow-xs">
             {/* Directory Header & In-page Filter Toolbar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">

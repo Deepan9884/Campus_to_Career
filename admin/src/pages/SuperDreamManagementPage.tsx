@@ -1629,11 +1629,6 @@ const CS_SUBJECT_DETAILS: Record<string, {
           </div>
 
           <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-[var(--muted-foreground)] font-mono font-medium">
-                Synced: {lastRefreshedAt.toLocaleTimeString()}
-              </span>
-            </div>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight">
               <span className="gradient-text-warm">Super Dream 20+ LPA</span>{" "}
               <span className="text-[var(--foreground)]">Track</span>
