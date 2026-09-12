@@ -58,7 +58,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen relative z-10">
         
         {/* Left Panel - Branding Showcase (Desktop Only) */}
-        <div className="hidden lg:flex lg:col-span-6 xl:col-span-7 relative bg-white/75 backdrop-blur-xl border-r border-slate-200/90 p-8 xl:p-12 flex-col justify-between overflow-hidden">
+        <div className="hidden lg:flex lg:col-span-6 xl:col-span-7 relative p-8 xl:p-14 flex-col justify-between overflow-hidden">
           {/* Top Brand Header */}
           <div className="relative z-10 flex items-center justify-between gap-4">
             <img
