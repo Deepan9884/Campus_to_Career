@@ -193,9 +193,6 @@ export function SuperDreamManagementPage() {
   
   // Filter out any accounts that are explicitly marked as faculty/admin
   const candidates: SuperDreamCohortStudent[] = rawCandidates.filter((cand) => {
-    if (cand.isAssignedToMe === false) {
-      return false;
-    }
     const roleStr = (cand.targetRole || "").toLowerCase();
     const nameStr = (cand.name || "").toLowerCase();
     if (
