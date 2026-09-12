@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import {
-  GraduationCap,
   Lock,
   Mail,
   Loader2,
   Eye,
   EyeOff,
-  CheckCircle2,
-  TrendingUp,
-  Users,
-  Shield,
   ArrowRight,
 } from "lucide-react";
 import { setAccessToken, API_BASE } from "../lib/api";
@@ -149,7 +144,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen relative z-10">
         
-        {/* Left Panel - Branding & Institutional Telemetry Showcase (Desktop Only) */}
+        {/* Left Panel - Branding Showcase (Desktop Only) */}
         <div className="hidden lg:flex lg:col-span-6 xl:col-span-7 relative bg-white/75 backdrop-blur-xl border-r border-slate-200/90 p-12 xl:p-16 flex-col justify-between overflow-hidden">
           {/* Top Brand Header */}
           <div className="relative z-10 flex items-center justify-between gap-4">
@@ -158,90 +153,16 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
               alt="Campus to Career AI"
               className="h-14 xl:h-16 w-auto max-w-[280px] object-contain drop-shadow-xs"
             />
-            <span className="text-xs px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-bold shrink-0 tracking-wide">
-              Faculty & Mentor Workspace
-            </span>
           </div>
 
           {/* Hero Branding Content */}
-          <div className="relative z-10 max-w-xl space-y-8 my-auto py-12">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                Enterprise Placement Operations
-              </div>
-              <h1 className="text-3xl xl:text-4xl font-black tracking-tight text-slate-900 leading-tight">
-                Student placement benchmarks & cohort telemetry.
-              </h1>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Monitor student skill deficiencies, competitive coding performance, ATS resume scores, and multi-round AI voice interview audits from one unified command center.
-              </p>
-            </div>
-
-            {/* Live Metrics Card Preview */}
-            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 space-y-5 shadow-xl shadow-slate-200/50">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  Live Cohort Telemetry
-                </span>
-                <span className="text-[11px] font-medium text-slate-400">Updated Real-Time</span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
-                  <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold mb-1">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                    <span>Placement</span>
-                  </div>
-                  <p className="text-2xl font-black tracking-tight text-slate-900 font-sans">94.8%</p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
-                  <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold mb-1">
-                    <Users className="h-3.5 w-3.5 text-indigo-600 shrink-0" />
-                    <span>Candidates</span>
-                  </div>
-                  <p className="text-2xl font-black tracking-tight text-slate-900 font-sans">1,240</p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
-                  <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold mb-1">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-purple-600 shrink-0" />
-                    <span>Audits</span>
-                  </div>
-                  <p className="text-2xl font-black tracking-tight text-slate-900 font-sans">18.4k</p>
-                </div>
-              </div>
-
-              {/* Executive Feature Highlights */}
-              <div className="grid grid-cols-2 gap-2 pt-1 text-xs text-slate-600 font-medium">
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
-                  <span>AI Diagnostic Interventions</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  <span>Live Proctoring Radar</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                  <span>Super Dream Cutoff Engine</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                  <span>Master CSV Cohort Export</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Metadata */}
-          <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 pt-6 border-t border-slate-200/80">
-            <span className="flex items-center gap-1.5 font-medium">
-              <Shield className="h-3.5 w-3.5 text-emerald-600" /> Institutional RBAC Protected
-            </span>
-            <span className="font-semibold text-slate-400">Campus to Career AI v2.4</span>
+          <div className="relative z-10 max-w-xl space-y-4 my-auto py-12">
+            <h1 className="text-3xl xl:text-4xl font-black tracking-tight text-slate-900 leading-tight">
+              Student placement benchmarks & cohort telemetry.
+            </h1>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Monitor student skill deficiencies, competitive coding performance, ATS resume scores, and multi-round AI voice interview audits from one unified command center.
+            </p>
           </div>
         </div>
 

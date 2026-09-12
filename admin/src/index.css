@@ -138,10 +138,12 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
     transition: background-color 0.25s ease, color 0.25s ease;
     background-image:
       radial-gradient(ellipse 900px 700px at 15% -10%, rgba(139, 92, 246, 0.22) 0%, transparent 70%),
@@ -156,14 +158,24 @@
   }
 
   h1, h2 {
-    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.025em;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.028em;
     font-weight: 700;
   }
   h3, h4, h5, h6 {
-    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.015em;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.018em;
     font-weight: 600;
+  }
+
+  /* Executive Typographic Refinement: Cap extreme font-black to clean authoritative bold */
+  .font-black {
+    font-weight: 700 !important;
+  }
+
+  /* Tabular figures for clean alignment of numbers, metrics, and percentages */
+  .font-mono, [data-tabular], .kpi-card, .stat-badge, table td {
+    font-variant-numeric: tabular-nums;
   }
 }
 
