@@ -84,12 +84,7 @@ export function LoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
               <img
                 src="/teacher-mentor.png"
                 alt="Faculty Mentorship & Career Readiness"
-                style={{
-                  mixBlendMode: "multiply",
-                  WebkitMaskImage: "radial-gradient(ellipse 90% 90% at center, black 65%, transparent 100%)",
-                  maskImage: "radial-gradient(ellipse 90% 90% at center, black 65%, transparent 100%)",
-                }}
-                className="w-full max-h-[340px] xl:max-h-[390px] object-contain pointer-events-none select-none transition-transform duration-500 hover:scale-[1.01]"
+                className="w-full max-h-[360px] xl:max-h-[420px] object-contain pointer-events-none select-none transition-transform duration-500 hover:scale-[1.01]"
               />
             </div>
           </div>
