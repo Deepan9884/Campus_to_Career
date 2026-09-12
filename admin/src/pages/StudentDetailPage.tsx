@@ -686,8 +686,8 @@ export function StudentDetailPage() {
             {/* Super Dream Hero Banner */}
             <GlassCard className="p-6 border-[rgb(var(--primary-rgb)/40%)] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
               <div className="flex items-center gap-4 relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-indigo-600 to-purple-600 grid place-items-center text-white shadow-xl shrink-0">
-                  <Crown className="w-7 h-7" />
+                <div className="w-14 h-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 p-2 grid place-items-center shadow-md shrink-0 ring-2 ring-indigo-500/20">
+                  <img src="/eec-logo.webp" alt="Easwari Engineering College" className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">

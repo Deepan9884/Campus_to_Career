@@ -1624,8 +1624,8 @@ const CS_SUBJECT_DETAILS: Record<string, {
           style={{ background: "radial-gradient(ellipse at top right, rgba(167,139,250,0.7), transparent 70%)" }}
         />
         <div className="flex items-start sm:items-center gap-4 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 via-indigo-600 to-purple-600 grid place-items-center text-white shadow-2xl shrink-0 ring-2 ring-white/10">
-            <Crown className="w-8 h-8" />
+          <div className="w-16 h-16 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 p-2 grid place-items-center shadow-lg shrink-0 ring-2 ring-indigo-500/20">
+            <img src="/eec-logo.webp" alt="Easwari Engineering College" className="w-full h-full object-contain" />
           </div>
 
           <div className="space-y-1.5">
