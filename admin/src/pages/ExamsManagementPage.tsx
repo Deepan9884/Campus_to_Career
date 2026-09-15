@@ -41,8 +41,11 @@ import {
   toggleAdminExamRetakes,
   assignExamStudents,
   getStudentsList,
+  getBatches,
+  getBatchDetail,
   type ExamItem,
   type StudentSummary,
+  type StudentBatch,
 } from "../lib/admin-api";
 import { CreateExamModal } from "../components/exam/CreateExamModal";
 import { QuestionPaperPreviewModal } from "../components/exam/QuestionPaperPreviewModal";
@@ -489,14 +492,18 @@ export function ExamsManagementPage() {
                       <Users className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                       <div>
                         <span className="text-[11px] font-bold block text-slate-900 dark:text-white">
-                          {exam.targetAudience === "selected" || (exam.assignedStudents && exam.assignedStudents.length > 0)
+                          {exam.targetAudience === "batch"
+                            ? `Saved Batch${exam.batchName ? ` — ${exam.batchName}` : ""} (${exam.assignedStudents?.length || 0} Students)`
+                            : exam.targetAudience === "selected" || (exam.assignedStudents && exam.assignedStudents.length > 0)
                             ? `Selected Batch (${exam.assignedStudents?.length || 0} Students)`
                             : exam.targetAudience === "mentees"
                             ? "My Mentees Only"
                             : "All Registered Students"}
                         </span>
                         <span className="text-[9px] text-slate-500 dark:text-slate-400">
-                          {exam.targetAudience === "selected" || (exam.assignedStudents && exam.assignedStudents.length > 0)
+                          {exam.targetAudience === "batch"
+                            ? "Reusable saved group snapshot"
+                            : exam.targetAudience === "selected" || (exam.assignedStudents && exam.assignedStudents.length > 0)
                             ? "Strictly restricted to selected batch"
                             : exam.targetAudience === "mentees"
                             ? "Only visible to your mentees"
@@ -643,7 +650,7 @@ function AssignBatchModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const [targetAudience, setTargetAudience] = useState<"all" | "mentees" | "selected">(
+  const [targetAudience, setTargetAudience] = useState<"all" | "mentees" | "selected" | "batch">(
     exam.targetAudience || "all"
   );
   const [selectedIds, setSelectedIds] = useState<string[]>(() => {
@@ -656,6 +663,11 @@ function AssignBatchModal({
   const [students, setStudents] = useState<StudentSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [batches, setBatches] = useState<StudentBatch[]>([]);
+  const [isLoadingBatches, setIsLoadingBatches] = useState(false);
+  const [selectedBatchId, setSelectedBatchId] = useState<string | null>(
+    (exam as any).batchId ? String((exam as any).batchId) : null
+  );
 
   React.useEffect(() => {
     setIsLoading(true);
@@ -669,6 +681,11 @@ function AssignBatchModal({
       .finally(() => {
         setIsLoading(false);
       });
+    setIsLoadingBatches(true);
+    getBatches()
+      .then((res) => setBatches(res.batches || []))
+      .catch((err) => console.error("Failed to load batches", err))
+      .finally(() => setIsLoadingBatches(false));
   }, []);
 
   const filteredStudents = students.filter((s) => {
@@ -682,15 +699,27 @@ function AssignBatchModal({
   });
 
   const handleSave = async () => {
+    if ((targetAudience === "selected" || targetAudience === "batch") && selectedIds.length === 0) {
+      toast.error("Select at least 1 student or pick a saved batch first.");
+      return;
+    }
+    if (targetAudience === "batch" && !selectedBatchId) {
+      toast.error("Pick a saved batch first.");
+      return;
+    }
     setIsSaving(true);
     try {
       await assignExamStudents(
         exam._id,
         targetAudience,
-        targetAudience === "selected" ? selectedIds : []
+        targetAudience === "selected" || targetAudience === "batch" ? selectedIds : [],
+        targetAudience === "batch" ? selectedBatchId : null
       );
+      const batchName = batches.find((b) => b._id === selectedBatchId)?.name;
       toast.success(
-        targetAudience === "selected"
+        targetAudience === "batch"
+          ? `Exam assigned to saved batch${batchName ? ` "${batchName}"` : ""} (${selectedIds.length} candidate(s))`
+          : targetAudience === "selected"
           ? `Successfully assigned test to ${selectedIds.length} candidate(s)`
           : targetAudience === "mentees"
           ? "Exam restricted to your assigned mentees"
@@ -701,6 +730,16 @@ function AssignBatchModal({
       toast.error(err.message || "Failed to update batch assignment");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handlePickBatch = async (batchId: string) => {
+    setSelectedBatchId(batchId);
+    try {
+      const res = await getBatchDetail(batchId);
+      setSelectedIds((res.batch.studentIds || []).map((id) => String(id)));
+    } catch (err: any) {
+      toast.error(err.message || "Failed to load batch members");
     }
   };
 
@@ -736,11 +775,12 @@ function AssignBatchModal({
           <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
             Target Audience Policy
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
             {[
               { id: "all", label: "All Students", desc: "Open to whole directory" },
               { id: "mentees", label: "My Mentees Only", desc: "Assigned mentees only" },
               { id: "selected", label: "Selected Batch", desc: "Designated candidate list" },
+              { id: "batch", label: "Saved Batch", desc: "Reuse a saved group" },
             ].map((aud) => (
               <div
                 key={aud.id}
@@ -757,6 +797,54 @@ function AssignBatchModal({
             ))}
           </div>
         </div>
+
+        {/* Saved Batch Picker */}
+        {targetAudience === "batch" && (
+          <div className="space-y-2.5">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              Saved Batches
+            </label>
+            {isLoadingBatches ? (
+              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 py-3">
+                <Loader2 className="h-4 w-4 animate-spin" /> Loading saved batches…
+              </div>
+            ) : batches.length === 0 ? (
+              <div className="p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 text-center">
+                <p className="text-xs font-bold text-slate-700 dark:text-slate-200">No saved batches yet</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  Create one from “Specific Selected Students” while authoring an assessment.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-0.5">
+                {batches.map((b) => {
+                  const isActive = selectedBatchId === b._id;
+                  return (
+                    <div
+                      key={b._id}
+                      onClick={() => handlePickBatch(b._id)}
+                      className={`p-3 rounded-2xl border transition cursor-pointer ${
+                        isActive
+                          ? "bg-indigo-50 border-indigo-500 ring-1 ring-indigo-500 dark:bg-indigo-950/50"
+                          : "bg-slate-50 border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:border-slate-800 dark:hover:border-slate-700"
+                      }`}
+                    >
+                      <div className="font-bold text-slate-900 dark:text-white text-xs truncate">{b.name}</div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        {b.studentCount} student{b.studentCount === 1 ? "" : "s"} • {selectedIds.length > 0 && isActive ? `${selectedIds.length} loaded` : `Updated ${new Date(b.updatedAt).toLocaleDateString()}`}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {selectedBatchId && (
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                Publishing snapshots the batch’s current members ({selectedIds.length}) into this exam.
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Candidate Selector for Selected Batch */}
         {targetAudience === "selected" && (
@@ -876,7 +964,7 @@ function AssignBatchModal({
 
           <button
             type="button"
-            disabled={isSaving || (targetAudience === "selected" && selectedIds.length === 0)}
+            disabled={isSaving || ((targetAudience === "selected" || targetAudience === "batch") && selectedIds.length === 0)}
             onClick={handleSave}
             className="bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 rounded-xl text-xs font-black text-white shadow-lg shadow-indigo-500/25 flex items-center gap-2 transition cursor-pointer disabled:opacity-50"
           >

@@ -54,11 +54,17 @@ import {
   extractQuestionsFromFile,
   extractQuestionsFromText,
   getStudentsList,
+  getBatches,
+  getBatchDetail,
+  createBatch,
+  updateBatch,
+  deleteBatch,
   type ExamItem,
   type ExamSectionData,
   type McqQuestionData,
   type CodingQuestionData,
   type StudentSummary,
+  type StudentBatch,
 } from "../../lib/admin-api";
 import { QuestionPaperPreviewModal } from "./QuestionPaperPreviewModal";
 import { formatMathText } from "../../lib/formatMathText";
@@ -197,11 +203,110 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
   const docFileInputRef = useRef<HTMLInputElement>(null);
 
   // ── STEP 4: TARGET AUDIENCE, PROCTORING & SCHEDULING ───────────────────────
-  const [targetAudience, setTargetAudience] = useState<"all" | "mentees" | "selected">("all");
+  const [targetAudience, setTargetAudience] = useState<"all" | "mentees" | "selected" | "batch">("all");
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [studentSearch, setStudentSearch] = useState("");
   const [studentsRoster, setStudentsRoster] = useState<StudentSummary[]>([]);
   const [isLoadingRoster, setIsLoadingRoster] = useState(false);
+
+  // ── Saved reusable batches ────────────────────────────────────────────────
+  const [batches, setBatches] = useState<StudentBatch[]>([]);
+  const [isLoadingBatches, setIsLoadingBatches] = useState(false);
+  const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
+  const [newBatchName, setNewBatchName] = useState("");
+  const [isSavingBatch, setIsSavingBatch] = useState(false);
+
+  const refreshBatches = async () => {
+    setIsLoadingBatches(true);
+    try {
+      const res = await getBatches();
+      setBatches(res.batches || []);
+    } catch (err) {
+      console.error("Failed to load batches:", err);
+    } finally {
+      setIsLoadingBatches(false);
+    }
+  };
+
+  const handlePickBatch = async (batchId: string) => {
+    setSelectedBatchId(batchId);
+    try {
+      const res = await getBatchDetail(batchId);
+      const ids = (res.batch.studentIds || []).map((id) => String(id));
+      setSelectedStudentIds(ids);
+      setBatches((prev) =>
+        prev.map((b) => (b._id === batchId ? { ...b, studentIds: ids, studentCount: ids.length } : b))
+      );
+    } catch (err: any) {
+      toast.error(err.message || "Failed to load batch members");
+    }
+  };
+
+  const handleSaveBatch = async () => {
+    const name = newBatchName.trim();
+    if (!name) {
+      toast.error("Give the batch a name first (e.g. CSE 2026-A)");
+      return;
+    }
+    if (selectedStudentIds.length === 0) {
+      toast.error("Select at least 1 student to save a batch");
+      return;
+    }
+    setIsSavingBatch(true);
+    try {
+      const res = await createBatch({ name, studentIds: selectedStudentIds });
+      setBatches((prev) => [{ ...res.batch, studentCount: res.batch.studentIds.length }, ...prev]);
+      setSelectedBatchId(res.batch._id);
+      setNewBatchName("");
+      toast.success(`Batch "${res.batch.name}" saved — reuse it in any future assessment`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save batch");
+    } finally {
+      setIsSavingBatch(false);
+    }
+  };
+
+  const handleUpdateBatch = async () => {
+    if (!selectedBatchId) return;
+    if (selectedStudentIds.length === 0) {
+      toast.error("A batch must contain at least 1 student");
+      return;
+    }
+    setIsSavingBatch(true);
+    try {
+      const res = await updateBatch(selectedBatchId, { studentIds: selectedStudentIds });
+      setBatches((prev) =>
+        prev.map((b) =>
+          b._id === selectedBatchId
+            ? { ...b, studentIds: res.batch.studentIds, studentCount: res.batch.studentIds.length }
+            : b
+        )
+      );
+      toast.success(`Batch "${res.batch.name}" updated`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update batch");
+    } finally {
+      setIsSavingBatch(false);
+    }
+  };
+
+  const handleDeleteBatch = async (batchId: string, batchName: string) => {
+    if (!window.confirm(`Delete saved batch "${batchName}"? Published exams keep their students.`)) return;
+    try {
+      await deleteBatch(batchId);
+      setBatches((prev) => prev.filter((b) => b._id !== batchId));
+      if (selectedBatchId === batchId) setSelectedBatchId(null);
+      toast.success("Batch deleted");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete batch");
+    }
+  };
+
+  const selectedBatch = batches.find((b) => b._id === selectedBatchId) || null;
+  const batchDirty =
+    !!selectedBatch &&
+    (selectedBatch.studentIds.length !== selectedStudentIds.length ||
+      selectedBatch.studentIds.some((id) => !selectedStudentIds.includes(String(id))));
 
   // Scheduling Configuration
   const [isScheduled, setIsScheduled] = useState(false);
@@ -250,9 +355,9 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
   const [showPreviewPaperModal, setShowPreviewPaperModal] = useState(false);
   const [createdExamRecord, setCreatedExamRecord] = useState<ExamItem | null>(null);
 
-  // Fetch student roster when target audience is "selected"
+  // Fetch student roster when target audience needs manual picking
   useEffect(() => {
-    if (targetAudience === "selected" && studentsRoster.length === 0) {
+    if ((targetAudience === "selected" || targetAudience === "batch") && studentsRoster.length === 0) {
       setIsLoadingRoster(true);
       getStudentsList(1, "", "all", 1000)
         .then((res) => {
@@ -264,6 +369,9 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
         .finally(() => {
           setIsLoadingRoster(false);
         });
+    }
+    if ((targetAudience === "selected" || targetAudience === "batch") && batches.length === 0 && !isLoadingBatches) {
+      refreshBatches();
     }
   }, [targetAudience]);
 
@@ -511,6 +619,10 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
     if (fromStep === 4) {
       if (targetAudience === "selected" && selectedStudentIds.length === 0) {
         toast.error("Please select at least 1 student or choose 'All Students'.");
+        return false;
+      }
+      if (targetAudience === "batch" && (!selectedBatchId || selectedStudentIds.length === 0)) {
+        toast.error("Please pick a saved batch (or save the current selection as a batch).");
         return false;
       }
       if (isScheduled) {
@@ -829,6 +941,8 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
       return acc + s.codingQuestions.reduce((cAcc, c) => cAcc + (Number(c.marks) || 10), 0);
     }, 0) || 100,
     targetAudience,
+    batchId: targetAudience === "batch" ? selectedBatchId : null,
+    batchName: targetAudience === "batch" ? selectedBatch?.name || "" : "",
     sections,
     proctoringConfig: {
       webcamRequired,
@@ -874,7 +988,8 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
         durationMinutes: Number(durationMinutes) || 60,
         passingScorePercentage: Number(passingScorePercentage) || 60,
         targetAudience,
-        assignedStudents: targetAudience === "selected" ? (selectedStudentIds as any) : [],
+        assignedStudents: targetAudience === "selected" || targetAudience === "batch" ? (selectedStudentIds as any) : [],
+        batchId: targetAudience === "batch" ? selectedBatchId : null,
         sections,
         proctoringConfig: {
           webcamRequired,
@@ -2206,11 +2321,12 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                         <h4 className="text-xs font-extrabold text-slate-900 dark:text-white">Target Candidate Cohort</h4>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         {[
                           { id: "all", label: "All Registered Students", desc: "Open to entire student directory" },
                           { id: "mentees", label: "My Mentees Only", desc: "Restricted to your assigned mentees" },
                           { id: "selected", label: "Specific Selected Students", desc: "Manually pick candidates" },
+                          { id: "batch", label: "Saved Batches", desc: "Reuse a saved student group" },
                         ].map((aud) => (
                           <div
                             key={aud.id}
@@ -2227,8 +2343,85 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                         ))}
                       </div>
 
+                      {/* Saved Batches Picker */}
+                      {targetAudience === "batch" && (
+                        <div className="space-y-3 pt-2">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-xs font-extrabold text-slate-900 dark:text-white">
+                              Pick a saved batch to reuse
+                            </span>
+                            <button
+                              type="button"
+                              onClick={refreshBatches}
+                              disabled={isLoadingBatches}
+                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-indigo-700 hover:text-indigo-900 hover:bg-indigo-50 dark:text-indigo-300 dark:hover:bg-indigo-500/10 transition flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                            >
+                              <RefreshCw className={`h-3 w-3 ${isLoadingBatches ? "animate-spin" : ""}`} />
+                              Refresh
+                            </button>
+                          </div>
+
+                          {isLoadingBatches ? (
+                            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 py-3">
+                              <Loader2 className="h-4 w-4 animate-spin" /> Loading saved batches…
+                            </div>
+                          ) : batches.length === 0 ? (
+                            <div className="p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 text-center space-y-1">
+                              <Layers className="h-5 w-5 mx-auto text-slate-400" />
+                              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">No saved batches yet</p>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                Switch to “Specific Selected Students”, pick candidates, then save them as a batch below.
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-0.5">
+                              {batches.map((b) => {
+                                const isActive = selectedBatchId === b._id;
+                                return (
+                                  <div
+                                    key={b._id}
+                                    onClick={() => handlePickBatch(b._id)}
+                                    className={`p-3 rounded-2xl border transition cursor-pointer space-y-1 ${
+                                      isActive
+                                        ? "bg-indigo-50 border-indigo-500 ring-1 ring-indigo-500 dark:bg-indigo-950/40"
+                                        : "bg-white border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:border-slate-800 dark:hover:border-slate-700"
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between gap-2">
+                                      <span className="font-bold text-slate-900 dark:text-white text-xs truncate">{b.name}</span>
+                                      <button
+                                        type="button"
+                                        title={`Delete batch "${b.name}"`}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDeleteBatch(b._id, b.name);
+                                        }}
+                                        className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+                                      >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                      </button>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                                      <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 font-extrabold border border-indigo-200 dark:border-indigo-500/30">
+                                        {b.studentCount} student{b.studentCount === 1 ? "" : "s"}
+                                      </span>
+                                      <span>Updated {new Date(b.updatedAt).toLocaleDateString()}</span>
+                                    </div>
+                                    {isActive && (
+                                      <p className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1">
+                                        <Check className="h-3 w-3" /> Members loaded below — tweak if needed
+                                      </p>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       {/* Selected Students & Batch Picker */}
-                      {targetAudience === "selected" && (
+                      {(targetAudience === "selected" || targetAudience === "batch") && (
                         <div className="space-y-4 pt-2">
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                             <div className="flex items-center gap-2">
@@ -2269,6 +2462,50 @@ export function CreateExamModal({ open, onClose, onSuccess }: CreateExamModalPro
                               )}
                             </div>
                           </div>
+
+                          {/* Save / update reusable batch from current selection */}
+                          <div className="flex flex-col sm:flex-row gap-2 p-3 rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50/60 dark:bg-indigo-950/20">
+                            <div className="relative flex-1">
+                              <Layers className="h-3.5 w-3.5 text-indigo-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                              <input
+                                type="text"
+                                value={newBatchName}
+                                onChange={(e) => setNewBatchName(e.target.value)}
+                                placeholder='Save selection as batch — e.g. "CSE 2026-A"'
+                                maxLength={80}
+                                className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={handleSaveBatch}
+                                disabled={isSavingBatch || selectedStudentIds.length === 0}
+                                className="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                              >
+                                {isSavingBatch ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
+                                Save Batch
+                              </button>
+                              {selectedBatch && batchDirty && (
+                                <button
+                                  type="button"
+                                  onClick={handleUpdateBatch}
+                                  disabled={isSavingBatch}
+                                  className="px-3 py-2 rounded-xl bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-300 dark:bg-slate-900 dark:hover:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-500/40 font-bold text-xs transition cursor-pointer disabled:opacity-50"
+                                  title="Overwrite the saved batch with the current selection"
+                                >
+                                  Update “{selectedBatch.name}”
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {selectedBatch && !batchDirty && (
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                              <Check className="h-3 w-3 text-emerald-500" />
+                              Selection matches saved batch “{selectedBatch.name}” ({selectedBatch.studentCount} students)
+                            </p>
+                          )}
 
                           <div className="relative">
                             <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />

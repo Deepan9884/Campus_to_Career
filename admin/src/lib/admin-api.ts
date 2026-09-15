@@ -545,8 +545,10 @@ export interface ExamItem {
   durationMinutes: number;
   passingScorePercentage: number;
   totalMarks: number;
-  targetAudience: "all" | "mentees" | "selected";
+  targetAudience: "all" | "mentees" | "selected" | "batch";
   assignedStudents?: { _id: string; name: string; email: string; profile?: { registerNumber?: string } }[];
+  batchId?: string | null;
+  batchName?: string;
   sections: ExamSectionData[];
   proctoringConfig: {
     webcamRequired: boolean;
@@ -645,8 +647,49 @@ export interface ExamResultsResponse {
   resultsTable: ExamResultRow[];
 }
 
-export async function createAdminExam(payload: Partial<ExamItem>): Promise<ExamItem> {
+export async function createAdminExam(payload: Partial<ExamItem> & { batchId?: string | null }): Promise<ExamItem> {
   return api.post<ExamItem>("/exams/admin/create", payload);
+}
+
+// ── Saved reusable student batches ──────────────────────────────────────────
+
+export interface StudentBatch {
+  _id: string;
+  name: string;
+  description?: string;
+  studentIds: string[];
+  studentCount: number;
+  createdBy?: string;
+  createdAt: string;
+  updatedAt: string;
+  members?: { _id: string; name: string; email: string; profile?: { registerNumber?: string }; targetRole?: string }[];
+}
+
+export async function getBatches(): Promise<{ batches: StudentBatch[] }> {
+  return api.get<{ batches: StudentBatch[] }>("/admin/batches");
+}
+
+export async function getBatchDetail(batchId: string): Promise<{ batch: StudentBatch }> {
+  return api.get<{ batch: StudentBatch }>(`/admin/batches/${batchId}`);
+}
+
+export async function createBatch(payload: {
+  name: string;
+  description?: string;
+  studentIds: string[];
+}): Promise<{ batch: StudentBatch }> {
+  return api.post<{ batch: StudentBatch }>("/admin/batches", payload);
+}
+
+export async function updateBatch(
+  batchId: string,
+  payload: { name?: string; description?: string; studentIds?: string[] }
+): Promise<{ batch: StudentBatch }> {
+  return api.patch<{ batch: StudentBatch }>(`/admin/batches/${batchId}`, payload);
+}
+
+export async function deleteBatch(batchId: string): Promise<{ message: string }> {
+  return api.delete<{ message: string }>(`/admin/batches/${batchId}`);
 }
 
 export async function getAdminExams(type = "all", search = "", status = "all"): Promise<ExamItem[]> {
@@ -710,12 +753,13 @@ export async function toggleAdminExamRetakes(
 
 export async function assignExamStudents(
   examId: string,
-  targetAudience: "all" | "mentees" | "selected" = "selected",
-  assignedStudents: string[] = []
+  targetAudience: "all" | "mentees" | "selected" | "batch" = "selected",
+  assignedStudents: string[] = [],
+  batchId?: string | null
 ): Promise<{ examId: string; targetAudience: string; assignedCount: number; assignedStudents: string[] }> {
   return api.patch<{ examId: string; targetAudience: string; assignedCount: number; assignedStudents: string[] }>(
     `/exams/admin/${examId}/assign-students`,
-    { targetAudience, assignedStudents }
+    { targetAudience, assignedStudents, batchId: batchId || null }
   );
 }
 
