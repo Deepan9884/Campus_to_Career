@@ -256,6 +256,8 @@ export interface LiveExamCandidate {
   registerNumber: string;
   targetRole: string;
   status: "in_progress" | "warning" | "blocked" | "submitted";
+  isActiveNow?: boolean;
+  isSubmitted?: boolean;
   violationsCount: number;
   violationDetails: string[];
   proctoringIntegrity: number;
@@ -274,6 +276,8 @@ export interface LiveExamGroup {
   durationMinutes: number;
   status?: string;
   activeCount: number;
+  submittedCount?: number;
+  todayCount?: number;
   blockedCount: number;
   warningCount: number;
   candidates: LiveExamCandidate[];
@@ -303,6 +307,7 @@ export interface LiveProctoringFeedResponse {
   }>;
   activeExamsCount?: number;
   totalActiveCandidates?: number;
+  totalTodayCandidates?: number;
   examsWithTakers?: LiveExamGroup[];
 }
 

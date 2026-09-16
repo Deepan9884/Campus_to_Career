@@ -577,10 +577,15 @@ export function AdminResultsPage() {
 
                           {/* Status */}
                           <td className="py-3.5 px-4 text-center">
-                            {row.isBlocked || row.status === "disqualified" ? (
+                            {row.isBlocked || row.status === "disqualified" || row.status === "blocked" ? (
                               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40 inline-flex items-center gap-1">
                                 <Lock className="w-2.5 h-2.5" />
                                 Blocked
+                              </span>
+                            ) : row.status === "in_progress" ? (
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/40 inline-flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                                In Progress
                               </span>
                             ) : (
                               <span

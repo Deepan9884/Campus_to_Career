@@ -87,6 +87,7 @@ export function LiveProctoringOperations({
   const recentViolations = data?.recentViolations || [];
   const examsWithTakers: LiveExamGroup[] = data?.examsWithTakers || [];
   const totalActiveCandidates = data?.totalActiveCandidates || 0;
+  const totalTodayCandidates = data?.totalTodayCandidates || 0;
 
   // Selected Exam Group
   const activeExamGroup = examsWithTakers.find((e) => e.examId === selectedExamId);
@@ -148,10 +149,14 @@ export function LiveProctoringOperations({
     }
 
     // Status Filter
-    if (statusFilter === "active" && cand.status !== "in_progress") return false;
+    const isSubmittedCand = cand.isSubmitted === true || cand.status === "submitted" || (cand.status as string) === "evaluated";
+    if (statusFilter === "active") {
+      const writing = cand.status === "in_progress" || cand.status === "warning";
+      if (!writing || cand.isActiveNow === false) return false;
+    }
     if (statusFilter === "warning" && cand.status !== "warning" && cand.violationsCount === 0) return false;
     if (statusFilter === "blocked" && cand.status !== "blocked") return false;
-    if (statusFilter === "submitted" && cand.status !== "submitted") return false;
+    if (statusFilter === "submitted" && !isSubmittedCand) return false;
 
     // Risk Filter
     if (riskFilter === "safe" && cand.proctoringIntegrity < 85) return false;
@@ -242,7 +247,7 @@ export function LiveProctoringOperations({
         {!selectedExamId ? (
           <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs select-text">
             {/* KPI Summary Tiles */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-1 shadow-xs">
                 <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
                   <span className="text-[11px] font-bold uppercase tracking-wider">Running Exams</span>
@@ -258,7 +263,16 @@ export function LiveProctoringOperations({
                   <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{totalActiveCandidates}</p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">Actively taking tests right now</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Writing right now (live heartbeat)</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-indigo-50/50 dark:bg-slate-950/60 border border-indigo-200 dark:border-slate-800 space-y-1 shadow-xs">
+                <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                  <span className="text-[11px] font-bold uppercase tracking-wider">Seen Today</span>
+                  <Activity className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{totalTodayCandidates}</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Started or submitted today</p>
               </div>
 
               <div className="p-4 rounded-2xl bg-amber-50/50 dark:bg-slate-950/60 border border-amber-200 dark:border-slate-800 space-y-1 shadow-xs">
@@ -358,9 +372,11 @@ export function LiveProctoringOperations({
 
                       {/* Footer & Action */}
                       <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800/80 text-xs">
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1 flex-wrap">
                           <Clock className="h-3 w-3 text-slate-400 dark:text-slate-500" />
                           <span>Status: <strong className="text-slate-900 dark:text-white capitalize">{exam.status}</strong></span>
+                          <span>• <strong className="text-slate-900 dark:text-white">{exam.submittedCount ?? 0}</strong> submitted</span>
+                          <span>• <strong className="text-slate-900 dark:text-white">{exam.todayCount ?? 0}</strong> today</span>
                         </span>
 
                         <span className="text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 font-bold flex items-center gap-1">
@@ -510,6 +526,16 @@ export function LiveProctoringOperations({
                 >
                   Blocked ({activeExamGroup?.blockedCount || 0})
                 </button>
+                <button
+                  onClick={() => setStatusFilter("submitted")}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition cursor-pointer shrink-0 ${
+                    statusFilter === "submitted"
+                      ? "bg-indigo-600 text-white shadow-xs"
+                      : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  Submitted ({activeExamGroup?.submittedCount ?? activeExamGroup?.candidates?.filter((c) => c.isSubmitted || c.status === "submitted").length ?? 0})
+                </button>
               </div>
 
               {/* Risk Level Filter */}
@@ -568,13 +594,24 @@ export function LiveProctoringOperations({
                         <span className="px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/30 flex items-center gap-1">
                           <Lock className="h-3 w-3" /> Disqualified
                         </span>
+                      ) : cand.isSubmitted || cand.status === "submitted" || (cand.status as string) === "evaluated" ? (
+                        <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30 flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Submitted
+                        </span>
                       ) : cand.status === "warning" || cand.violationsCount > 0 ? (
                         <span className="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30 flex items-center gap-1">
                           <AlertTriangle className="h-3 w-3" /> {cand.violationsCount} Strikes
                         </span>
+                      ) : cand.isActiveNow === false ? (
+                        <span
+                          className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 flex items-center gap-1"
+                          title={cand.updatedAt ? `Last heartbeat: ${new Date(cand.updatedAt).toLocaleString()}` : "No recent heartbeat"}
+                        >
+                          <Clock className="h-3 w-3" /> Idle
+                        </span>
                       ) : (
                         <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30 flex items-center gap-1">
-                          <CheckCircle2 className="h-3 w-3" /> Active
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active
                         </span>
                       )}
                     </div>
